@@ -11,6 +11,11 @@ server/**/*.user
 .env
 .env.local
 
+# Archives
+*.zip
+*.rar
+*.tar.gz
+
 # OS
 .DS_Store
 Thumbs.db
