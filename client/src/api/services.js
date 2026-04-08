@@ -57,6 +57,10 @@ export const libraryApi = {
   delete: (id) => api.delete(`/library/${id}`),
 }
 
+export const authApi = {
+  login: (data) => api.post('/auth/login', data),
+}
+
 export const adminApi = {
   getStats: () => api.get('/admin/stats'),
   getVerificationQueue: () => api.get('/admin/verification-queue'),

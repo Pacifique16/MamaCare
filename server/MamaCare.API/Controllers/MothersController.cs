@@ -103,7 +103,7 @@ public class MothersController : ControllerBase
         };
         _db.Mothers.Add(mother);
         await _db.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetById), new { id = mother.Id }, mother);
+        return CreatedAtAction(nameof(GetById), new { id = mother.Id }, new { mother.Id, mother.UserId });
     }
 
     [HttpPut("{id}")]
