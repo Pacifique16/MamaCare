@@ -71,11 +71,11 @@ public class AppDbContext : DbContext
     {
         // --- Users ---
         modelBuilder.Entity<User>().HasData(
-            new User { Id = 1, FullName = "Aline Silva", Email = "aline@mamacare.app", PasswordHash = "hashed_pw_1", Role = UserRole.Mother, PhoneNumber = "+1 (555) 012-3456", ProfileImageUrl = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100" },
-            new User { Id = 2, FullName = "Elena Wright", Email = "elena@mamacare.app", PasswordHash = "hashed_pw_2", Role = UserRole.Mother, PhoneNumber = "+1 (555) 111-2222" },
-            new User { Id = 3, FullName = "Maya Lopez", Email = "maya@mamacare.app", PasswordHash = "hashed_pw_3", Role = UserRole.Mother, PhoneNumber = "+1 (555) 333-4444" },
-            new User { Id = 4, FullName = "Sarah Parker", Email = "sarah.p@mamacare.app", PasswordHash = "hashed_pw_4", Role = UserRole.Mother, PhoneNumber = "+1 (555) 555-6666" },
-            new User { Id = 5, FullName = "Ananya Kapoor", Email = "ananya@mamacare.app", PasswordHash = "hashed_pw_5", Role = UserRole.Mother, PhoneNumber = "+1 (555) 777-8888" },
+            new User { Id = 1, FullName = "Uwimana Clarisse", Email = "uwimana@mamacare.app", PasswordHash = "hashed_pw_1", Role = UserRole.Mother, PhoneNumber = "+250 788 100 001", ProfileImageUrl = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100" },
+            new User { Id = 2, FullName = "Mukamana Espérance", Email = "mukamana@mamacare.app", PasswordHash = "hashed_pw_2", Role = UserRole.Mother, PhoneNumber = "+250 788 100 002" },
+            new User { Id = 3, FullName = "Niyonsenga Vestine", Email = "niyonsenga@mamacare.app", PasswordHash = "hashed_pw_3", Role = UserRole.Mother, PhoneNumber = "+250 788 100 003" },
+            new User { Id = 4, FullName = "Uwase Alphonsine", Email = "uwase@mamacare.app", PasswordHash = "hashed_pw_4", Role = UserRole.Mother, PhoneNumber = "+250 788 100 004" },
+            new User { Id = 5, FullName = "Ingabire Solange", Email = "ingabire@mamacare.app", PasswordHash = "hashed_pw_5", Role = UserRole.Mother, PhoneNumber = "+250 788 100 005" },
             new User { Id = 6, FullName = "Dr. Sarah Mitchell", Email = "s.mitchell@mamacare.app", PasswordHash = "hashed_pw_6", Role = UserRole.Doctor, PhoneNumber = "+1 (555) 092-1111", ProfileImageUrl = "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100" },
             new User { Id = 7, FullName = "Dr. Michael Chen", Email = "m.chen@mamacare.app", PasswordHash = "hashed_pw_7", Role = UserRole.Doctor, PhoneNumber = "+1 (555) 092-4411", ProfileImageUrl = "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=100" },
             new User { Id = 8, FullName = "Dr. Elena Rodriguez", Email = "e.rodriguez@mamacare.app", PasswordHash = "hashed_pw_8", Role = UserRole.Doctor, PhoneNumber = "+1 (555) 092-5522", ProfileImageUrl = "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=100" },
@@ -84,11 +84,11 @@ public class AppDbContext : DbContext
 
         // --- Mothers ---
         modelBuilder.Entity<Mother>().HasData(
-            new Mother { Id = 1, UserId = 1, DateOfBirth = new DateTime(1992, 3, 15), Location = "Seattle, WA", ExpectedDueDate = new DateTime(2026, 10, 24), GestationalWeek = 28, CurrentTrimester = Trimester.Third, WeightKg = 72, RiskLevel = RiskLevel.High, HasHypertension = true, HasGestationalDiabetes = false, Allergies = "Penicillin", OnboardingComplete = true },
-            new Mother { Id = 2, UserId = 2, DateOfBirth = new DateTime(1999, 7, 20), Location = "Portland, OR", ExpectedDueDate = new DateTime(2026, 12, 10), GestationalWeek = 24, CurrentTrimester = Trimester.Second, WeightKg = 70, RiskLevel = RiskLevel.Low, HasHypertension = false, HasGestationalDiabetes = false, OnboardingComplete = true },
-            new Mother { Id = 3, UserId = 3, DateOfBirth = new DateTime(1993, 11, 5), Location = "Austin, TX", ExpectedDueDate = new DateTime(2026, 9, 15), GestationalWeek = 31, CurrentTrimester = Trimester.Third, WeightKg = 78, RiskLevel = RiskLevel.High, HasHypertension = true, HasGestationalDiabetes = true, OnboardingComplete = true },
-            new Mother { Id = 4, UserId = 4, DateOfBirth = new DateTime(2001, 4, 12), Location = "Denver, CO", ExpectedDueDate = new DateTime(2027, 2, 20), GestationalWeek = 12, CurrentTrimester = Trimester.First, WeightKg = 64, RiskLevel = RiskLevel.Medium, HasHypertension = false, HasGestationalDiabetes = false, OnboardingComplete = true },
-            new Mother { Id = 5, UserId = 5, DateOfBirth = new DateTime(1990, 9, 28), Location = "Chicago, IL", ExpectedDueDate = new DateTime(2026, 8, 5), GestationalWeek = 38, CurrentTrimester = Trimester.Third, WeightKg = 76, RiskLevel = RiskLevel.Low, HasHypertension = false, HasGestationalDiabetes = false, OnboardingComplete = true }
+            new Mother { Id = 1, UserId = 1, DateOfBirth = new DateTime(1992, 3, 15), Location = "Kigali, Rwanda", ExpectedDueDate = new DateTime(2026, 10, 24), GestationalWeek = 28, CurrentTrimester = Trimester.Third, WeightKg = 72, RiskLevel = RiskLevel.High, HasHypertension = true, HasGestationalDiabetes = false, Allergies = "Penicillin", OnboardingComplete = true },
+            new Mother { Id = 2, UserId = 2, DateOfBirth = new DateTime(1999, 7, 20), Location = "Musanze, Rwanda", ExpectedDueDate = new DateTime(2026, 12, 10), GestationalWeek = 24, CurrentTrimester = Trimester.Second, WeightKg = 70, RiskLevel = RiskLevel.Low, HasHypertension = false, HasGestationalDiabetes = false, OnboardingComplete = true },
+            new Mother { Id = 3, UserId = 3, DateOfBirth = new DateTime(1993, 11, 5), Location = "Huye, Rwanda", ExpectedDueDate = new DateTime(2026, 9, 15), GestationalWeek = 31, CurrentTrimester = Trimester.Third, WeightKg = 78, RiskLevel = RiskLevel.High, HasHypertension = true, HasGestationalDiabetes = true, OnboardingComplete = true },
+            new Mother { Id = 4, UserId = 4, DateOfBirth = new DateTime(2001, 4, 12), Location = "Rubavu, Rwanda", ExpectedDueDate = new DateTime(2027, 2, 20), GestationalWeek = 12, CurrentTrimester = Trimester.First, WeightKg = 64, RiskLevel = RiskLevel.Medium, HasHypertension = false, HasGestationalDiabetes = false, OnboardingComplete = true },
+            new Mother { Id = 5, UserId = 5, DateOfBirth = new DateTime(1990, 9, 28), Location = "Nyagatare, Rwanda", ExpectedDueDate = new DateTime(2026, 8, 5), GestationalWeek = 38, CurrentTrimester = Trimester.Third, WeightKg = 76, RiskLevel = RiskLevel.Low, HasHypertension = false, HasGestationalDiabetes = false, OnboardingComplete = true }
         );
 
         // --- Doctors ---
@@ -126,9 +126,9 @@ public class AppDbContext : DbContext
 
         // --- Messages ---
         modelBuilder.Entity<Message>().HasData(
-            new Message { Id = 1, MotherId = 1, DoctorId = 1, Content = "Hello Dr. Sarah, I'm feeling very dizzy and my vision is spotting.", SentByDoctor = false, SentAt = new DateTime(2026, 4, 7, 13, 0, 0, DateTimeKind.Utc), IsRead = true },
-            new Message { Id = 2, MotherId = 1, DoctorId = 1, Content = "Aline, please remain seated. I have received your triage alert. Are you alone?", SentByDoctor = true, SentAt = new DateTime(2026, 4, 7, 13, 3, 0, DateTimeKind.Utc), IsRead = true },
-            new Message { Id = 3, MotherId = 1, DoctorId = 1, Content = "No, my husband is with me. The headache is getting worse.", SentByDoctor = false, SentAt = new DateTime(2026, 4, 7, 13, 5, 0, DateTimeKind.Utc), IsRead = false }
+            new Message { Id = 1, MotherId = 1, DoctorId = 1, Content = "Muraho Dr. Sarah, ndi kumva indwara y'umutwe ikabije kandi amaso yanjye arahumeka.", SentByDoctor = false, SentAt = new DateTime(2026, 4, 7, 13, 0, 0, DateTimeKind.Utc), IsRead = true },
+            new Message { Id = 2, MotherId = 1, DoctorId = 1, Content = "Uwimana, nyamara ukomeze uryamye. Nakiriye ubutumwa bwawe bw'ubuvuzi. Wari wenyine?", SentByDoctor = true, SentAt = new DateTime(2026, 4, 7, 13, 3, 0, DateTimeKind.Utc), IsRead = true },
+            new Message { Id = 3, MotherId = 1, DoctorId = 1, Content = "Oya, umugabo wanjye ari hano. Indwara y'umutwe irushaho gukabya.", SentByDoctor = false, SentAt = new DateTime(2026, 4, 7, 13, 5, 0, DateTimeKind.Utc), IsRead = false }
         );
 
         // --- Library Articles ---
