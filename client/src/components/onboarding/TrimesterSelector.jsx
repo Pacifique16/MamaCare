@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 
-const TrimesterSelector = ({ defaultValue = "2nd" }) => {
+const trimesters = [
+  { id: 'First',  label: '1st', range: 'Weeks 1-12' },
+  { id: 'Second', label: '2nd', range: 'Weeks 13-26' },
+  { id: 'Third',  label: '3rd', range: 'Weeks 27-40' },
+];
+
+const TrimesterSelector = ({ defaultValue = 'Second', onChange }) => {
   const [selected, setSelected] = useState(defaultValue);
-  
-  const trimesters = [
-    { id: "1st", label: "1st", range: "Weeks 1-12" },
-    { id: "2nd", label: "2nd", range: "Weeks 13-26" },
-    { id: "3rd", label: "3rd", range: "Weeks 27-40" }
-  ];
+
+  const handleSelect = (id) => {
+    setSelected(id);
+    onChange?.(id);
+  };
 
   return (
     <div className="grid grid-cols-3 gap-4">
@@ -15,10 +20,10 @@ const TrimesterSelector = ({ defaultValue = "2nd" }) => {
         <button
           key={t.id}
           type="button"
-          onClick={() => setSelected(t.id)}
+          onClick={() => handleSelect(t.id)}
           className={`flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-300 ${
-            selected === t.id 
-              ? 'border-mamacare-teal bg-mamacare-teal/5 text-mamacare-teal' 
+            selected === t.id
+              ? 'border-mamacare-teal bg-mamacare-teal/5 text-mamacare-teal'
               : 'border-gray-100 bg-gray-50 text-gray-400 hover:border-gray-200'
           }`}
         >
