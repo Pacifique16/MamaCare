@@ -3,8 +3,8 @@ using System;
 using MamaCare.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -17,39 +17,39 @@ namespace MamaCare.API.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.5")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("ProductVersion", "9.0.4")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("MamaCare.API.Models.Appointment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("DoctorId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("MotherId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("ScheduledAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Type")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -130,32 +130,32 @@ namespace MamaCare.API.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Bio")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Institution")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("LicenseNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Specialty")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("YearsOfExperience")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -204,34 +204,34 @@ namespace MamaCare.API.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Category")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("PublishedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Summary")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -310,28 +310,28 @@ namespace MamaCare.API.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("DoctorId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<int>("MotherId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("SentAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("SentByDoctor")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -378,45 +378,45 @@ namespace MamaCare.API.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Allergies")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("CurrentTrimester")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("ExpectedDueDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("GestationalWeek")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("HasGestationalDiabetes")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("HasHypertension")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Location")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("OnboardingComplete")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<int>("RiskLevel")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<double>("WeightKg")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision");
 
                     b.HasKey("Id");
 
@@ -431,8 +431,8 @@ namespace MamaCare.API.Migrations
                             Id = 1,
                             Allergies = "Penicillin",
                             CurrentTrimester = 2,
-                            DateOfBirth = new DateTime(1992, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ExpectedDueDate = new DateTime(2026, 10, 24, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateOfBirth = new DateTime(1992, 3, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExpectedDueDate = new DateTime(2026, 10, 24, 0, 0, 0, 0, DateTimeKind.Utc),
                             GestationalWeek = 28,
                             HasGestationalDiabetes = false,
                             HasHypertension = true,
@@ -446,8 +446,8 @@ namespace MamaCare.API.Migrations
                         {
                             Id = 2,
                             CurrentTrimester = 1,
-                            DateOfBirth = new DateTime(1999, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ExpectedDueDate = new DateTime(2026, 12, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateOfBirth = new DateTime(1999, 7, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExpectedDueDate = new DateTime(2026, 12, 10, 0, 0, 0, 0, DateTimeKind.Utc),
                             GestationalWeek = 24,
                             HasGestationalDiabetes = false,
                             HasHypertension = false,
@@ -461,8 +461,8 @@ namespace MamaCare.API.Migrations
                         {
                             Id = 3,
                             CurrentTrimester = 2,
-                            DateOfBirth = new DateTime(1993, 11, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ExpectedDueDate = new DateTime(2026, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateOfBirth = new DateTime(1993, 11, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExpectedDueDate = new DateTime(2026, 9, 15, 0, 0, 0, 0, DateTimeKind.Utc),
                             GestationalWeek = 31,
                             HasGestationalDiabetes = true,
                             HasHypertension = true,
@@ -476,8 +476,8 @@ namespace MamaCare.API.Migrations
                         {
                             Id = 4,
                             CurrentTrimester = 0,
-                            DateOfBirth = new DateTime(2001, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ExpectedDueDate = new DateTime(2027, 2, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateOfBirth = new DateTime(2001, 4, 12, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExpectedDueDate = new DateTime(2027, 2, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                             GestationalWeek = 12,
                             HasGestationalDiabetes = false,
                             HasHypertension = false,
@@ -491,8 +491,8 @@ namespace MamaCare.API.Migrations
                         {
                             Id = 5,
                             CurrentTrimester = 2,
-                            DateOfBirth = new DateTime(1990, 9, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ExpectedDueDate = new DateTime(2026, 8, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateOfBirth = new DateTime(1990, 9, 28, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ExpectedDueDate = new DateTime(2026, 8, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             GestationalWeek = 38,
                             HasGestationalDiabetes = false,
                             HasHypertension = false,
@@ -508,43 +508,43 @@ namespace MamaCare.API.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AiRecommendation")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<double?>("BloodPressureDiastolic")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision");
 
                     b.Property<double?>("BloodPressureSystolic")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DurationDescription")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<double?>("HeartRate")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision");
 
                     b.Property<int>("MotherId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Outcome")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("SeverityScore")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Symptoms")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<double?>("Temperature")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision");
 
                     b.HasKey("Id");
 
@@ -599,33 +599,33 @@ namespace MamaCare.API.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("FullName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProfileImageUrl")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("Role")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -635,7 +635,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 4, 8, 15, 55, 42, 315, DateTimeKind.Utc).AddTicks(5961),
+                            CreatedAt = new DateTime(2026, 4, 9, 23, 15, 58, 434, DateTimeKind.Utc).AddTicks(4094),
                             Email = "uwimana@mamacare.app",
                             FullName = "Uwimana Clarisse",
                             PasswordHash = "hashed_pw_1",
@@ -646,7 +646,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 4, 8, 15, 55, 42, 315, DateTimeKind.Utc).AddTicks(8755),
+                            CreatedAt = new DateTime(2026, 4, 9, 23, 15, 58, 434, DateTimeKind.Utc).AddTicks(9034),
                             Email = "mukamana@mamacare.app",
                             FullName = "Mukamana Espérance",
                             PasswordHash = "hashed_pw_2",
@@ -656,7 +656,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 4, 8, 15, 55, 42, 315, DateTimeKind.Utc).AddTicks(8758),
+                            CreatedAt = new DateTime(2026, 4, 9, 23, 15, 58, 434, DateTimeKind.Utc).AddTicks(9038),
                             Email = "niyonsenga@mamacare.app",
                             FullName = "Niyonsenga Vestine",
                             PasswordHash = "hashed_pw_3",
@@ -666,7 +666,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2026, 4, 8, 15, 55, 42, 315, DateTimeKind.Utc).AddTicks(8759),
+                            CreatedAt = new DateTime(2026, 4, 9, 23, 15, 58, 434, DateTimeKind.Utc).AddTicks(9041),
                             Email = "uwase@mamacare.app",
                             FullName = "Uwase Alphonsine",
                             PasswordHash = "hashed_pw_4",
@@ -676,7 +676,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2026, 4, 8, 15, 55, 42, 315, DateTimeKind.Utc).AddTicks(8786),
+                            CreatedAt = new DateTime(2026, 4, 9, 23, 15, 58, 434, DateTimeKind.Utc).AddTicks(9044),
                             Email = "ingabire@mamacare.app",
                             FullName = "Ingabire Solange",
                             PasswordHash = "hashed_pw_5",
@@ -686,7 +686,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2026, 4, 8, 15, 55, 42, 315, DateTimeKind.Utc).AddTicks(8787),
+                            CreatedAt = new DateTime(2026, 4, 9, 23, 15, 58, 434, DateTimeKind.Utc).AddTicks(9046),
                             Email = "s.mitchell@mamacare.app",
                             FullName = "Dr. Sarah Mitchell",
                             PasswordHash = "hashed_pw_6",
@@ -697,7 +697,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2026, 4, 8, 15, 55, 42, 315, DateTimeKind.Utc).AddTicks(8788),
+                            CreatedAt = new DateTime(2026, 4, 9, 23, 15, 58, 434, DateTimeKind.Utc).AddTicks(9049),
                             Email = "m.chen@mamacare.app",
                             FullName = "Dr. Michael Chen",
                             PasswordHash = "hashed_pw_7",
@@ -708,7 +708,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2026, 4, 8, 15, 55, 42, 315, DateTimeKind.Utc).AddTicks(8790),
+                            CreatedAt = new DateTime(2026, 4, 9, 23, 15, 58, 434, DateTimeKind.Utc).AddTicks(9090),
                             Email = "e.rodriguez@mamacare.app",
                             FullName = "Dr. Elena Rodriguez",
                             PasswordHash = "hashed_pw_8",
@@ -719,7 +719,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 9,
-                            CreatedAt = new DateTime(2026, 4, 8, 15, 55, 42, 315, DateTimeKind.Utc).AddTicks(8792),
+                            CreatedAt = new DateTime(2026, 4, 9, 23, 15, 58, 434, DateTimeKind.Utc).AddTicks(9093),
                             Email = "admin@mamacare.app",
                             FullName = "Admin Sarah",
                             PasswordHash = "hashed_pw_9",
@@ -731,33 +731,33 @@ namespace MamaCare.API.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<double?>("BloodPressureDiastolic")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision");
 
                     b.Property<double?>("BloodPressureSystolic")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision");
 
                     b.Property<double?>("FetalHeartRate")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision");
 
                     b.Property<int>("MotherId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("RecordedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<double?>("Temperature")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision");
 
                     b.Property<double?>("WeightKg")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision");
 
                     b.HasKey("Id");
 
