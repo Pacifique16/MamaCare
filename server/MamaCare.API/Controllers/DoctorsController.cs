@@ -52,6 +52,29 @@ public class DoctorsController : ControllerBase
         return Ok(patients);
     }
 
+    [HttpGet("{id}/patients/priority")]
+    public async Task<IActionResult> GetPatientsByPriority(int id)
+    {
+        var patients = await _db.Appointments
+            .Where(a => a.DoctorId == id)
+            .Include(a => a.Mother).ThenInclude(m => m.User)
+            .Select(a => a.Mother)
+            .Distinct()
+            .Select(m => new MotherSummaryDto(
+                m.Id, m.User.FullName, m.User.ProfileImageUrl,
+                m.GestationalWeek, m.CurrentTrimester, m.RiskLevel,
+                m.ExpectedDueDate, m.WeightKg, m.Location))
+            .ToListAsync();
+
+        // Sort: High → Medium → Low, then by gestational week descending
+        var sorted = patients
+            .OrderBy(p => p.RiskLevel == RiskLevel.High ? 0 : p.RiskLevel == RiskLevel.Medium ? 1 : 2)
+            .ThenByDescending(p => p.GestationalWeek)
+            .ToList();
+
+        return Ok(sorted);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create(CreateDoctorDto dto)
     {

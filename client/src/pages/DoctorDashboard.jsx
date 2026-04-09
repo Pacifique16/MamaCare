@@ -31,7 +31,7 @@ const DoctorDashboard = () => {
   useEffect(() => {
     Promise.all([
       adminApi.getStats(),
-      doctorsApi.getPatients(doctorId),
+      doctorsApi.getPatientsByPriority(doctorId),
     ]).then(([statsRes, patientsRes]) => {
       setStats(statsRes.data);
       setPatients(patientsRes.data);
