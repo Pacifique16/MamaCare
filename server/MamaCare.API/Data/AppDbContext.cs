@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using MamaCare.API.Models;
 
 namespace MamaCare.API.Data;
@@ -59,12 +58,6 @@ public class AppDbContext : DbContext
             .OnDelete(DeleteBehavior.Restrict);
 
         SeedData(modelBuilder);
-    }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.ConfigureWarnings(w =>
-            w.Ignore(RelationalEventId.PendingModelChangesWarning));
     }
 
     private static void SeedData(ModelBuilder modelBuilder)
