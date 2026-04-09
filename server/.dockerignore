@@ -1,0 +1,9 @@
+**/bin/
+**/obj/
+**/.vs/
+**/node_modules/
+**/*.user
+**/*.suo
+.git
+.gitignore
+README.md
