@@ -15,6 +15,7 @@ export const doctorsApi = {
   getAll: () => api.get('/doctors'),
   getById: (id) => api.get(`/doctors/${id}`),
   getPatients: (id) => api.get(`/doctors/${id}/patients`),
+  getPatientsByPriority: (id) => api.get(`/doctors/${id}/patients/priority`),
   create: (data) => api.post('/doctors', data),
   update: (id, data) => api.put(`/doctors/${id}`, data),
   verify: (id) => api.patch(`/doctors/${id}/verify`),
