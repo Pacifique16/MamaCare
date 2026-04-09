@@ -6,6 +6,7 @@ client/dist/
 server/**/bin/
 server/**/obj/
 server/**/*.user
+server/**/appsettings.Development.json
 
 # Environment
 .env
