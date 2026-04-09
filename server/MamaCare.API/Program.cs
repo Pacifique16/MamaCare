@@ -28,6 +28,8 @@ if (!string.IsNullOrEmpty(databaseUrl))
 else
 {
     connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    if (string.IsNullOrEmpty(connectionString))
+        throw new InvalidOperationException("No database connection string found. Set DATABASE_URL environment variable.");
 }
 
 builder.Services.AddDbContext<AppDbContext>(options =>
