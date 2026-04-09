@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -17,16 +18,16 @@ namespace MamaCare.API.Migrations
                 name: "LibraryArticles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Summary = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Category = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PublishedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    Summary = table.Column<string>(type: "text", nullable: true),
+                    Content = table.Column<string>(type: "text", nullable: true),
+                    Category = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    ImageUrl = table.Column<string>(type: "text", nullable: true),
+                    PublishedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -37,15 +38,15 @@ namespace MamaCare.API.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Role = table.Column<int>(type: "int", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ProfileImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    FullName = table.Column<string>(type: "text", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    PasswordHash = table.Column<string>(type: "text", nullable: false),
+                    Role = table.Column<int>(type: "integer", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    ProfileImageUrl = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -56,15 +57,15 @@ namespace MamaCare.API.Migrations
                 name: "Doctors",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Specialty = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LicenseNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Institution = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    YearsOfExperience = table.Column<int>(type: "int", nullable: false),
-                    Bio = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    Specialty = table.Column<string>(type: "text", nullable: false),
+                    LicenseNumber = table.Column<string>(type: "text", nullable: false),
+                    Institution = table.Column<string>(type: "text", nullable: true),
+                    YearsOfExperience = table.Column<int>(type: "integer", nullable: false),
+                    Bio = table.Column<string>(type: "text", nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -81,20 +82,20 @@ namespace MamaCare.API.Migrations
                 name: "Mothers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ExpectedDueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    GestationalWeek = table.Column<int>(type: "int", nullable: false),
-                    CurrentTrimester = table.Column<int>(type: "int", nullable: false),
-                    WeightKg = table.Column<double>(type: "float", nullable: false),
-                    RiskLevel = table.Column<int>(type: "int", nullable: false),
-                    HasGestationalDiabetes = table.Column<bool>(type: "bit", nullable: false),
-                    HasHypertension = table.Column<bool>(type: "bit", nullable: false),
-                    Allergies = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OnboardingComplete = table.Column<bool>(type: "bit", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Location = table.Column<string>(type: "text", nullable: true),
+                    ExpectedDueDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    GestationalWeek = table.Column<int>(type: "integer", nullable: false),
+                    CurrentTrimester = table.Column<int>(type: "integer", nullable: false),
+                    WeightKg = table.Column<double>(type: "double precision", nullable: false),
+                    RiskLevel = table.Column<int>(type: "integer", nullable: false),
+                    HasGestationalDiabetes = table.Column<bool>(type: "boolean", nullable: false),
+                    HasHypertension = table.Column<bool>(type: "boolean", nullable: false),
+                    Allergies = table.Column<string>(type: "text", nullable: true),
+                    OnboardingComplete = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -111,15 +112,15 @@ namespace MamaCare.API.Migrations
                 name: "Appointments",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    MotherId = table.Column<int>(type: "int", nullable: false),
-                    DoctorId = table.Column<int>(type: "int", nullable: false),
-                    ScheduledAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    MotherId = table.Column<int>(type: "integer", nullable: false),
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    ScheduledAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Notes = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -142,14 +143,14 @@ namespace MamaCare.API.Migrations
                 name: "Messages",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    MotherId = table.Column<int>(type: "int", nullable: false),
-                    DoctorId = table.Column<int>(type: "int", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SentByDoctor = table.Column<bool>(type: "bit", nullable: false),
-                    SentAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsRead = table.Column<bool>(type: "bit", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    MotherId = table.Column<int>(type: "integer", nullable: false),
+                    DoctorId = table.Column<int>(type: "integer", nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: false),
+                    SentByDoctor = table.Column<bool>(type: "boolean", nullable: false),
+                    SentAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IsRead = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -172,19 +173,19 @@ namespace MamaCare.API.Migrations
                 name: "TriageSessions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    MotherId = table.Column<int>(type: "int", nullable: false),
-                    Symptoms = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SeverityScore = table.Column<int>(type: "int", nullable: false),
-                    DurationDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BloodPressureSystolic = table.Column<double>(type: "float", nullable: true),
-                    BloodPressureDiastolic = table.Column<double>(type: "float", nullable: true),
-                    HeartRate = table.Column<double>(type: "float", nullable: true),
-                    Temperature = table.Column<double>(type: "float", nullable: true),
-                    Outcome = table.Column<int>(type: "int", nullable: false),
-                    AiRecommendation = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    MotherId = table.Column<int>(type: "integer", nullable: false),
+                    Symptoms = table.Column<string>(type: "text", nullable: false),
+                    SeverityScore = table.Column<int>(type: "integer", nullable: false),
+                    DurationDescription = table.Column<string>(type: "text", nullable: true),
+                    BloodPressureSystolic = table.Column<double>(type: "double precision", nullable: true),
+                    BloodPressureDiastolic = table.Column<double>(type: "double precision", nullable: true),
+                    HeartRate = table.Column<double>(type: "double precision", nullable: true),
+                    Temperature = table.Column<double>(type: "double precision", nullable: true),
+                    Outcome = table.Column<int>(type: "integer", nullable: false),
+                    AiRecommendation = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -201,16 +202,16 @@ namespace MamaCare.API.Migrations
                 name: "VitalRecords",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    MotherId = table.Column<int>(type: "int", nullable: false),
-                    BloodPressureSystolic = table.Column<double>(type: "float", nullable: true),
-                    BloodPressureDiastolic = table.Column<double>(type: "float", nullable: true),
-                    WeightKg = table.Column<double>(type: "float", nullable: true),
-                    FetalHeartRate = table.Column<double>(type: "float", nullable: true),
-                    Temperature = table.Column<double>(type: "float", nullable: true),
-                    RecordedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    MotherId = table.Column<int>(type: "integer", nullable: false),
+                    BloodPressureSystolic = table.Column<double>(type: "double precision", nullable: true),
+                    BloodPressureDiastolic = table.Column<double>(type: "double precision", nullable: true),
+                    WeightKg = table.Column<double>(type: "double precision", nullable: true),
+                    FetalHeartRate = table.Column<double>(type: "double precision", nullable: true),
+                    Temperature = table.Column<double>(type: "double precision", nullable: true),
+                    RecordedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Notes = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -241,15 +242,15 @@ namespace MamaCare.API.Migrations
                 columns: new[] { "Id", "CreatedAt", "Email", "FullName", "PasswordHash", "PhoneNumber", "ProfileImageUrl", "Role" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2026, 4, 7, 20, 9, 24, 773, DateTimeKind.Utc).AddTicks(2157), "aline@mamacare.app", "Aline Silva", "hashed_pw_1", "+1 (555) 012-3456", "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100", 0 },
-                    { 2, new DateTime(2026, 4, 7, 20, 9, 24, 773, DateTimeKind.Utc).AddTicks(6463), "elena@mamacare.app", "Elena Wright", "hashed_pw_2", "+1 (555) 111-2222", null, 0 },
-                    { 3, new DateTime(2026, 4, 7, 20, 9, 24, 773, DateTimeKind.Utc).AddTicks(6469), "maya@mamacare.app", "Maya Lopez", "hashed_pw_3", "+1 (555) 333-4444", null, 0 },
-                    { 4, new DateTime(2026, 4, 7, 20, 9, 24, 773, DateTimeKind.Utc).AddTicks(6471), "sarah.p@mamacare.app", "Sarah Parker", "hashed_pw_4", "+1 (555) 555-6666", null, 0 },
-                    { 5, new DateTime(2026, 4, 7, 20, 9, 24, 773, DateTimeKind.Utc).AddTicks(6472), "ananya@mamacare.app", "Ananya Kapoor", "hashed_pw_5", "+1 (555) 777-8888", null, 0 },
-                    { 6, new DateTime(2026, 4, 7, 20, 9, 24, 773, DateTimeKind.Utc).AddTicks(6474), "s.mitchell@mamacare.app", "Dr. Sarah Mitchell", "hashed_pw_6", "+1 (555) 092-1111", "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100", 1 },
-                    { 7, new DateTime(2026, 4, 7, 20, 9, 24, 773, DateTimeKind.Utc).AddTicks(6475), "m.chen@mamacare.app", "Dr. Michael Chen", "hashed_pw_7", "+1 (555) 092-4411", "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=100", 1 },
-                    { 8, new DateTime(2026, 4, 7, 20, 9, 24, 773, DateTimeKind.Utc).AddTicks(6477), "e.rodriguez@mamacare.app", "Dr. Elena Rodriguez", "hashed_pw_8", "+1 (555) 092-5522", "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=100", 1 },
-                    { 9, new DateTime(2026, 4, 7, 20, 9, 24, 773, DateTimeKind.Utc).AddTicks(6478), "admin@mamacare.app", "Admin Sarah", "hashed_pw_9", null, null, 2 }
+                    { 1, new DateTime(2026, 4, 9, 23, 15, 58, 434, DateTimeKind.Utc).AddTicks(4094), "uwimana@mamacare.app", "Uwimana Clarisse", "hashed_pw_1", "+250 788 100 001", "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100", 0 },
+                    { 2, new DateTime(2026, 4, 9, 23, 15, 58, 434, DateTimeKind.Utc).AddTicks(9034), "mukamana@mamacare.app", "Mukamana Espérance", "hashed_pw_2", "+250 788 100 002", null, 0 },
+                    { 3, new DateTime(2026, 4, 9, 23, 15, 58, 434, DateTimeKind.Utc).AddTicks(9038), "niyonsenga@mamacare.app", "Niyonsenga Vestine", "hashed_pw_3", "+250 788 100 003", null, 0 },
+                    { 4, new DateTime(2026, 4, 9, 23, 15, 58, 434, DateTimeKind.Utc).AddTicks(9041), "uwase@mamacare.app", "Uwase Alphonsine", "hashed_pw_4", "+250 788 100 004", null, 0 },
+                    { 5, new DateTime(2026, 4, 9, 23, 15, 58, 434, DateTimeKind.Utc).AddTicks(9044), "ingabire@mamacare.app", "Ingabire Solange", "hashed_pw_5", "+250 788 100 005", null, 0 },
+                    { 6, new DateTime(2026, 4, 9, 23, 15, 58, 434, DateTimeKind.Utc).AddTicks(9046), "s.mitchell@mamacare.app", "Dr. Sarah Mitchell", "hashed_pw_6", "+1 (555) 092-1111", "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100", 1 },
+                    { 7, new DateTime(2026, 4, 9, 23, 15, 58, 434, DateTimeKind.Utc).AddTicks(9049), "m.chen@mamacare.app", "Dr. Michael Chen", "hashed_pw_7", "+1 (555) 092-4411", "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=100", 1 },
+                    { 8, new DateTime(2026, 4, 9, 23, 15, 58, 434, DateTimeKind.Utc).AddTicks(9090), "e.rodriguez@mamacare.app", "Dr. Elena Rodriguez", "hashed_pw_8", "+1 (555) 092-5522", "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=100", 1 },
+                    { 9, new DateTime(2026, 4, 9, 23, 15, 58, 434, DateTimeKind.Utc).AddTicks(9093), "admin@mamacare.app", "Admin Sarah", "hashed_pw_9", null, null, 2 }
                 });
 
             migrationBuilder.InsertData(
@@ -267,11 +268,11 @@ namespace MamaCare.API.Migrations
                 columns: new[] { "Id", "Allergies", "CurrentTrimester", "DateOfBirth", "ExpectedDueDate", "GestationalWeek", "HasGestationalDiabetes", "HasHypertension", "Location", "OnboardingComplete", "RiskLevel", "UserId", "WeightKg" },
                 values: new object[,]
                 {
-                    { 1, "Penicillin", 2, new DateTime(1992, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 10, 24, 0, 0, 0, 0, DateTimeKind.Unspecified), 28, false, true, "Seattle, WA", true, 2, 1, 72.0 },
-                    { 2, null, 1, new DateTime(1999, 7, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 12, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 24, false, false, "Portland, OR", true, 0, 2, 70.0 },
-                    { 3, null, 2, new DateTime(1993, 11, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 9, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 31, true, true, "Austin, TX", true, 2, 3, 78.0 },
-                    { 4, null, 0, new DateTime(2001, 4, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2027, 2, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 12, false, false, "Denver, CO", true, 1, 4, 64.0 },
-                    { 5, null, 2, new DateTime(1990, 9, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 8, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), 38, false, false, "Chicago, IL", true, 0, 5, 76.0 }
+                    { 1, "Penicillin", 2, new DateTime(1992, 3, 15, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 10, 24, 0, 0, 0, 0, DateTimeKind.Utc), 28, false, true, "Kigali, Rwanda", true, 2, 1, 72.0 },
+                    { 2, null, 1, new DateTime(1999, 7, 20, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 12, 10, 0, 0, 0, 0, DateTimeKind.Utc), 24, false, false, "Musanze, Rwanda", true, 0, 2, 70.0 },
+                    { 3, null, 2, new DateTime(1993, 11, 5, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 9, 15, 0, 0, 0, 0, DateTimeKind.Utc), 31, true, true, "Huye, Rwanda", true, 2, 3, 78.0 },
+                    { 4, null, 0, new DateTime(2001, 4, 12, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2027, 2, 20, 0, 0, 0, 0, DateTimeKind.Utc), 12, false, false, "Rubavu, Rwanda", true, 1, 4, 64.0 },
+                    { 5, null, 2, new DateTime(1990, 9, 28, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 8, 5, 0, 0, 0, 0, DateTimeKind.Utc), 38, false, false, "Nyagatare, Rwanda", true, 0, 5, 76.0 }
                 });
 
             migrationBuilder.InsertData(
@@ -292,9 +293,9 @@ namespace MamaCare.API.Migrations
                 columns: new[] { "Id", "Content", "DoctorId", "IsRead", "MotherId", "SentAt", "SentByDoctor" },
                 values: new object[,]
                 {
-                    { 1, "Hello Dr. Sarah, I'm feeling very dizzy and my vision is spotting.", 1, true, 1, new DateTime(2026, 4, 7, 13, 0, 0, 0, DateTimeKind.Utc), false },
-                    { 2, "Aline, please remain seated. I have received your triage alert. Are you alone?", 1, true, 1, new DateTime(2026, 4, 7, 13, 3, 0, 0, DateTimeKind.Utc), true },
-                    { 3, "No, my husband is with me. The headache is getting worse.", 1, false, 1, new DateTime(2026, 4, 7, 13, 5, 0, 0, DateTimeKind.Utc), false }
+                    { 1, "Muraho Dr. Sarah, ndi kumva indwara y'umutwe ikabije kandi amaso yanjye arahumeka.", 1, true, 1, new DateTime(2026, 4, 7, 13, 0, 0, 0, DateTimeKind.Utc), false },
+                    { 2, "Uwimana, nyamara ukomeze uryamye. Nakiriye ubutumwa bwawe bw'ubuvuzi. Wari wenyine?", 1, true, 1, new DateTime(2026, 4, 7, 13, 3, 0, 0, DateTimeKind.Utc), true },
+                    { 3, "Oya, umugabo wanjye ari hano. Indwara y'umutwe irushaho gukabya.", 1, false, 1, new DateTime(2026, 4, 7, 13, 5, 0, 0, DateTimeKind.Utc), false }
                 });
 
             migrationBuilder.InsertData(
