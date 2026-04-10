@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using MamaCare.API.Data;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,8 +16,24 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
     });
 
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+string? connectionString;
+if (!string.IsNullOrEmpty(databaseUrl))
+{
+    // Convert postgresql://user:pass@host:port/db to Npgsql format
+    var uri = new Uri(databaseUrl);
+    var userInfo = uri.UserInfo.Split(':');
+    connectionString = $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]}";
+}
+else
+{
+    connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    if (string.IsNullOrEmpty(connectionString))
+        throw new InvalidOperationException("No database connection string found. Set DATABASE_URL environment variable.");
+}
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(connectionString));
 
 // Allow local dev + production frontend (update FRONTEND_URL on Render)
 var frontendUrl = Environment.GetEnvironmentVariable("FRONTEND_URL") ?? "";
