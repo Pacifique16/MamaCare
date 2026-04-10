@@ -59,7 +59,7 @@ public class AppointmentsController : ControllerBase
         var appt = new Appointment
         {
             MotherId = dto.MotherId, DoctorId = dto.DoctorId,
-            ScheduledAt = dto.ScheduledAt, Type = dto.Type, Notes = dto.Notes
+            ScheduledAt = DateTime.SpecifyKind(dto.ScheduledAt, DateTimeKind.Utc), Type = dto.Type, Notes = dto.Notes
         };
         _db.Appointments.Add(appt);
         await _db.SaveChangesAsync();
@@ -72,7 +72,7 @@ public class AppointmentsController : ControllerBase
         var appt = await _db.Appointments.FindAsync(id);
         if (appt is null) return NotFound();
 
-        if (dto.ScheduledAt.HasValue) appt.ScheduledAt = dto.ScheduledAt.Value;
+        if (dto.ScheduledAt.HasValue) appt.ScheduledAt = DateTime.SpecifyKind(dto.ScheduledAt.Value, DateTimeKind.Utc);
         if (dto.Type.HasValue) appt.Type = dto.Type.Value;
         if (dto.Status.HasValue) appt.Status = dto.Status.Value;
         if (dto.Notes is not null) appt.Notes = dto.Notes;

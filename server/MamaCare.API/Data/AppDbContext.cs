@@ -8,6 +8,11 @@ public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
+    }
+
     public DbSet<User> Users => Set<User>();
     public DbSet<Mother> Mothers => Set<Mother>();
     public DbSet<Doctor> Doctors => Set<Doctor>();
@@ -77,11 +82,11 @@ public class AppDbContext : DbContext
 
         // --- Mothers ---
         modelBuilder.Entity<Mother>().HasData(
-            new Mother { Id = 1, UserId = 1, DateOfBirth = new DateTime(1992, 3, 15), Location = "Kigali, Rwanda", ExpectedDueDate = new DateTime(2026, 10, 24), GestationalWeek = 28, CurrentTrimester = Trimester.Third, WeightKg = 72, RiskLevel = RiskLevel.High, HasHypertension = true, HasGestationalDiabetes = false, Allergies = "Penicillin", OnboardingComplete = true },
-            new Mother { Id = 2, UserId = 2, DateOfBirth = new DateTime(1999, 7, 20), Location = "Musanze, Rwanda", ExpectedDueDate = new DateTime(2026, 12, 10), GestationalWeek = 24, CurrentTrimester = Trimester.Second, WeightKg = 70, RiskLevel = RiskLevel.Low, HasHypertension = false, HasGestationalDiabetes = false, OnboardingComplete = true },
-            new Mother { Id = 3, UserId = 3, DateOfBirth = new DateTime(1993, 11, 5), Location = "Huye, Rwanda", ExpectedDueDate = new DateTime(2026, 9, 15), GestationalWeek = 31, CurrentTrimester = Trimester.Third, WeightKg = 78, RiskLevel = RiskLevel.High, HasHypertension = true, HasGestationalDiabetes = true, OnboardingComplete = true },
-            new Mother { Id = 4, UserId = 4, DateOfBirth = new DateTime(2001, 4, 12), Location = "Rubavu, Rwanda", ExpectedDueDate = new DateTime(2027, 2, 20), GestationalWeek = 12, CurrentTrimester = Trimester.First, WeightKg = 64, RiskLevel = RiskLevel.Medium, HasHypertension = false, HasGestationalDiabetes = false, OnboardingComplete = true },
-            new Mother { Id = 5, UserId = 5, DateOfBirth = new DateTime(1990, 9, 28), Location = "Nyagatare, Rwanda", ExpectedDueDate = new DateTime(2026, 8, 5), GestationalWeek = 38, CurrentTrimester = Trimester.Third, WeightKg = 76, RiskLevel = RiskLevel.Low, HasHypertension = false, HasGestationalDiabetes = false, OnboardingComplete = true }
+            new Mother { Id = 1, UserId = 1, DateOfBirth = new DateTime(1992, 3, 15, 0, 0, 0, DateTimeKind.Utc), Location = "Kigali, Rwanda", ExpectedDueDate = new DateTime(2026, 10, 24, 0, 0, 0, DateTimeKind.Utc), GestationalWeek = 28, CurrentTrimester = Trimester.Third, WeightKg = 72, RiskLevel = RiskLevel.High, HasHypertension = true, HasGestationalDiabetes = false, Allergies = "Penicillin", OnboardingComplete = true },
+            new Mother { Id = 2, UserId = 2, DateOfBirth = new DateTime(1999, 7, 20, 0, 0, 0, DateTimeKind.Utc), Location = "Musanze, Rwanda", ExpectedDueDate = new DateTime(2026, 12, 10, 0, 0, 0, DateTimeKind.Utc), GestationalWeek = 24, CurrentTrimester = Trimester.Second, WeightKg = 70, RiskLevel = RiskLevel.Low, HasHypertension = false, HasGestationalDiabetes = false, OnboardingComplete = true },
+            new Mother { Id = 3, UserId = 3, DateOfBirth = new DateTime(1993, 11, 5, 0, 0, 0, DateTimeKind.Utc), Location = "Huye, Rwanda", ExpectedDueDate = new DateTime(2026, 9, 15, 0, 0, 0, DateTimeKind.Utc), GestationalWeek = 31, CurrentTrimester = Trimester.Third, WeightKg = 78, RiskLevel = RiskLevel.High, HasHypertension = true, HasGestationalDiabetes = true, OnboardingComplete = true },
+            new Mother { Id = 4, UserId = 4, DateOfBirth = new DateTime(2001, 4, 12, 0, 0, 0, DateTimeKind.Utc), Location = "Rubavu, Rwanda", ExpectedDueDate = new DateTime(2027, 2, 20, 0, 0, 0, DateTimeKind.Utc), GestationalWeek = 12, CurrentTrimester = Trimester.First, WeightKg = 64, RiskLevel = RiskLevel.Medium, HasHypertension = false, HasGestationalDiabetes = false, OnboardingComplete = true },
+            new Mother { Id = 5, UserId = 5, DateOfBirth = new DateTime(1990, 9, 28, 0, 0, 0, DateTimeKind.Utc), Location = "Nyagatare, Rwanda", ExpectedDueDate = new DateTime(2026, 8, 5, 0, 0, 0, DateTimeKind.Utc), GestationalWeek = 38, CurrentTrimester = Trimester.Third, WeightKg = 76, RiskLevel = RiskLevel.Low, HasHypertension = false, HasGestationalDiabetes = false, OnboardingComplete = true }
         );
 
         // --- Doctors ---
