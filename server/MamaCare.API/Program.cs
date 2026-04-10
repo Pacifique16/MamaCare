@@ -56,7 +56,6 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseCors("AllowReact");
-app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
