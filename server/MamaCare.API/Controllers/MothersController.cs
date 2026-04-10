@@ -95,8 +95,8 @@ public class MothersController : ControllerBase
 
         var mother = new Mother
         {
-            UserId = user.Id, DateOfBirth = dto.DateOfBirth,
-            Location = dto.Location, ExpectedDueDate = dto.ExpectedDueDate,
+            UserId = user.Id, DateOfBirth = DateTime.SpecifyKind(dto.DateOfBirth, DateTimeKind.Utc),
+            Location = dto.Location, ExpectedDueDate = DateTime.SpecifyKind(dto.ExpectedDueDate, DateTimeKind.Utc),
             GestationalWeek = dto.GestationalWeek, CurrentTrimester = dto.CurrentTrimester,
             WeightKg = dto.WeightKg, HasGestationalDiabetes = dto.HasGestationalDiabetes,
             HasHypertension = dto.HasHypertension, Allergies = dto.Allergies
@@ -113,7 +113,7 @@ public class MothersController : ControllerBase
         if (mother is null) return NotFound();
 
         if (dto.Location is not null) mother.Location = dto.Location;
-        if (dto.ExpectedDueDate.HasValue) mother.ExpectedDueDate = dto.ExpectedDueDate.Value;
+        if (dto.ExpectedDueDate.HasValue) mother.ExpectedDueDate = DateTime.SpecifyKind(dto.ExpectedDueDate.Value, DateTimeKind.Utc);
         if (dto.GestationalWeek.HasValue) mother.GestationalWeek = dto.GestationalWeek.Value;
         if (dto.CurrentTrimester.HasValue) mother.CurrentTrimester = dto.CurrentTrimester.Value;
         if (dto.WeightKg.HasValue) mother.WeightKg = dto.WeightKg.Value;
