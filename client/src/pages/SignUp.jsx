@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext';
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const { register } = useAuth();
+  const { login } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
   const [userRole, setUserRole] = useState('mother');
