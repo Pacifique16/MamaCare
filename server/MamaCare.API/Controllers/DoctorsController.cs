@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using MamaCare.API.Data;
 using MamaCare.API.DTOs;
@@ -8,6 +9,7 @@ namespace MamaCare.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class DoctorsController : ControllerBase
 {
     private readonly AppDbContext _db;
@@ -76,12 +78,13 @@ public class DoctorsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create(CreateDoctorDto dto)
     {
         var user = new User
         {
             FullName = dto.FullName, Email = dto.Email,
-            PasswordHash = dto.Password, PhoneNumber = dto.PhoneNumber,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password), PhoneNumber = dto.PhoneNumber,
             Role = UserRole.Doctor
         };
         _db.Users.Add(user);
@@ -99,6 +102,7 @@ public class DoctorsController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(int id, UpdateDoctorDto dto)
     {
         var doctor = await _db.Doctors.Include(d => d.User).FirstOrDefaultAsync(d => d.Id == id);
@@ -118,6 +122,7 @@ public class DoctorsController : ControllerBase
     }
 
     [HttpPatch("{id}/verify")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Verify(int id)
     {
         var doctor = await _db.Doctors.FindAsync(id);
@@ -128,6 +133,7 @@ public class DoctorsController : ControllerBase
     }
 
     [HttpPatch("{id}/suspend")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Suspend(int id)
     {
         var doctor = await _db.Doctors.FindAsync(id);
@@ -138,6 +144,7 @@ public class DoctorsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var doctor = await _db.Doctors.FindAsync(id);

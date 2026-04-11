@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using MamaCare.API.Data;
 using MamaCare.API.DTOs;
@@ -14,6 +15,7 @@ public class MothersController : ControllerBase
     public MothersController(AppDbContext db) => _db = db;
 
     [HttpGet]
+    [Authorize(Roles = "Doctor,Admin")]
     public async Task<IActionResult> GetAll()
     {
         var mothers = await _db.Mothers
@@ -27,6 +29,7 @@ public class MothersController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize]
     public async Task<IActionResult> GetById(int id)
     {
         var m = await _db.Mothers.Include(m => m.User).FirstOrDefaultAsync(m => m.Id == id);
@@ -40,6 +43,7 @@ public class MothersController : ControllerBase
     }
 
     [HttpGet("{id}/vitals")]
+    [Authorize]
     public async Task<IActionResult> GetVitals(int id)
     {
         var vitals = await _db.VitalRecords
@@ -53,6 +57,7 @@ public class MothersController : ControllerBase
     }
 
     [HttpGet("{id}/appointments")]
+    [Authorize]
     public async Task<IActionResult> GetAppointments(int id)
     {
         var appts = await _db.Appointments
@@ -67,6 +72,7 @@ public class MothersController : ControllerBase
     }
 
     [HttpGet("{id}/triage")]
+    [Authorize]
     public async Task<IActionResult> GetTriageSessions(int id)
     {
         var sessions = await _db.TriageSessions
@@ -88,7 +94,7 @@ public class MothersController : ControllerBase
         var user = new User
         {
             FullName = dto.FullName, Email = dto.Email,
-            PasswordHash = dto.Password, Role = UserRole.Mother
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password), Role = UserRole.Mother
         };
         _db.Users.Add(user);
         await _db.SaveChangesAsync();
@@ -107,6 +113,7 @@ public class MothersController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize]
     public async Task<IActionResult> Update(int id, UpdateMotherDto dto)
     {
         var mother = await _db.Mothers.FindAsync(id);
@@ -128,6 +135,7 @@ public class MothersController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var mother = await _db.Mothers.FindAsync(id);
