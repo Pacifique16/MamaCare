@@ -12,10 +12,11 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     try {
       const res = await authApi.login({ email, password })
-      const loggedIn = res.data
-      setUser(loggedIn)
-      localStorage.setItem('mamacare_user', JSON.stringify(loggedIn))
-      return { success: true, user: loggedIn }
+      const { token, user: loggedIn } = res.data
+      const session = { ...loggedIn, token }
+      setUser(session)
+      localStorage.setItem('mamacare_user', JSON.stringify(session))
+      return { success: true, user: session }
     } catch (err) {
       const msg = err.response?.data?.error || 'Invalid email or password'
       return { success: false, error: msg }
