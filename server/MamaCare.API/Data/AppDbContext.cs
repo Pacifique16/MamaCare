@@ -69,15 +69,15 @@ public class AppDbContext : DbContext
     {
         // --- Users ---
         modelBuilder.Entity<User>().HasData(
-            new User { Id = 1, FullName = "Uwimana Clarisse", Email = "uwimana@mamacare.app", PasswordHash = "hashed_pw_1", Role = UserRole.Mother, PhoneNumber = "+250 788 100 001", ProfileImageUrl = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100" },
-            new User { Id = 2, FullName = "Mukamana Espérance", Email = "mukamana@mamacare.app", PasswordHash = "hashed_pw_2", Role = UserRole.Mother, PhoneNumber = "+250 788 100 002" },
-            new User { Id = 3, FullName = "Niyonsenga Vestine", Email = "niyonsenga@mamacare.app", PasswordHash = "hashed_pw_3", Role = UserRole.Mother, PhoneNumber = "+250 788 100 003" },
-            new User { Id = 4, FullName = "Uwase Alphonsine", Email = "uwase@mamacare.app", PasswordHash = "hashed_pw_4", Role = UserRole.Mother, PhoneNumber = "+250 788 100 004" },
-            new User { Id = 5, FullName = "Ingabire Solange", Email = "ingabire@mamacare.app", PasswordHash = "hashed_pw_5", Role = UserRole.Mother, PhoneNumber = "+250 788 100 005" },
-            new User { Id = 6, FullName = "Dr. Sarah Mitchell", Email = "s.mitchell@mamacare.app", PasswordHash = "hashed_pw_6", Role = UserRole.Doctor, PhoneNumber = "+1 (555) 092-1111", ProfileImageUrl = "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100" },
-            new User { Id = 7, FullName = "Dr. Michael Chen", Email = "m.chen@mamacare.app", PasswordHash = "hashed_pw_7", Role = UserRole.Doctor, PhoneNumber = "+1 (555) 092-4411", ProfileImageUrl = "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=100" },
-            new User { Id = 8, FullName = "Dr. Elena Rodriguez", Email = "e.rodriguez@mamacare.app", PasswordHash = "hashed_pw_8", Role = UserRole.Doctor, PhoneNumber = "+1 (555) 092-5522", ProfileImageUrl = "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=100" },
-            new User { Id = 9, FullName = "Admin Sarah", Email = "admin@mamacare.app", PasswordHash = "hashed_pw_9", Role = UserRole.Admin }
+            new User { Id = 1, FullName = "Uwimana Clarisse", Email = "uwimana@mamacare.app", PasswordHash = "789456123", Role = UserRole.Mother, PhoneNumber = "+250 788 100 001", ProfileImageUrl = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100" },
+            new User { Id = 2, FullName = "Mukamana Espérance", Email = "mukamana@mamacare.app", PasswordHash = "789456123", Role = UserRole.Mother, PhoneNumber = "+250 788 100 002" },
+            new User { Id = 3, FullName = "Niyonsenga Vestine", Email = "niyonsenga@mamacare.app", PasswordHash = "789456123", Role = UserRole.Mother, PhoneNumber = "+250 788 100 003" },
+            new User { Id = 4, FullName = "Uwase Alphonsine", Email = "uwase@mamacare.app", PasswordHash = "789456123", Role = UserRole.Mother, PhoneNumber = "+250 788 100 004" },
+            new User { Id = 5, FullName = "Ingabire Solange", Email = "ingabire@mamacare.app", PasswordHash = "789456123", Role = UserRole.Mother, PhoneNumber = "+250 788 100 005" },
+            new User { Id = 6, FullName = "Dr. Sarah Mitchell", Email = "s.mitchell@mamacare.app", PasswordHash = "789456123", Role = UserRole.Doctor, PhoneNumber = "+1 (555) 092-1111", ProfileImageUrl = "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100" },
+            new User { Id = 7, FullName = "Dr. Michael Chen", Email = "m.chen@mamacare.app", PasswordHash = "789456123", Role = UserRole.Doctor, PhoneNumber = "+1 (555) 092-4411", ProfileImageUrl = "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=100" },
+            new User { Id = 8, FullName = "Dr. Elena Rodriguez", Email = "e.rodriguez@mamacare.app", PasswordHash = "789456123", Role = UserRole.Doctor, PhoneNumber = "+1 (555) 092-5522", ProfileImageUrl = "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=100" },
+            new User { Id = 9, FullName = "Admin Sarah", Email = "admin@mamacare.app", PasswordHash = "789456123", Role = UserRole.Admin }
         );
 
         // --- Mothers ---
