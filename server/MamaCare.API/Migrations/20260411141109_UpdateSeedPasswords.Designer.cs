@@ -3,6 +3,7 @@ using System;
 using MamaCare.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MamaCare.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260411141109_UpdateSeedPasswords")]
+    partial class UpdateSeedPasswords
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -635,10 +638,10 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 4, 11, 17, 12, 18, 767, DateTimeKind.Utc).AddTicks(8417),
+                            CreatedAt = new DateTime(2026, 4, 11, 14, 11, 8, 464, DateTimeKind.Utc).AddTicks(327),
                             Email = "uwimana@mamacare.app",
                             FullName = "Uwimana Clarisse",
-                            PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
+                            PasswordHash = "789456123",
                             PhoneNumber = "+250 788 100 001",
                             ProfileImageUrl = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100",
                             Role = 0
@@ -646,50 +649,50 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 4, 11, 17, 12, 18, 768, DateTimeKind.Utc).AddTicks(1400),
+                            CreatedAt = new DateTime(2026, 4, 11, 14, 11, 8, 464, DateTimeKind.Utc).AddTicks(3188),
                             Email = "mukamana@mamacare.app",
                             FullName = "Mukamana Espérance",
-                            PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
+                            PasswordHash = "789456123",
                             PhoneNumber = "+250 788 100 002",
                             Role = 0
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 4, 11, 17, 12, 18, 768, DateTimeKind.Utc).AddTicks(1403),
+                            CreatedAt = new DateTime(2026, 4, 11, 14, 11, 8, 464, DateTimeKind.Utc).AddTicks(3191),
                             Email = "niyonsenga@mamacare.app",
                             FullName = "Niyonsenga Vestine",
-                            PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
+                            PasswordHash = "789456123",
                             PhoneNumber = "+250 788 100 003",
                             Role = 0
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2026, 4, 11, 17, 12, 18, 768, DateTimeKind.Utc).AddTicks(1404),
+                            CreatedAt = new DateTime(2026, 4, 11, 14, 11, 8, 464, DateTimeKind.Utc).AddTicks(3193),
                             Email = "uwase@mamacare.app",
                             FullName = "Uwase Alphonsine",
-                            PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
+                            PasswordHash = "789456123",
                             PhoneNumber = "+250 788 100 004",
                             Role = 0
                         },
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2026, 4, 11, 17, 12, 18, 768, DateTimeKind.Utc).AddTicks(1406),
+                            CreatedAt = new DateTime(2026, 4, 11, 14, 11, 8, 464, DateTimeKind.Utc).AddTicks(3194),
                             Email = "ingabire@mamacare.app",
                             FullName = "Ingabire Solange",
-                            PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
+                            PasswordHash = "789456123",
                             PhoneNumber = "+250 788 100 005",
                             Role = 0
                         },
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2026, 4, 11, 17, 12, 18, 768, DateTimeKind.Utc).AddTicks(1407),
+                            CreatedAt = new DateTime(2026, 4, 11, 14, 11, 8, 464, DateTimeKind.Utc).AddTicks(3195),
                             Email = "s.mitchell@mamacare.app",
                             FullName = "Dr. Sarah Mitchell",
-                            PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
+                            PasswordHash = "789456123",
                             PhoneNumber = "+1 (555) 092-1111",
                             ProfileImageUrl = "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100",
                             Role = 1
@@ -697,10 +700,10 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2026, 4, 11, 17, 12, 18, 768, DateTimeKind.Utc).AddTicks(1408),
+                            CreatedAt = new DateTime(2026, 4, 11, 14, 11, 8, 464, DateTimeKind.Utc).AddTicks(3196),
                             Email = "m.chen@mamacare.app",
                             FullName = "Dr. Michael Chen",
-                            PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
+                            PasswordHash = "789456123",
                             PhoneNumber = "+1 (555) 092-4411",
                             ProfileImageUrl = "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=100",
                             Role = 1
@@ -708,10 +711,10 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2026, 4, 11, 17, 12, 18, 768, DateTimeKind.Utc).AddTicks(1410),
+                            CreatedAt = new DateTime(2026, 4, 11, 14, 11, 8, 464, DateTimeKind.Utc).AddTicks(3198),
                             Email = "e.rodriguez@mamacare.app",
                             FullName = "Dr. Elena Rodriguez",
-                            PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
+                            PasswordHash = "789456123",
                             PhoneNumber = "+1 (555) 092-5522",
                             ProfileImageUrl = "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=100",
                             Role = 1
@@ -719,10 +722,10 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 9,
-                            CreatedAt = new DateTime(2026, 4, 11, 17, 12, 18, 768, DateTimeKind.Utc).AddTicks(1411),
+                            CreatedAt = new DateTime(2026, 4, 11, 14, 11, 8, 464, DateTimeKind.Utc).AddTicks(3199),
                             Email = "admin@mamacare.app",
                             FullName = "Admin Sarah",
-                            PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
+                            PasswordHash = "789456123",
                             Role = 2
                         });
                 });

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MamaCare.API.Data;
@@ -8,6 +9,7 @@ namespace MamaCare.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class LibraryController : ControllerBase
 {
     private readonly AppDbContext _db;
