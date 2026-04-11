@@ -56,14 +56,6 @@ const SignIn = () => {
           </div>
         )}
 
-        {/* Demo credentials hint */}
-        <div className="bg-teal-50 border border-teal-100 text-mamacare-teal text-xs font-medium px-4 py-3 rounded-xl space-y-1">
-          <p className="font-bold">Demo Accounts:</p>
-          <p>Mother: aline@mamacare.app / hashed_pw_1</p>
-          <p>Doctor: s.mitchell@mamacare.app / hashed_pw_6</p>
-          <p>Admin: admin@mamacare.app / hashed_pw_9</p>
-        </div>
-
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-2">
             <label className="form-label">Email Address</label>
