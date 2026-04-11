@@ -48,17 +48,13 @@ const SignUp = () => {
         hasHypertension: false,
       });
 
-      // res.data is the newly created Mother — store session
-      const newMother = res.data;
-      register({
-        id: newMother.userId,
-        motherId: newMother.id,
-        role: 'Mother',
-        name: fullName,
-        email,
-      });
-
-      navigate('/onboarding/step-1');
+      // Auto-login after signup
+      const loginResult = await login(email, password);
+      if (loginResult.success) {
+        navigate('/onboarding/step-1');
+      } else {
+        navigate('/login');
+      }
     } catch (err) {
       console.error('Signup error:', err);
       console.error('Response:', err.response);
