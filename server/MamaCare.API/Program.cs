@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json.Serialization;
 using MamaCare.API.Data;
+using MamaCare.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +37,8 @@ else
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
+
+builder.Services.AddScoped<IContactMessagesService, ContactMessagesService>();
 
 // Allow local dev + production frontend (update FRONTEND_URL on Render)
 var frontendUrl = Environment.GetEnvironmentVariable("FRONTEND_URL") ?? "";
