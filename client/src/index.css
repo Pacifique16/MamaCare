@@ -3,11 +3,41 @@
 
 @theme {
   --font-outfit: "Outfit", sans-serif;
+  --font-inter: "Inter", sans-serif;
+  --font-manrope: "Manrope", sans-serif;
   
   --color-mamacare-teal: #005C5C;
   --color-mamacare-teal-dark: #004848;
   --color-mamacare-teal-light: #007373;
   --color-mamacare-teal-soft: #008484;
+
+  /* Landing Page Palette */
+  --color-primary-lp: #006a68;
+  --color-on-primary-lp: #ffffff;
+  --color-primary-container-lp: #4cafad;
+  --color-on-primary-container-lp: #003e3d;
+  --color-primary-fixed-lp: #92f3f0;
+  
+  --color-secondary-lp: #805062;
+  --color-on-secondary-lp: #ffffff;
+  --color-secondary-container-lp: #fec1d6;
+  --color-on-secondary-container-lp: #7b4c5e;
+  
+  --color-tertiary-lp: #9f4122;
+  --color-on-tertiary-lp: #ffffff;
+  --color-tertiary-container-lp: #f2805c;
+  --color-on-tertiary-container-lp: #691b00;
+
+  --color-background-lp: #f9f9f9;
+  --color-on-background-lp: #1a1c1c;
+  --color-surface-lp: #f9f9f9;
+  --color-on-surface-lp: #1a1c1c;
+  --color-on-surface-variant-lp: #3e4948;
+  
+  --color-surface-container-highest-lp: #e2e2e2;
+  --color-surface-container-high-lp: #e8e8e8;
+  --color-surface-container-low-lp: #f3f3f3;
+  --color-surface-container-lowest-lp: #ffffff;
   
   --color-mamacare-gray-100: #F3F4F6;
   --color-mamacare-gray-200: #E5E7EB;
@@ -61,6 +91,14 @@
 
   .ripple {
     @apply absolute border border-mamacare-teal/10 rounded-full animate-ripple;
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+
+  .hero-gradient {
+    background: linear-gradient(135deg, #006a68 0%, #4cafad 100%);
   }
 
   /* Date Input Resets */
