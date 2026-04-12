@@ -27,10 +27,13 @@ import PatientProfile from './pages/doctor/PatientProfile';
 import DoctorAppointments from './pages/doctor/Appointments';
 import Messaging from './pages/doctor/Messaging';
 
+import LandingPage from './pages/LandingPage';
+
 function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<SignIn />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -66,8 +69,6 @@ function App() {
         <Route path="/doctor/patients/:id" element={<PatientProfile />} />
         <Route path="/doctor/appointments" element={<DoctorAppointments />} />
         <Route path="/doctor/messaging" element={<Messaging />} />
-
-        <Route path="/" element={<Navigate to="/signup" replace />} />
       </Routes>
     </Router>
   );
