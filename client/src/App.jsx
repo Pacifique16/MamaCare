@@ -25,7 +25,8 @@ import DoctorDashboard from './pages/DoctorDashboard';
 import PatientRoster from './pages/doctor/PatientRoster';
 import PatientProfile from './pages/doctor/PatientProfile';
 import DoctorAppointments from './pages/doctor/Appointments';
-import Messaging from './pages/doctor/Messaging';
+import Messaging from './pages/doctor/Messaging'
+import PatientAppointmentsPage from './pages/PatientAppointmentsPage';
 
 function App() {
   return (
@@ -66,6 +67,8 @@ function App() {
         <Route path="/doctor/patients/:id" element={<PatientProfile />} />
         <Route path="/doctor/appointments" element={<DoctorAppointments />} />
         <Route path="/doctor/messaging" element={<Messaging />} />
+
+        <Route path="/patient-appointments" element={<PatientAppointmentsPage />} />
 
         <Route path="/" element={<Navigate to="/signup" replace />} />
       </Routes>

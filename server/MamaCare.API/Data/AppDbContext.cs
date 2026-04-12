@@ -21,6 +21,8 @@ public class AppDbContext : DbContext
     public DbSet<VitalRecord> VitalRecords => Set<VitalRecord>();
     public DbSet<Message> Messages => Set<Message>();
     public DbSet<LibraryArticle> LibraryArticles => Set<LibraryArticle>();
+    public DbSet<Patient> Patients => Set<Patient>();
+    public DbSet<PatientAppointment> PatientAppointments => Set<PatientAppointment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -60,6 +62,18 @@ public class AppDbContext : DbContext
             .HasOne(m => m.Doctor)
             .WithMany(d => d.Messages)
             .HasForeignKey(m => m.DoctorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<PatientAppointment>()
+            .HasOne(a => a.Doctor)
+            .WithMany()
+            .HasForeignKey(a => a.DoctorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<PatientAppointment>()
+            .HasOne(a => a.Patient)
+            .WithMany()
+            .HasForeignKey(a => a.PatientId)
             .OnDelete(DeleteBehavior.Restrict);
 
         SeedData(modelBuilder);
