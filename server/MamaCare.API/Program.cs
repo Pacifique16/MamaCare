@@ -39,6 +39,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 builder.Services.AddScoped<IPatientsService, PatientsService>();
+builder.Services.AddScoped<IPatientAppointmentsService, PatientAppointmentsService>();
 
 // Allow local dev + production frontend (update FRONTEND_URL on Render)
 var frontendUrl = Environment.GetEnvironmentVariable("FRONTEND_URL") ?? "";

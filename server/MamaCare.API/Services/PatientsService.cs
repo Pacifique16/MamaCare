@@ -30,12 +30,12 @@ public class PatientsService : IPatientsService
     {
         var patient = new Patient
         {
-            FullName       = request.FullName.Trim(),
-            DateOfBirth    = DateTime.SpecifyKind(request.DateOfBirth, DateTimeKind.Utc),
-            PhoneNumber    = request.PhoneNumber?.Trim(),
-            Address        = request.Address?.Trim(),
-            WeeksPregnant  = request.WeeksPregnant,
-            CreatedAt      = DateTime.UtcNow,
+            FullName      = request.FullName.Trim(),
+            DateOfBirth   = DateTime.SpecifyKind(request.DateOfBirth, DateTimeKind.Utc),
+            PhoneNumber   = request.PhoneNumber?.Trim(),
+            Address       = request.Address?.Trim(),
+            WeeksPregnant = request.WeeksPregnant,
+            CreatedAt     = DateTime.UtcNow,
         };
 
         _db.Patients.Add(patient);

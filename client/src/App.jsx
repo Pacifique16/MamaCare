@@ -27,6 +27,7 @@ import PatientProfile from './pages/doctor/PatientProfile';
 import DoctorAppointments from './pages/doctor/Appointments';
 import Messaging from './pages/doctor/Messaging'
 import PatientsPage from './pages/PatientsPage';
+import PatientAppointmentsPage from './pages/PatientAppointmentsPage';
 
 function App() {
   return (
@@ -69,6 +70,7 @@ function App() {
         <Route path="/doctor/messaging" element={<Messaging />} />
 
         <Route path="/patients" element={<PatientsPage />} />
+        <Route path="/patient-appointments" element={<PatientAppointmentsPage />} />
 
         <Route path="/" element={<Navigate to="/signup" replace />} />
       </Routes>
