@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using MamaCare.API.Models;
 
 namespace MamaCare.API.DTOs;
 
@@ -20,4 +21,17 @@ public class PatientRequest
 
     [Range(0, 45, ErrorMessage = "Weeks pregnant must be between 0 and 45.")]
     public int WeeksPregnant { get; set; }
+
+    public PatientBloodType BloodType { get; set; } = PatientBloodType.Unknown;
+
+    public PatientRiskLevel RiskLevel { get; set; } = PatientRiskLevel.Low;
+
+    [MaxLength(200)]
+    public string? EmergencyContactName { get; set; }
+
+    [MaxLength(20)]
+    public string? EmergencyContactPhone { get; set; }
+
+    [MaxLength(2000)]
+    public string? MedicalNotes { get; set; }
 }

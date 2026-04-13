@@ -3,6 +3,7 @@ using System;
 using MamaCare.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MamaCare.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260413214149_AddAppointmentTypeAndCancellationReason")]
+    partial class AddAppointmentTypeAndCancellationReason
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -554,33 +557,18 @@ namespace MamaCare.API.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("text");
 
-                    b.Property<int>("BloodType")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("EmergencyContactName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("EmergencyContactPhone")
-                        .HasColumnType("text");
-
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("MedicalNotes")
-                        .HasColumnType("text");
-
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
-
-                    b.Property<int>("RiskLevel")
-                        .HasColumnType("integer");
 
                     b.Property<int>("WeeksPregnant")
                         .HasColumnType("integer");
@@ -763,7 +751,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 4, 13, 22, 11, 8, 758, DateTimeKind.Utc).AddTicks(5965),
+                            CreatedAt = new DateTime(2026, 4, 13, 21, 41, 48, 433, DateTimeKind.Utc).AddTicks(3950),
                             Email = "uwimana@mamacare.app",
                             FullName = "Uwimana Clarisse",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -774,7 +762,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 4, 13, 22, 11, 8, 758, DateTimeKind.Utc).AddTicks(9656),
+                            CreatedAt = new DateTime(2026, 4, 13, 21, 41, 48, 433, DateTimeKind.Utc).AddTicks(6619),
                             Email = "mukamana@mamacare.app",
                             FullName = "Mukamana Espérance",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -784,7 +772,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 4, 13, 22, 11, 8, 758, DateTimeKind.Utc).AddTicks(9660),
+                            CreatedAt = new DateTime(2026, 4, 13, 21, 41, 48, 433, DateTimeKind.Utc).AddTicks(6622),
                             Email = "niyonsenga@mamacare.app",
                             FullName = "Niyonsenga Vestine",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -794,7 +782,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2026, 4, 13, 22, 11, 8, 758, DateTimeKind.Utc).AddTicks(9663),
+                            CreatedAt = new DateTime(2026, 4, 13, 21, 41, 48, 433, DateTimeKind.Utc).AddTicks(6624),
                             Email = "uwase@mamacare.app",
                             FullName = "Uwase Alphonsine",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -804,7 +792,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2026, 4, 13, 22, 11, 8, 758, DateTimeKind.Utc).AddTicks(9664),
+                            CreatedAt = new DateTime(2026, 4, 13, 21, 41, 48, 433, DateTimeKind.Utc).AddTicks(6625),
                             Email = "ingabire@mamacare.app",
                             FullName = "Ingabire Solange",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -814,7 +802,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2026, 4, 13, 22, 11, 8, 758, DateTimeKind.Utc).AddTicks(9666),
+                            CreatedAt = new DateTime(2026, 4, 13, 21, 41, 48, 433, DateTimeKind.Utc).AddTicks(6650),
                             Email = "s.mitchell@mamacare.app",
                             FullName = "Dr. Sarah Mitchell",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -825,7 +813,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2026, 4, 13, 22, 11, 8, 758, DateTimeKind.Utc).AddTicks(9668),
+                            CreatedAt = new DateTime(2026, 4, 13, 21, 41, 48, 433, DateTimeKind.Utc).AddTicks(6652),
                             Email = "m.chen@mamacare.app",
                             FullName = "Dr. Michael Chen",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -836,7 +824,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2026, 4, 13, 22, 11, 8, 758, DateTimeKind.Utc).AddTicks(9669),
+                            CreatedAt = new DateTime(2026, 4, 13, 21, 41, 48, 433, DateTimeKind.Utc).AddTicks(6653),
                             Email = "e.rodriguez@mamacare.app",
                             FullName = "Dr. Elena Rodriguez",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -847,7 +835,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 9,
-                            CreatedAt = new DateTime(2026, 4, 13, 22, 11, 8, 758, DateTimeKind.Utc).AddTicks(9671),
+                            CreatedAt = new DateTime(2026, 4, 13, 21, 41, 48, 433, DateTimeKind.Utc).AddTicks(6654),
                             Email = "admin@mamacare.app",
                             FullName = "Admin Sarah",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
