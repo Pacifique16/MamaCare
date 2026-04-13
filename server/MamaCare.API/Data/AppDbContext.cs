@@ -21,6 +21,7 @@ public class AppDbContext : DbContext
     public DbSet<VitalRecord> VitalRecords => Set<VitalRecord>();
     public DbSet<Message> Messages => Set<Message>();
     public DbSet<LibraryArticle> LibraryArticles => Set<LibraryArticle>();
+    public DbSet<Patient> Patients => Set<Patient>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
