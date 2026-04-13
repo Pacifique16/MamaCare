@@ -195,16 +195,16 @@ const LandingPage = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-stone-100 dark:bg-stone-950 w-full py-12 px-8">
+      <footer className="bg-background-lp w-full py-12 px-8 border-t border-surface-container-lp">
         <div className="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto gap-4">
-          <div className="space-y-2">
-            <span className="font-headline font-bold text-lg text-stone-800 dark:text-stone-200">MamaCare</span>
-            <p className="text-xs leading-relaxed text-stone-500 dark:text-stone-500">© 2024 MamaCare. All rights reserved.</p>
+          <div className="space-y-1 text-center md:text-left">
+            <span className="font-headline font-semibold text-base text-on-surface-lp">MamaCare</span>
+            <p className="text-xs text-on-surface-variant-lp">© 2024 MamaCare. All rights reserved.</p>
           </div>
           <div className="flex gap-8">
-            <a className="text-xs text-stone-500 dark:text-stone-500 hover:text-primary-lp transition-all opacity-80 hover:opacity-100" href="#">Privacy Policy</a>
-            <a className="text-xs text-stone-500 dark:text-stone-500 hover:text-primary-lp transition-all opacity-80 hover:opacity-100" href="#">Terms of Service</a>
-            <a className="text-xs text-stone-500 dark:text-stone-500 hover:text-primary-lp transition-all opacity-80 hover:opacity-100" href="#">Contact Support</a>
+            <a className="text-xs text-on-surface-variant-lp hover:text-primary-lp transition-colors" href="#">Privacy Policy</a>
+            <a className="text-xs text-on-surface-variant-lp hover:text-primary-lp transition-colors" href="#">Terms of Service</a>
+            <a className="text-xs text-on-surface-variant-lp hover:text-primary-lp transition-colors" href="#">Contact Support</a>
           </div>
         </div>
       </footer>
