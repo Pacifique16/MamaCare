@@ -11,7 +11,7 @@ const LandingPage = () => {
       {/* TopNavBar */}
       <nav className="fixed top-0 w-full z-50 bg-stone-50/70 backdrop-blur-md">
         <div className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
-          <span className="text-2xl font-bold tracking-tighter text-primary-lp">MamaCare</span>
+          <span className="text-2xl font-bold tracking-tighter text-mamacare-teal">MamaCare</span>
           <div className="hidden md:flex items-center gap-8">
             <a className="font-headline tracking-tight text-base font-medium text-stone-600 hover:text-primary-lp transition-colors" href="#features">Features</a>
             <a className="font-headline tracking-tight text-base font-medium text-stone-600 hover:text-primary-lp transition-colors" href="#how-it-works">How it Works</a>
@@ -202,7 +202,7 @@ const LandingPage = () => {
       <footer className="bg-background-lp w-full py-12 px-8 border-t border-gray-200">
         <div className="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto gap-4">
           <div className="space-y-1 text-center md:text-left">
-            <span className="font-headline font-semibold text-lg text-on-surface-lp">MamaCare</span>
+            <span className="font-headline font-semibold text-lg text-mamacare-teal">MamaCare</span>
             <p className="text-sm text-on-surface-variant-lp"> © 2026 MamaCare Digital Sanctuary. All rights reserved.</p>
           </div>
           <div className="flex gap-8">
