@@ -1,9 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { X } from 'lucide-react'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 import { createPatient, updatePatient } from '../api/patientsApi'
 
 function PatientForm({ patient, onSuccess, onCancel }) {
   const isEdit = Boolean(patient)
+  const firstInputRef = useRef(null)
 
   const [form, setForm] = useState({
     fullName: '',
@@ -15,6 +18,11 @@ function PatientForm({ patient, onSuccess, onCancel }) {
   const [errors, setErrors] = useState({})
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
+
+  useEffect(() => {
+    // Focus first input after modal mounts
+    setTimeout(() => firstInputRef.current?.focus(), 50)
+  }, [])
 
   useEffect(() => {
     if (patient) {
@@ -74,7 +82,7 @@ function PatientForm({ patient, onSuccess, onCancel }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-[2.5rem] p-10 w-full max-w-md shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -99,7 +107,7 @@ function PatientForm({ patient, onSuccess, onCancel }) {
           <div>
             <label className="form-label">Full Name *</label>
             <input
-              autoFocus
+              ref={firstInputRef}
               name="fullName"
               value={form.fullName}
               onChange={handleChange}
@@ -147,13 +155,25 @@ function PatientForm({ patient, onSuccess, onCancel }) {
           </div>
 
           <div>
-            <label className="form-label">Date of Birth *</label>
-            <input
-              type="date"
-              name="dateOfBirth"
-              value={form.dateOfBirth}
-              onChange={handleChange}
-              className={`input-field ${errors.dateOfBirth ? 'ring-2 ring-red-400' : ''}`}
+            <label className="form-label">Date of Birth * <span className="font-normal normal-case tracking-normal text-gray-400 text-[11px]">(YYYY-MM-DD)</span></label>
+            <DatePicker
+              selected={form.dateOfBirth ? new Date(form.dateOfBirth) : null}
+              onChange={(date) => {
+                const val = date
+                  ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+                  : ''
+                setForm((prev) => ({ ...prev, dateOfBirth: val }))
+                setErrors((prev) => ({ ...prev, dateOfBirth: '' }))
+              }}
+              maxDate={new Date()}
+              dateFormat="yyyy-MM-dd"
+              placeholderText="Select date of birth"
+              showYearDropdown
+              scrollableYearDropdown
+              yearDropdownItemNumber={80}
+              className={`input-field w-full ${errors.dateOfBirth ? 'ring-2 ring-red-400' : ''}`}
+              wrapperClassName="w-full"
+              popperPlacement="bottom-start"
             />
             {errors.dateOfBirth && <p className="text-red-400 text-xs font-semibold mt-1">{errors.dateOfBirth}</p>}
           </div>

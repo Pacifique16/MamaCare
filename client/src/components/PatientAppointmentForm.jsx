@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { X, Clock } from 'lucide-react'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 import { createAppointment, updateAppointment, getVerifiedDoctors, getAvailableSlots } from '../api/patientAppointmentsApi'
 import { getAllPatients } from '../api/patientsApi'
 
@@ -27,13 +30,11 @@ function PatientAppointmentForm({ appointment, onSuccess, onCancel }) {
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
 
-  // Load patients and doctors once on mount
   useEffect(() => {
     getAllPatients().then((res) => setPatients(res.data)).catch(() => {})
     getVerifiedDoctors().then((res) => setDoctors(res.data)).catch(() => {})
   }, [])
 
-  // Pre-fill form when editing
   useEffect(() => {
     if (!appointment) return
     const dt = new Date(appointment.appointmentDate)
@@ -50,7 +51,6 @@ function PatientAppointmentForm({ appointment, onSuccess, onCancel }) {
     })
   }, [appointment])
 
-  // Fetch available slots whenever doctor or date changes
   useEffect(() => {
     if (!form.doctorId || !form.date) { setSlots([]); return }
     setSlotsLoading(true)
@@ -117,10 +117,16 @@ function PatientAppointmentForm({ appointment, onSuccess, onCancel }) {
 
   const selectedDoctor = doctors.find((d) => d.id === parseInt(form.doctorId, 10))
 
-  return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-[2.5rem] p-10 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
-
+  return createPortal(
+    <div
+      style={{ position: 'fixed', inset: 0, zIndex: 9999, backgroundColor: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
+      onClick={onCancel}
+    >
+      {/* stopPropagation prevents clicks inside the modal from reaching the overlay */}
+      <div
+        style={{ backgroundColor: 'white', borderRadius: '2.5rem', padding: '2.5rem', width: '100%', maxWidth: '32rem', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', maxHeight: '90vh', overflowY: 'auto', position: 'relative' }}
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -132,6 +138,7 @@ function PatientAppointmentForm({ appointment, onSuccess, onCancel }) {
             </h2>
           </div>
           <button
+            type="button"
             onClick={onCancel}
             className="w-10 h-10 rounded-2xl bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-400 transition-all"
           >
@@ -182,13 +189,21 @@ function PatientAppointmentForm({ appointment, onSuccess, onCancel }) {
           {/* Date */}
           <div>
             <label className="form-label">Appointment Date *</label>
-            <input
-              type="date"
-              name="date"
-              value={form.date}
-              onChange={handleChange}
-              min={new Date().toISOString().slice(0, 10)}
-              className={`input-field ${errors.date ? 'ring-2 ring-red-400' : ''}`}
+            <DatePicker
+              selected={form.date ? new Date(form.date) : null}
+              onChange={(date) => {
+                const val = date
+                  ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+                  : ''
+                setForm((prev) => ({ ...prev, date: val, time: '' }))
+                setErrors((prev) => ({ ...prev, date: '' }))
+              }}
+              minDate={new Date()}
+              dateFormat="yyyy-MM-dd"
+              placeholderText="Select a date"
+              className={`input-field w-full ${errors.date ? 'ring-2 ring-red-400' : ''}`}
+              wrapperClassName="w-full"
+              popperPlacement="bottom-start"
             />
             {errors.date && <p className="text-red-400 text-xs font-semibold mt-1">{errors.date}</p>}
           </div>
@@ -279,7 +294,8 @@ function PatientAppointmentForm({ appointment, onSuccess, onCancel }) {
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 
