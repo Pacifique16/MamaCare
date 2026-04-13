@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import pregnantWoman from '../assets/pregnantwoman.png';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -16,13 +17,13 @@ const LandingPage = () => {
             <a className="font-headline tracking-tight text-sm font-medium text-stone-600 hover:text-primary-lp transition-colors" href="#library">Library</a>
           </div>
           <div className="flex items-center gap-4">
-            <button 
+            <button
               onClick={() => navigate('/login')}
               className="font-headline tracking-tight text-sm font-medium text-primary-lp hover:opacity-80 transition-opacity"
             >
               Sign In
             </button>
-            <button 
+            <button
               onClick={() => navigate('/signup')}
               className="bg-primary-lp text-on-primary-lp px-6 py-2 rounded-xl font-headline tracking-tight text-sm font-medium hover:opacity-90 transition-opacity"
             >
@@ -32,22 +33,22 @@ const LandingPage = () => {
         </div>
       </nav>
 
-      <main className="pt-24 overflow-x-hidden">
+      <main className="overflow-x-hidden">
         {/* Hero Section */}
         <section className="max-w-7xl mx-auto px-8 py-20 md:py-32 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
             <div className="inline-flex items-center px-3 py-1 rounded-full bg-secondary-container-lp text-on-secondary-container-lp text-xs font-semibold tracking-wider uppercase">
-              New: AI-Powered Triage
+              AI-Powered Triage
             </div>
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter text-on-surface-lp leading-[1.1] font-headline">
-              Empowering Mothers, <br/>
+              Empowering Mothers, <br />
               <span className="text-primary-lp">Ensuring Safe Journeys</span>
             </h1>
             <p className="text-lg text-on-surface-variant-lp max-w-lg leading-relaxed">
               Personalized digital antenatal support and smart triage systems designed to guide you through every milestone of motherhood with medical precision and emotional care.
             </p>
             <div className="flex flex-wrap gap-4 pt-4">
-              <button 
+              <button
                 onClick={() => navigate('/signup')}
                 className="hero-gradient text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-xl shadow-primary-lp/20 hover:scale-[1.02] transition-transform"
               >
@@ -60,11 +61,13 @@ const LandingPage = () => {
           </div>
           <div className="relative">
             <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-secondary-container-lp/20 rounded-full blur-3xl"></div>
-            <img 
-              alt="Empowering Motherhood" 
-              className="w-full h-auto rounded-[3rem] object-cover shadow-2xl" 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-nDA34rDi1T0upOVlk1EvPF7HObj2i3auESfpoPO4tOpZSXpUp04iGYJGp5iUwqRQp14zmUWUGKp-LwP0tiLHNObspVELRVnaW6iC0sSaCV4AOHBig5YNHSz3v0SMWhhiu4--03VFOGNaOvAetXgAYPvF85sO-xEby1qplrciDi27GvnNZWPWmrCRZ-2_sT28_xv1TPdDaj4pG3s_27UkNGN1GtmY7RIbGPah-WJ5Tpiyfiw4qHjnIV1bTie_NvWgD77WASPeYqA"
-            />
+            <div className="rounded-[3rem] overflow-hidden shadow-2xl">
+              <img
+                alt="Empowering Motherhood"
+                className="w-full h-auto object-cover scale-110"
+                src={pregnantWoman}
+              />
+            </div>
           </div>
         </section>
 
@@ -178,9 +181,9 @@ const LandingPage = () => {
           <div className="hero-gradient rounded-[3rem] p-12 md:p-24 text-center text-white space-y-10 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-48 -mt-48"></div>
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary-container-lp/20 rounded-full blur-3xl -ml-32 -mb-32"></div>
-            <h2 className="text-4xl md:text-6xl font-extrabold tracking-tighter leading-tight relative z-10 font-headline">Ready to start your <br/>healthy pregnancy journey?</h2>
+            <h2 className="text-4xl md:text-6xl font-extrabold tracking-tighter leading-tight relative z-10 font-headline">Ready to start your <br />healthy pregnancy journey?</h2>
             <div className="flex flex-col sm:flex-row justify-center gap-6 relative z-10">
-              <button 
+              <button
                 onClick={() => navigate('/signup')}
                 className="bg-white text-primary-lp px-10 py-5 rounded-2xl font-bold text-xl shadow-xl hover:scale-105 transition-transform"
               >
@@ -195,7 +198,7 @@ const LandingPage = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-background-lp w-full py-12 px-8 border-t border-surface-container-lp">
+      <footer className="bg-background-lp w-full py-12 px-8 border-t border-gray-200">
         <div className="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto gap-4">
           <div className="space-y-1 text-center md:text-left">
             <span className="font-headline font-semibold text-base text-on-surface-lp">MamaCare</span>
