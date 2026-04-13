@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MamaCare.API.Data;
+using MamaCare.API.DTOs;
 using MamaCare.API.Models;
 
 namespace MamaCare.API.Services;
@@ -25,25 +26,33 @@ public class PatientsService : IPatientsService
         return await _db.Patients.FindAsync(id);
     }
 
-    public async Task<Patient> CreateAsync(Patient patient)
+    public async Task<Patient> CreateAsync(PatientRequest request)
     {
-        patient.CreatedAt = DateTime.UtcNow;
-        patient.DateOfBirth = DateTime.SpecifyKind(patient.DateOfBirth, DateTimeKind.Utc);
+        var patient = new Patient
+        {
+            FullName       = request.FullName.Trim(),
+            DateOfBirth    = DateTime.SpecifyKind(request.DateOfBirth, DateTimeKind.Utc),
+            PhoneNumber    = request.PhoneNumber?.Trim(),
+            Address        = request.Address?.Trim(),
+            WeeksPregnant  = request.WeeksPregnant,
+            CreatedAt      = DateTime.UtcNow,
+        };
+
         _db.Patients.Add(patient);
         await _db.SaveChangesAsync();
         return patient;
     }
 
-    public async Task<Patient?> UpdateAsync(int id, Patient incoming)
+    public async Task<Patient?> UpdateAsync(int id, PatientRequest request)
     {
         var patient = await _db.Patients.FindAsync(id);
         if (patient is null) return null;
 
-        patient.FullName = incoming.FullName;
-        patient.DateOfBirth = DateTime.SpecifyKind(incoming.DateOfBirth, DateTimeKind.Utc);
-        patient.PhoneNumber = incoming.PhoneNumber;
-        patient.Address = incoming.Address;
-        patient.WeeksPregnant = incoming.WeeksPregnant;
+        patient.FullName      = request.FullName.Trim();
+        patient.DateOfBirth   = DateTime.SpecifyKind(request.DateOfBirth, DateTimeKind.Utc);
+        patient.PhoneNumber   = request.PhoneNumber?.Trim();
+        patient.Address       = request.Address?.Trim();
+        patient.WeeksPregnant = request.WeeksPregnant;
 
         await _db.SaveChangesAsync();
         return patient;
