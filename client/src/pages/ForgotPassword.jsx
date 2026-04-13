@@ -13,12 +13,12 @@ const ForgotPassword = () => {
     title: "Secure Your Journey",
     subtitle: "Reset your password to regain access to your personal digital sanctuary and expert support.",
     extra: (
-        <div className="relative mt-8 group">
+        <div className="relative mt-4 group">
           <div className="absolute -inset-4 bg-white/5 rounded-[2rem] blur-2xl group-hover:bg-white/10 transition-all duration-500"></div>
           <img 
             src={signinCharacter} 
             alt="MamaCare Journey" 
-            className="relative w-full rounded-3xl shadow-2xl opacity-80"
+            className="relative w-full max-h-[350px] object-cover rounded-3xl shadow-2xl opacity-80 transition-transform duration-500 group-hover:scale-[1.02]"
           />
         </div>
       )
@@ -26,7 +26,7 @@ const ForgotPassword = () => {
 
   return (
     <AuthLayout leftContent={leftContent} compact={true}>
-      <div className="space-y-6">
+      <div className="space-y-4">
         <div className="space-y-2">
           <button 
             onClick={() => window.history.back()}
@@ -48,7 +48,7 @@ const ForgotPassword = () => {
 
         {!isSubmitted ? (
           <form 
-            className="space-y-6"
+            className="space-y-4"
             onSubmit={(e) => {
               e.preventDefault();
               navigate('/verify-otp');
