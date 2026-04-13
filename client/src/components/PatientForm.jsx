@@ -7,10 +7,10 @@ function PatientForm({ patient, onSuccess, onCancel }) {
 
   const [form, setForm] = useState({
     fullName: '',
-    dateOfBirth: '',
     phoneNumber: '',
     address: '',
     weeksPregnant: '',
+    dateOfBirth: '',
   })
   const [errors, setErrors] = useState({})
   const [submitting, setSubmitting] = useState(false)
@@ -20,10 +20,10 @@ function PatientForm({ patient, onSuccess, onCancel }) {
     if (patient) {
       setForm({
         fullName: patient.fullName || '',
-        dateOfBirth: patient.dateOfBirth ? patient.dateOfBirth.substring(0, 10) : '',
         phoneNumber: patient.phoneNumber || '',
         address: patient.address || '',
         weeksPregnant: patient.weeksPregnant ?? '',
+        dateOfBirth: patient.dateOfBirth ? patient.dateOfBirth.substring(0, 10) : '',
       })
     }
   }, [patient])
@@ -87,6 +87,7 @@ function PatientForm({ patient, onSuccess, onCancel }) {
             </h2>
           </div>
           <button
+            type="button"
             onClick={onCancel}
             className="w-10 h-10 rounded-2xl bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-400 transition-all"
           >
@@ -98,6 +99,7 @@ function PatientForm({ patient, onSuccess, onCancel }) {
           <div>
             <label className="form-label">Full Name *</label>
             <input
+              autoFocus
               name="fullName"
               value={form.fullName}
               onChange={handleChange}
@@ -105,18 +107,6 @@ function PatientForm({ patient, onSuccess, onCancel }) {
               className={`input-field ${errors.fullName ? 'ring-2 ring-red-400' : ''}`}
             />
             {errors.fullName && <p className="text-red-400 text-xs font-semibold mt-1">{errors.fullName}</p>}
-          </div>
-
-          <div>
-            <label className="form-label">Date of Birth *</label>
-            <input
-              type="date"
-              name="dateOfBirth"
-              value={form.dateOfBirth}
-              onChange={handleChange}
-              className={`input-field ${errors.dateOfBirth ? 'ring-2 ring-red-400' : ''}`}
-            />
-            {errors.dateOfBirth && <p className="text-red-400 text-xs font-semibold mt-1">{errors.dateOfBirth}</p>}
           </div>
 
           <div>
@@ -154,6 +144,18 @@ function PatientForm({ patient, onSuccess, onCancel }) {
               className={`input-field ${errors.weeksPregnant ? 'ring-2 ring-red-400' : ''}`}
             />
             {errors.weeksPregnant && <p className="text-red-400 text-xs font-semibold mt-1">{errors.weeksPregnant}</p>}
+          </div>
+
+          <div>
+            <label className="form-label">Date of Birth *</label>
+            <input
+              type="date"
+              name="dateOfBirth"
+              value={form.dateOfBirth}
+              onChange={handleChange}
+              className={`input-field ${errors.dateOfBirth ? 'ring-2 ring-red-400' : ''}`}
+            />
+            {errors.dateOfBirth && <p className="text-red-400 text-xs font-semibold mt-1">{errors.dateOfBirth}</p>}
           </div>
 
           {submitError && (
