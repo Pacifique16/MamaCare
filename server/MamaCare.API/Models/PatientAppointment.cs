@@ -1,5 +1,7 @@
 namespace MamaCare.API.Models;
 
+public enum PatientAppointmentStatus { Scheduled, Completed, Cancelled }
+
 public class PatientAppointment
 {
     public int Id { get; set; }
@@ -14,8 +16,7 @@ public class PatientAppointment
 
     public string? Notes { get; set; }
 
-    /// <summary>Allowed values: Scheduled, Completed, Cancelled</summary>
-    public string Status { get; set; } = "Scheduled";
+    public PatientAppointmentStatus Status { get; set; } = PatientAppointmentStatus.Scheduled;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

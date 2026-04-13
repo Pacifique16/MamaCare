@@ -1,34 +1,34 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MamaCare.API.Data;
-using MamaCare.API.Models;
+using MamaCare.API.Services;
 
 namespace MamaCare.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class PatientsController : ControllerBase
 {
-    private readonly AppDbContext _db;
+    private readonly IPatientsService _service;
 
-    public PatientsController(AppDbContext db)
+    public PatientsController(IPatientsService service)
     {
-        _db = db;
+        _service = service;
     }
 
     // GET /api/patients
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var patients = await _db.Patients.OrderBy(p => p.FullName).ToListAsync();
+        var patients = await _service.GetAllAsync();
         return Ok(patients);
     }
 
     // GET /api/patients/{id}
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var patient = await _db.Patients.FindAsync(id);
+        var patient = await _service.GetByIdAsync(id);
         if (patient is null) return NotFound();
         return Ok(patient);
     }

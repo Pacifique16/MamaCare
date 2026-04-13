@@ -9,6 +9,10 @@ public class PatientAppointmentsService : IPatientAppointmentsService
 {
     private readonly AppDbContext _db;
 
+    private const int WorkdayStartHour = 8;
+    private const int WorkdayEndHour = 17;
+    private const int SlotMinutes = 30;
+
     public PatientAppointmentsService(AppDbContext db)
     {
         _db = db;
@@ -87,14 +91,15 @@ public class PatientAppointmentsService : IPatientAppointmentsService
 
         var allBooked = patientBookedTimes.Concat(systemBookedTimes).ToList();
 
-        // Build 30-min slots from 08:00 to 16:30
+        // Build SlotMinutes-wide slots from WorkdayStartHour to WorkdayEndHour
+        // e.g. 08:00–08:30, 08:30–09:00, … 16:30–17:00
         var slots = new List<SlotDto>();
-        for (var h = 8; h < 17; h++)
+        for (var h = WorkdayStartHour; h < WorkdayEndHour; h++)
         {
-            foreach (var m in new[] { 0, 30 })
+            foreach (var m in new[] { 0, SlotMinutes })
             {
                 var slotStart = new DateTime(date.Year, date.Month, date.Day, h, m, 0, DateTimeKind.Utc);
-                var slotEnd = slotStart.AddMinutes(30);
+                var slotEnd = slotStart.AddMinutes(SlotMinutes);
                 var taken = allBooked.Any(t => t >= slotStart && t < slotEnd);
                 slots.Add(new SlotDto($"{h:D2}:{m:D2}", !taken));
             }
