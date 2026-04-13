@@ -1,4 +1,4 @@
-import { Edit2, Trash2, User, Stethoscope, Calendar, FileText } from 'lucide-react'
+import { Edit2, Trash2, User, Stethoscope, Calendar, FileText, Clock, Tag, XCircle } from 'lucide-react'
 
 const STATUS_STYLES = {
   Scheduled: 'bg-teal-50 text-mamacare-teal',
@@ -6,20 +6,47 @@ const STATUS_STYLES = {
   Cancelled: 'bg-red-50 text-red-400',
 }
 
+const TYPE_LABELS = {
+  RoutineCheckup: 'Routine Checkup',
+  UltrasoundScan: 'Ultrasound Scan',
+  GlucoseScreening: 'Glucose Screening',
+  BirthPlanReview: 'Birth Plan Review',
+  UrgentFollowUp: 'Urgent Follow-Up',
+  Postpartum: 'Postpartum',
+  Other: 'Other',
+}
+
+function getProximityBadge(dateStr) {
+  const appt = new Date(dateStr)
+  const now = new Date()
+
+  const apptDay = new Date(Date.UTC(appt.getUTCFullYear(), appt.getUTCMonth(), appt.getUTCDate()))
+  const todayDay = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()))
+  const diff = (apptDay - todayDay) / (1000 * 60 * 60 * 24)
+
+  if (diff === 0) return { label: 'Today', style: 'bg-orange-50 text-orange-500' }
+  if (diff === 1) return { label: 'Tomorrow', style: 'bg-blue-50 text-blue-500' }
+  if (diff < 0) return null
+  return null
+}
+
 function PatientAppointmentCard({ appointment, onEdit, onDelete }) {
   const formattedDate = appointment.appointmentDate
     ? new Date(appointment.appointmentDate).toLocaleDateString('en-US', {
         weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
+        timeZone: 'UTC'
       })
     : '—'
 
   const formattedTime = appointment.appointmentDate
     ? new Date(appointment.appointmentDate).toLocaleTimeString('en-US', {
         hour: '2-digit', minute: '2-digit',
+        timeZone: 'UTC'
       })
     : ''
 
   const statusStyle = STATUS_STYLES[appointment.status] || 'bg-gray-50 text-gray-400'
+  const proximityBadge = appointment.appointmentDate ? getProximityBadge(appointment.appointmentDate) : null
 
   return (
     <div className="bg-white rounded-[2.5rem] p-8 border border-white shadow-card hover:shadow-2xl transition-all">
@@ -34,9 +61,16 @@ function PatientAppointmentCard({ appointment, onEdit, onDelete }) {
             <p className="text-[10px] font-semibold text-gray-400 mt-0.5">{appointment.doctorSpecialty}</p>
           </div>
         </div>
-        <span className={`px-3 py-1.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest shrink-0 ${statusStyle}`}>
-          {appointment.status}
-        </span>
+        <div className="flex flex-col items-end gap-1.5 shrink-0">
+          <span className={`px-3 py-1.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest ${statusStyle}`}>
+            {appointment.status}
+          </span>
+          {proximityBadge && (
+            <span className={`px-3 py-1 rounded-xl text-[10px] font-extrabold uppercase tracking-widest ${proximityBadge.style}`}>
+              {proximityBadge.label}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Details */}
@@ -47,12 +81,30 @@ function PatientAppointmentCard({ appointment, onEdit, onDelete }) {
         </div>
         <div className="flex items-center gap-3 text-sm text-gray-500">
           <Calendar size={14} className="text-gray-300 shrink-0" />
-          <span className="font-medium">{formattedDate} {formattedTime && `· ${formattedTime}`}</span>
+          <span className="font-medium">{formattedDate}</span>
         </div>
+        {formattedTime && (
+          <div className="flex items-center gap-3 text-sm text-gray-500">
+            <Clock size={14} className="text-gray-300 shrink-0" />
+            <span className="font-medium">{formattedTime}</span>
+          </div>
+        )}
+        {appointment.type && (
+          <div className="flex items-center gap-3 text-sm text-gray-500">
+            <Tag size={14} className="text-gray-300 shrink-0" />
+            <span className="font-medium">{TYPE_LABELS[appointment.type] || appointment.type}</span>
+          </div>
+        )}
         {appointment.notes && (
           <div className="flex items-start gap-3 text-sm text-gray-500">
             <FileText size={14} className="text-gray-300 shrink-0 mt-0.5" />
             <span className="font-medium">{appointment.notes}</span>
+          </div>
+        )}
+        {appointment.status === 'Cancelled' && appointment.cancellationReason && (
+          <div className="flex items-start gap-3 text-sm text-red-400">
+            <XCircle size={14} className="shrink-0 mt-0.5" />
+            <span className="font-medium">{appointment.cancellationReason}</span>
           </div>
         )}
       </div>

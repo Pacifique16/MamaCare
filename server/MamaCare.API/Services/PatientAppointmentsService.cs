@@ -72,7 +72,8 @@ public class PatientAppointmentsService : IPatientAppointmentsService
         var patientBookedQuery = _db.PatientAppointments
             .Where(a => a.DoctorId == doctorId
                      && a.AppointmentDate >= dayStart
-                     && a.AppointmentDate < dayEnd);
+                     && a.AppointmentDate < dayEnd
+                     && a.Status != PatientAppointmentStatus.Cancelled);
 
         if (excludeId.HasValue)
             patientBookedQuery = patientBookedQuery.Where(a => a.Id != excludeId.Value);
@@ -122,8 +123,10 @@ public class PatientAppointmentsService : IPatientAppointmentsService
             PatientId = request.PatientId,
             DoctorId = request.DoctorId,
             AppointmentDate = appointmentDate,
+            Type = request.Type,
             Notes = request.Notes,
             Status = request.Status,
+            CancellationReason = request.Status == PatientAppointmentStatus.Cancelled ? request.CancellationReason : null,
             CreatedAt = DateTime.UtcNow,
         };
 
@@ -146,8 +149,10 @@ public class PatientAppointmentsService : IPatientAppointmentsService
         entity.PatientId = request.PatientId;
         entity.DoctorId = request.DoctorId;
         entity.AppointmentDate = appointmentDate;
+        entity.Type = request.Type;
         entity.Notes = request.Notes;
         entity.Status = request.Status;
+        entity.CancellationReason = request.Status == PatientAppointmentStatus.Cancelled ? request.CancellationReason : null;
 
         await _db.SaveChangesAsync();
 
@@ -178,7 +183,8 @@ public class PatientAppointmentsService : IPatientAppointmentsService
         var patientQuery = _db.PatientAppointments
             .Where(a => a.DoctorId == doctorId
                      && a.AppointmentDate >= slotStart
-                     && a.AppointmentDate < slotEnd);
+                     && a.AppointmentDate < slotEnd
+                     && a.Status != PatientAppointmentStatus.Cancelled);
 
         if (excludeId.HasValue)
             patientQuery = patientQuery.Where(a => a.Id != excludeId.Value);
@@ -201,8 +207,10 @@ public class PatientAppointmentsService : IPatientAppointmentsService
         DoctorName = a.Doctor.User.FullName,
         DoctorSpecialty = a.Doctor.Specialty,
         AppointmentDate = a.AppointmentDate,
+        Type = a.Type,
         Notes = a.Notes,
         Status = a.Status,
+        CancellationReason = a.CancellationReason,
         CreatedAt = a.CreatedAt,
     };
 }
