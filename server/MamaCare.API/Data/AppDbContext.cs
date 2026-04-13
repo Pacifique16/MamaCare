@@ -76,6 +76,11 @@ public class AppDbContext : DbContext
             .HasForeignKey(a => a.PatientId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // Store PatientAppointmentStatus enum as its string name (no DDL migration needed)
+        modelBuilder.Entity<PatientAppointment>()
+            .Property(a => a.Status)
+            .HasConversion<string>();
+
         SeedData(modelBuilder);
     }
 

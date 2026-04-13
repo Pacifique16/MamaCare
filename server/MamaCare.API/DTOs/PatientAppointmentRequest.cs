@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using MamaCare.API.Models;
 
 namespace MamaCare.API.DTOs;
 
@@ -15,5 +16,5 @@ public class PatientAppointmentRequest
 
     public string? Notes { get; set; }
 
-    public string Status { get; set; } = "Scheduled";
+    public PatientAppointmentStatus Status { get; set; } = PatientAppointmentStatus.Scheduled;
 }

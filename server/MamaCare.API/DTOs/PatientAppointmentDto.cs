@@ -1,3 +1,5 @@
+using MamaCare.API.Models;
+
 namespace MamaCare.API.DTOs;
 
 public class PatientAppointmentDto
@@ -10,6 +12,6 @@ public class PatientAppointmentDto
     public string DoctorSpecialty { get; set; } = string.Empty;
     public DateTime AppointmentDate { get; set; }
     public string? Notes { get; set; }
-    public string Status { get; set; } = "Scheduled";
+    public PatientAppointmentStatus Status { get; set; }
     public DateTime CreatedAt { get; set; }
 }

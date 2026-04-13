@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MamaCare.API.DTOs;
 using MamaCare.API.Services;
 
 namespace MamaCare.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/patient-appointments")]
 public class PatientAppointmentsController : ControllerBase
