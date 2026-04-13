@@ -40,6 +40,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IPatientsService, PatientsService>();
 builder.Services.AddScoped<IPatientAppointmentsService, PatientAppointmentsService>();
+builder.Services.AddScoped<IContactMessagesService, ContactMessagesService>();
 
 // Allow local dev + production frontend (update FRONTEND_URL on Render)
 var frontendUrl = Environment.GetEnvironmentVariable("FRONTEND_URL") ?? "";
