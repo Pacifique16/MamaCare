@@ -14,7 +14,11 @@ public class PatientAppointmentRequest
     [Required]
     public DateTime AppointmentDate { get; set; }
 
+    public PatientAppointmentType Type { get; set; } = PatientAppointmentType.RoutineCheckup;
+
     public string? Notes { get; set; }
 
     public PatientAppointmentStatus Status { get; set; } = PatientAppointmentStatus.Scheduled;
+
+    public string? CancellationReason { get; set; }
 }

@@ -1,9 +1,19 @@
-import { Edit2, Trash2, User, Stethoscope, Calendar, FileText, Clock } from 'lucide-react'
+import { Edit2, Trash2, User, Stethoscope, Calendar, FileText, Clock, Tag, XCircle } from 'lucide-react'
 
 const STATUS_STYLES = {
   Scheduled: 'bg-teal-50 text-mamacare-teal',
   Completed: 'bg-green-50 text-green-600',
   Cancelled: 'bg-red-50 text-red-400',
+}
+
+const TYPE_LABELS = {
+  RoutineCheckup: 'Routine Checkup',
+  UltrasoundScan: 'Ultrasound Scan',
+  GlucoseScreening: 'Glucose Screening',
+  BirthPlanReview: 'Birth Plan Review',
+  UrgentFollowUp: 'Urgent Follow-Up',
+  Postpartum: 'Postpartum',
+  Other: 'Other',
 }
 
 function getProximityBadge(dateStr) {
@@ -79,10 +89,22 @@ function PatientAppointmentCard({ appointment, onEdit, onDelete }) {
             <span className="font-medium">{formattedTime}</span>
           </div>
         )}
+        {appointment.type && (
+          <div className="flex items-center gap-3 text-sm text-gray-500">
+            <Tag size={14} className="text-gray-300 shrink-0" />
+            <span className="font-medium">{TYPE_LABELS[appointment.type] || appointment.type}</span>
+          </div>
+        )}
         {appointment.notes && (
           <div className="flex items-start gap-3 text-sm text-gray-500">
             <FileText size={14} className="text-gray-300 shrink-0 mt-0.5" />
             <span className="font-medium">{appointment.notes}</span>
+          </div>
+        )}
+        {appointment.status === 'Cancelled' && appointment.cancellationReason && (
+          <div className="flex items-start gap-3 text-sm text-red-400">
+            <XCircle size={14} className="shrink-0 mt-0.5" />
+            <span className="font-medium">{appointment.cancellationReason}</span>
           </div>
         )}
       </div>
