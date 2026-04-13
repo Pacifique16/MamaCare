@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Plus, CalendarDays, RefreshCw, CheckCircle, XCircle, Search, ArrowUpDown } from 'lucide-react'
+import { Plus, CalendarDays, RefreshCw, CheckCircle, XCircle, Search, ArrowUpDown, Download } from 'lucide-react'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 import AdminLayout from '../components/layout/AdminLayout'
 import PatientAppointmentCard from '../components/PatientAppointmentCard'
 import PatientAppointmentForm from '../components/PatientAppointmentForm'
@@ -27,6 +29,8 @@ function PatientAppointmentsPage() {
   const [statusFilter, setStatusFilter] = useState('All')
   const [sort, setSort] = useState('date_asc')
   const [page, setPage] = useState(1)
+  const [dateFrom, setDateFrom] = useState('')
+  const [dateTo, setDateTo] = useState('')
 
   const fetchAppointments = async () => {
     setLoading(true)
@@ -76,6 +80,10 @@ function PatientAppointmentsPage() {
     // Status filter
     if (statusFilter !== 'All') list = list.filter((a) => a.status === statusFilter)
 
+    // Date range filter
+    if (dateFrom) list = list.filter((a) => new Date(a.appointmentDate) >= new Date(dateFrom))
+    if (dateTo) list = list.filter((a) => new Date(a.appointmentDate) <= new Date(dateTo + 'T23:59:59Z'))
+
     // Search
     if (search.trim()) {
       const q = search.toLowerCase()
@@ -96,14 +104,38 @@ function PatientAppointmentsPage() {
     })
 
     return list
-  }, [appointments, activeTab, statusFilter, search, sort])
+  }, [appointments, activeTab, statusFilter, search, sort, dateFrom, dateTo])
 
   // Pagination
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   // Reset page when filters change
-  useEffect(() => { setPage(1) }, [search, activeTab, statusFilter, sort])
+  useEffect(() => { setPage(1) }, [search, activeTab, statusFilter, sort, dateFrom, dateTo])
+
+  // CSV Export
+  const handleExport = () => {
+    const headers = ['Patient', 'Doctor', 'Specialty', 'Type', 'Date', 'Time', 'Status', 'Cancellation Reason', 'Notes']
+    const rows = filtered.map((a) => [
+      a.patientName,
+      a.doctorName,
+      a.doctorSpecialty,
+      a.type ?? '',
+      new Date(a.appointmentDate).toLocaleDateString('en-US', { timeZone: 'UTC' }),
+      new Date(a.appointmentDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' }),
+      a.status,
+      a.cancellationReason ?? '',
+      a.notes ?? '',
+    ])
+    const csv = [headers, ...rows].map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n')
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `appointments-${new Date().toISOString().slice(0, 10)}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
 
   const scheduled = appointments.filter((a) => a.status === 'Scheduled').length
   const completed = appointments.filter((a) => a.status === 'Completed').length
@@ -218,6 +250,53 @@ function PatientAppointmentsPage() {
                 ))}
               </select>
             </div>
+
+            {/* Date Range */}
+            <div className="flex items-center gap-2">
+              <DatePicker
+                selected={dateFrom ? new Date(dateFrom) : null}
+                onChange={(date) => {
+                  const val = date
+                    ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+                    : ''
+                  setDateFrom(val)
+                }}
+                selectsStart
+                startDate={dateFrom ? new Date(dateFrom) : null}
+                endDate={dateTo ? new Date(dateTo) : null}
+                dateFormat="yyyy-MM-dd"
+                placeholderText="From date"
+                isClearable
+                className="px-3 py-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-bold text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 w-32"
+              />
+              <span className="text-gray-300 text-xs font-bold">to</span>
+              <DatePicker
+                selected={dateTo ? new Date(dateTo) : null}
+                onChange={(date) => {
+                  const val = date
+                    ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+                    : ''
+                  setDateTo(val)
+                }}
+                selectsEnd
+                startDate={dateFrom ? new Date(dateFrom) : null}
+                endDate={dateTo ? new Date(dateTo) : null}
+                minDate={dateFrom ? new Date(dateFrom) : null}
+                dateFormat="yyyy-MM-dd"
+                placeholderText="To date"
+                isClearable
+                className="px-3 py-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-bold text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 w-32"
+              />
+            </div>
+
+            {/* Export */}
+            <button
+              onClick={handleExport}
+              className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-500 hover:text-mamacare-teal hover:border-mamacare-teal/30 transition-all"
+            >
+              <Download size={14} />
+              Export CSV
+            </button>
           </div>
         )}
 
@@ -254,13 +333,13 @@ function PatientAppointmentsPage() {
             </div>
             <div className="text-center space-y-2">
               <h3 className="font-bold text-gray-900 text-lg">
-                {search || statusFilter !== 'All' || activeTab !== 'All' ? 'No appointments match your filters' : 'No appointments yet'}
+                {search || statusFilter !== 'All' || activeTab !== 'All' || dateFrom || dateTo ? 'No appointments match your filters' : 'No appointments yet'}
               </h3>
               <p className="text-sm text-gray-400 font-medium">
-                {search || statusFilter !== 'All' || activeTab !== 'All' ? 'Try adjusting your search or filters.' : 'Click "Book Appointment" to schedule the first one.'}
+                {search || statusFilter !== 'All' || activeTab !== 'All' || dateFrom || dateTo ? 'Try adjusting your search or filters.' : 'Click "Book Appointment" to schedule the first one.'}
               </p>
             </div>
-            {!search && statusFilter === 'All' && activeTab === 'All' && (
+            {!search && statusFilter === 'All' && activeTab === 'All' && !dateFrom && !dateTo && (
               <button onClick={() => setShowForm(true)} className="btn-primary">
                 <Plus size={16} />
                 Book Appointment

@@ -8,13 +8,25 @@ import { getAllPatients } from '../api/patientsApi'
 
 const STATUSES = ['Scheduled', 'Completed', 'Cancelled']
 
+const APPOINTMENT_TYPES = [
+  { value: 'RoutineCheckup', label: 'Routine Checkup' },
+  { value: 'UltrasoundScan', label: 'Ultrasound Scan' },
+  { value: 'GlucoseScreening', label: 'Glucose Screening' },
+  { value: 'BirthPlanReview', label: 'Birth Plan Review' },
+  { value: 'UrgentFollowUp', label: 'Urgent Follow-Up' },
+  { value: 'Postpartum', label: 'Postpartum' },
+  { value: 'Other', label: 'Other' },
+]
+
 const EMPTY_FORM = {
   patientId: '',
   doctorId: '',
   date: '',
   time: '',
+  type: 'RoutineCheckup',
   notes: '',
   status: 'Scheduled',
+  cancellationReason: '',
 }
 
 function PatientAppointmentForm({ appointment, onSuccess, onCancel }) {
@@ -46,8 +58,10 @@ function PatientAppointmentForm({ appointment, onSuccess, onCancel }) {
       doctorId: appointment.doctorId ?? '',
       date,
       time: `${h}:${m}`,
+      type: appointment.type || 'RoutineCheckup',
       notes: appointment.notes || '',
       status: appointment.status || 'Scheduled',
+      cancellationReason: appointment.cancellationReason || '',
     })
   }, [appointment])
 
@@ -93,8 +107,10 @@ function PatientAppointmentForm({ appointment, onSuccess, onCancel }) {
       patientId: parseInt(form.patientId, 10),
       doctorId: parseInt(form.doctorId, 10),
       appointmentDate: new Date(`${form.date}T${form.time}:00Z`).toISOString(),
+      type: form.type,
       notes: form.notes.trim() || null,
       status: form.status,
+      cancellationReason: form.status === 'Cancelled' ? form.cancellationReason.trim() || null : null,
     }
 
     try {
@@ -186,6 +202,21 @@ function PatientAppointmentForm({ appointment, onSuccess, onCancel }) {
             {errors.doctorId && <p className="text-red-400 text-xs font-semibold mt-1">{errors.doctorId}</p>}
           </div>
 
+          {/* Appointment Type */}
+          <div>
+            <label className="form-label">Appointment Type *</label>
+            <select
+              name="type"
+              value={form.type}
+              onChange={handleChange}
+              className="input-field"
+            >
+              {APPOINTMENT_TYPES.map((t) => (
+                <option key={t.value} value={t.value}>{t.label}</option>
+              ))}
+            </select>
+          </div>
+
           {/* Date */}
           <div>
             <label className="form-label">Appointment Date *</label>
@@ -275,6 +306,20 @@ function PatientAppointmentForm({ appointment, onSuccess, onCancel }) {
                   <option key={s} value={s}>{s}</option>
                 ))}
               </select>
+            </div>
+          )}
+
+          {/* Cancellation Reason */}
+          {isEdit && form.status === 'Cancelled' && (
+            <div>
+              <label className="form-label">Cancellation Reason</label>
+              <input
+                name="cancellationReason"
+                value={form.cancellationReason}
+                onChange={handleChange}
+                placeholder="Reason for cancellation…"
+                className="input-field"
+              />
             </div>
           )}
 
