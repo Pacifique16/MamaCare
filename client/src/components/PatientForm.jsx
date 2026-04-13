@@ -4,6 +4,24 @@ import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { createPatient, updatePatient } from '../api/patientsApi'
 
+const BLOOD_TYPES = [
+  { value: 'Unknown', label: 'Unknown' },
+  { value: 'APositive', label: 'A+' },
+  { value: 'ANegative', label: 'A-' },
+  { value: 'BPositive', label: 'B+' },
+  { value: 'BNegative', label: 'B-' },
+  { value: 'OPositive', label: 'O+' },
+  { value: 'ONegative', label: 'O-' },
+  { value: 'ABPositive', label: 'AB+' },
+  { value: 'ABNegative', label: 'AB-' },
+]
+
+const RISK_LEVELS = [
+  { value: 'Low', label: 'Low' },
+  { value: 'Medium', label: 'Medium' },
+  { value: 'High', label: 'High' },
+]
+
 function PatientForm({ patient, onSuccess, onCancel }) {
   const isEdit = Boolean(patient)
   const firstInputRef = useRef(null)
@@ -14,13 +32,17 @@ function PatientForm({ patient, onSuccess, onCancel }) {
     address: '',
     weeksPregnant: '',
     dateOfBirth: '',
+    bloodType: 'Unknown',
+    riskLevel: 'Low',
+    emergencyContactName: '',
+    emergencyContactPhone: '',
+    medicalNotes: '',
   })
   const [errors, setErrors] = useState({})
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
 
   useEffect(() => {
-    // Focus first input after modal mounts
     setTimeout(() => firstInputRef.current?.focus(), 50)
   }, [])
 
@@ -32,6 +54,11 @@ function PatientForm({ patient, onSuccess, onCancel }) {
         address: patient.address || '',
         weeksPregnant: patient.weeksPregnant ?? '',
         dateOfBirth: patient.dateOfBirth ? patient.dateOfBirth.substring(0, 10) : '',
+        bloodType: patient.bloodType || 'Unknown',
+        riskLevel: patient.riskLevel || 'Low',
+        emergencyContactName: patient.emergencyContactName || '',
+        emergencyContactPhone: patient.emergencyContactPhone || '',
+        medicalNotes: patient.medicalNotes || '',
       })
     }
   }, [patient])
@@ -63,6 +90,11 @@ function PatientForm({ patient, onSuccess, onCancel }) {
       phoneNumber: form.phoneNumber.trim() || null,
       address: form.address.trim() || null,
       weeksPregnant: parseInt(form.weeksPregnant, 10),
+      bloodType: form.bloodType,
+      riskLevel: form.riskLevel,
+      emergencyContactName: form.emergencyContactName.trim() || null,
+      emergencyContactPhone: form.emergencyContactPhone.trim() || null,
+      medicalNotes: form.medicalNotes.trim() || null,
     }
 
     try {
@@ -83,7 +115,7 @@ function PatientForm({ patient, onSuccess, onCancel }) {
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-[2.5rem] p-10 w-full max-w-md shadow-2xl">
+      <div className="bg-white rounded-[2.5rem] p-10 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -104,6 +136,8 @@ function PatientForm({ patient, onSuccess, onCancel }) {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
+
+          {/* Full Name */}
           <div>
             <label className="form-label">Full Name *</label>
             <input
@@ -117,17 +151,34 @@ function PatientForm({ patient, onSuccess, onCancel }) {
             {errors.fullName && <p className="text-red-400 text-xs font-semibold mt-1">{errors.fullName}</p>}
           </div>
 
-          <div>
-            <label className="form-label">Phone Number</label>
-            <input
-              name="phoneNumber"
-              value={form.phoneNumber}
-              onChange={handleChange}
-              placeholder="e.g. +250 788 000 000"
-              className="input-field"
-            />
+          {/* Phone + Weeks */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="form-label">Phone Number</label>
+              <input
+                name="phoneNumber"
+                value={form.phoneNumber}
+                onChange={handleChange}
+                placeholder="+250 788 000 000"
+                className="input-field"
+              />
+            </div>
+            <div>
+              <label className="form-label">Weeks Pregnant *</label>
+              <input
+                type="number"
+                name="weeksPregnant"
+                value={form.weeksPregnant}
+                onChange={handleChange}
+                min={0} max={45}
+                placeholder="e.g. 24"
+                className={`input-field ${errors.weeksPregnant ? 'ring-2 ring-red-400' : ''}`}
+              />
+              {errors.weeksPregnant && <p className="text-red-400 text-xs font-semibold mt-1">{errors.weeksPregnant}</p>}
+            </div>
           </div>
 
+          {/* Address */}
           <div>
             <label className="form-label">Address</label>
             <input
@@ -139,23 +190,9 @@ function PatientForm({ patient, onSuccess, onCancel }) {
             />
           </div>
 
+          {/* Date of Birth */}
           <div>
-            <label className="form-label">Weeks Pregnant *</label>
-            <input
-              type="number"
-              name="weeksPregnant"
-              value={form.weeksPregnant}
-              onChange={handleChange}
-              min={0}
-              max={45}
-              placeholder="e.g. 24"
-              className={`input-field ${errors.weeksPregnant ? 'ring-2 ring-red-400' : ''}`}
-            />
-            {errors.weeksPregnant && <p className="text-red-400 text-xs font-semibold mt-1">{errors.weeksPregnant}</p>}
-          </div>
-
-          <div>
-            <label className="form-label">Date of Birth * <span className="font-normal normal-case tracking-normal text-gray-400 text-[11px]">(YYYY-MM-DD)</span></label>
+            <label className="form-label">Date of Birth *</label>
             <DatePicker
               selected={form.dateOfBirth ? new Date(form.dateOfBirth) : null}
               onChange={(date) => {
@@ -176,6 +213,63 @@ function PatientForm({ patient, onSuccess, onCancel }) {
               popperPlacement="bottom-start"
             />
             {errors.dateOfBirth && <p className="text-red-400 text-xs font-semibold mt-1">{errors.dateOfBirth}</p>}
+          </div>
+
+          {/* Blood Type + Risk Level */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="form-label">Blood Type</label>
+              <select name="bloodType" value={form.bloodType} onChange={handleChange} className="input-field">
+                {BLOOD_TYPES.map((b) => (
+                  <option key={b.value} value={b.value}>{b.label}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="form-label">Risk Level</label>
+              <select name="riskLevel" value={form.riskLevel} onChange={handleChange} className="input-field">
+                {RISK_LEVELS.map((r) => (
+                  <option key={r.value} value={r.value}>{r.label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Emergency Contact */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="form-label">Emergency Contact Name</label>
+              <input
+                name="emergencyContactName"
+                value={form.emergencyContactName}
+                onChange={handleChange}
+                placeholder="e.g. John Doe"
+                className="input-field"
+              />
+            </div>
+            <div>
+              <label className="form-label">Emergency Contact Phone</label>
+              <input
+                name="emergencyContactPhone"
+                value={form.emergencyContactPhone}
+                onChange={handleChange}
+                placeholder="+250 788 000 000"
+                className="input-field"
+              />
+            </div>
+          </div>
+
+          {/* Medical Notes */}
+          <div>
+            <label className="form-label">Medical Notes</label>
+            <textarea
+              name="medicalNotes"
+              value={form.medicalNotes}
+              onChange={handleChange}
+              placeholder="Any relevant medical history or notes…"
+              rows={3}
+              className="input-field resize-none"
+            />
           </div>
 
           {submitError && (

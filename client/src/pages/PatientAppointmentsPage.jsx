@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Plus, CalendarDays, RefreshCw, CheckCircle, XCircle, Search, ArrowUpDown, Download } from 'lucide-react'
+import { useSearchParams } from 'react-router-dom'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import AdminLayout from '../components/layout/AdminLayout'
@@ -31,6 +32,13 @@ function PatientAppointmentsPage() {
   const [page, setPage] = useState(1)
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
+
+  // Pre-filter by patient if navigated from PatientCard
+  const [searchParams] = useSearchParams()
+  useEffect(() => {
+    const patientName = searchParams.get('patientName')
+    if (patientName) setSearch(patientName)
+  }, [])
 
   const fetchAppointments = async () => {
     setLoading(true)
