@@ -92,10 +92,10 @@ const SignUp = () => {
 
   return (
     <AuthLayout leftContent={leftContent}>
-      <div className="space-y-8">
+      <div className="space-y-6">
         <div className="space-y-2">
-          <h2 className="text-4xl font-bold text-gray-900 tracking-tight">Start Your Journey</h2>
-          <p className="text-gray-500 font-medium">Join thousands of mothers receiving expert support.</p>
+          <h2 className="text-5xl font-bold text-gray-900 tracking-tight">Start Your Journey</h2>
+          <p className="text-lg text-gray-500 font-medium">Join thousands of mothers receiving expert support.</p>
         </div>
 
         {error && (
@@ -106,7 +106,7 @@ const SignUp = () => {
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-2">
-            <label className="form-label">Full Name</label>
+            <label className="form-label text-base">Full Name</label>
             <input
               type="text"
               value={fullName}
@@ -118,7 +118,7 @@ const SignUp = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="form-label">Email Address</label>
+            <label className="form-label text-base">Email Address</label>
             <input
               type="email"
               value={email}
@@ -130,7 +130,7 @@ const SignUp = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="form-label">Password</label>
+            <label className="form-label text-base">Password</label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
@@ -150,9 +150,9 @@ const SignUp = () => {
             </div>
           </div>
 
-          <div className="space-y-3">
-            <label className="form-label">I am signing up as:</label>
-            <div className="grid grid-cols-3 gap-4">
+          <div className="space-y-2">
+            <label className="form-label text-base">I am signing up as:</label>
+            <div className="grid grid-cols-3 gap-3">
               {[
                 { role: 'mother', label: 'Mother', Icon: Baby },
                 { role: 'doctor', label: 'Doctor', Icon: Stethoscope },
@@ -162,14 +162,14 @@ const SignUp = () => {
                   key={role}
                   type="button"
                   onClick={() => setUserRole(role)}
-                  className={`flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-300 ${
+                  className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all duration-300 ${
                     userRole === role
                       ? 'border-mamacare-teal bg-mamacare-teal/5 text-mamacare-teal ring-4 ring-mamacare-teal/5'
                       : 'border-gray-100/50 bg-gray-50 text-gray-400 hover:border-gray-300'
                   }`}
                 >
-                  <div className={`p-3 rounded-xl mb-3 ${userRole === role ? 'bg-mamacare-teal text-white' : 'bg-white text-gray-400 shadow-sm'}`}>
-                    <Icon size={28} />
+                  <div className={`p-2 rounded-xl mb-2 ${userRole === role ? 'bg-mamacare-teal text-white' : 'bg-white text-gray-400 shadow-sm'}`}>
+                    <Icon size={24} />
                   </div>
                   <span className="font-bold text-xs">{label}</span>
                 </button>
@@ -180,15 +180,15 @@ const SignUp = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full btn-primary py-4 text-lg shadow-xl shadow-mamacare-teal/20 group disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full btn-primary py-4 text-xl shadow-xl shadow-mamacare-teal/20 group disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Creating Account...' : 'Create Account'}
-            <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
+            <ArrowRight size={22} className="transition-transform group-hover:translate-x-1" />
           </button>
         </form>
 
         <div className="text-center pt-4">
-          <p className="text-gray-500 font-medium">
+          <p className="text-lg text-gray-500 font-medium">
             Already have an account?{' '}
             <Link to="/login" className="text-mamacare-teal font-bold hover:underline">Log in</Link>
           </p>
