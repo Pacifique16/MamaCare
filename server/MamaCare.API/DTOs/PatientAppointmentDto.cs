@@ -11,7 +11,9 @@ public class PatientAppointmentDto
     public string DoctorName { get; set; } = string.Empty;
     public string DoctorSpecialty { get; set; } = string.Empty;
     public DateTime AppointmentDate { get; set; }
+    public PatientAppointmentType Type { get; set; }
     public string? Notes { get; set; }
     public PatientAppointmentStatus Status { get; set; }
+    public string? CancellationReason { get; set; }
     public DateTime CreatedAt { get; set; }
 }

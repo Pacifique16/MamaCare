@@ -12,7 +12,7 @@ const AdminLayout = ({ children }) => {
       <div className="flex-1 flex flex-col min-w-0">
         
         {/* Top Header Bar */}
-        <header className="h-20 bg-white/80 backdrop-blur-md border-b border-gray-100 px-8 sticky top-0 z-40">
+        <header className="h-20 bg-white border-b border-gray-100 px-8 sticky top-0 z-40">
            <div className="max-w-7xl mx-auto h-full flex justify-between items-center">
               <div className="flex items-center gap-2">
                  <span className="text-[10px] font-bold text-gray-300 tracking-widest uppercase">System Administration</span>
