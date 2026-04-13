@@ -23,6 +23,7 @@ public class AppDbContext : DbContext
     public DbSet<LibraryArticle> LibraryArticles => Set<LibraryArticle>();
     public DbSet<Patient> Patients => Set<Patient>();
     public DbSet<PatientAppointment> PatientAppointments => Set<PatientAppointment>();
+    public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
