@@ -72,7 +72,8 @@ public class PatientAppointmentsService : IPatientAppointmentsService
         var patientBookedQuery = _db.PatientAppointments
             .Where(a => a.DoctorId == doctorId
                      && a.AppointmentDate >= dayStart
-                     && a.AppointmentDate < dayEnd);
+                     && a.AppointmentDate < dayEnd
+                     && a.Status != PatientAppointmentStatus.Cancelled);
 
         if (excludeId.HasValue)
             patientBookedQuery = patientBookedQuery.Where(a => a.Id != excludeId.Value);
@@ -178,7 +179,8 @@ public class PatientAppointmentsService : IPatientAppointmentsService
         var patientQuery = _db.PatientAppointments
             .Where(a => a.DoctorId == doctorId
                      && a.AppointmentDate >= slotStart
-                     && a.AppointmentDate < slotEnd);
+                     && a.AppointmentDate < slotEnd
+                     && a.Status != PatientAppointmentStatus.Cancelled);
 
         if (excludeId.HasValue)
             patientQuery = patientQuery.Where(a => a.Id != excludeId.Value);
