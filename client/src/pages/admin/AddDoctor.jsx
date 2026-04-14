@@ -30,6 +30,10 @@ const AddDoctor = () => {
     const [photoPreview, setPhotoPreview] = useState(null);
     const [uploadingPhoto, setUploadingPhoto] = useState(false);
     const photoInputRef = useRef(null);
+    const [certFile, setCertFile] = useState(null);
+    const [certName, setCertName] = useState('');
+    const [uploadingCert, setUploadingCert] = useState(false);
+    const certInputRef = useRef(null);
 
     const set = (field, value) => setForm(prev => ({ ...prev, [field]: value }));
 
@@ -38,6 +42,13 @@ const AddDoctor = () => {
         if (!file) return;
         setPhotoFile(file);
         setPhotoPreview(URL.createObjectURL(file));
+    };
+
+    const handleCertChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setCertFile(file);
+        setCertName(file.name);
     };
 
     const handleSubmit = async () => {
@@ -54,6 +65,12 @@ const AddDoctor = () => {
                 profileImageUrl = await uploadToCloudinary(photoFile);
                 setUploadingPhoto(false);
             }
+            let certificationUrl = null;
+            if (certFile) {
+                setUploadingCert(true);
+                certificationUrl = await uploadToCloudinary(certFile, 'raw');
+                setUploadingCert(false);
+            }
             await doctorsApi.create({
                 fullName: form.fullName.trim(),
                 email: form.email.trim(),
@@ -65,6 +82,7 @@ const AddDoctor = () => {
                 yearsOfExperience: parseInt(form.yearsOfExperience) || 0,
                 bio: form.bio.trim() || null,
                 profileImageUrl,
+                certificationUrl,
             });
             navigate('/admin/doctors');
         } catch (err) {
@@ -191,15 +209,25 @@ const AddDoctor = () => {
                             </div>
                          </div>
 
-                         {/* Upload Zone (Matches Image 4) */}
+                         {/* Upload Zone */}
                          <div className="space-y-4">
                             <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Medical Certifications (PDF/Image)</label>
-                            <div className="bg-[#F2FBFA] border-2 border-dashed border-mamacare-teal/30 rounded-[2.5rem] p-16 text-center group hover:bg-mamacare-teal/5 hover:border-mamacare-teal transition-all cursor-pointer">
+                            <input ref={certInputRef} type="file" accept=".pdf,image/*" onChange={handleCertChange} className="hidden" />
+                            <div onClick={() => certInputRef.current?.click()} className="bg-[#F2FBFA] border-2 border-dashed border-mamacare-teal/30 rounded-[2.5rem] p-16 text-center group hover:bg-mamacare-teal/5 hover:border-mamacare-teal transition-all cursor-pointer">
                                <div className="w-16 h-16 bg-mamacare-teal text-white rounded-2xl mx-auto flex items-center justify-center mb-6 shadow-xl shadow-mamacare-teal/20 group-hover:scale-110 transition-transform">
                                   <Upload size={28} />
                                </div>
-                               <h4 className="text-xl font-bold text-gray-900 mb-2">Click to upload or drag and drop</h4>
-                               <p className="text-sm font-medium text-gray-500">Medical Board Certification, Residency Diploma, and DEA Registration</p>
+                               {certName ? (
+                                 <>
+                                   <h4 className="text-xl font-bold text-mamacare-teal mb-2">✓ {certName}</h4>
+                                   <p className="text-sm font-medium text-gray-400">Click to change file</p>
+                                 </>
+                               ) : (
+                                 <>
+                                   <h4 className="text-xl font-bold text-gray-900 mb-2">Click to upload or drag and drop</h4>
+                                   <p className="text-sm font-medium text-gray-500">Medical Board Certification, Residency Diploma, and DEA Registration</p>
+                                 </>
+                               )}
                             </div>
                          </div>
 
@@ -246,7 +274,7 @@ const AddDoctor = () => {
                         disabled={submitting}
                         className="flex-1 md:flex-none px-12 py-5 rounded-3xl bg-[#005C5C] text-white font-bold shadow-xl shadow-mamacare-teal/20 flex items-center justify-center gap-3 hover:bg-mamacare-teal-dark hover:scale-105 active:scale-95 transition-all text-lg disabled:opacity-50"
                       >
-                         {submitting ? (uploadingPhoto ? 'Uploading photo...' : 'Adding...') : 'Add Doctor'}
+                         {submitting ? (uploadingPhoto ? 'Uploading photo...' : uploadingCert ? 'Uploading cert...' : 'Adding...') : 'Add Doctor'}
                          <ArrowRight size={20} />
                       </button>
                    </div>
