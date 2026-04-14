@@ -14,7 +14,9 @@ public class Doctor
     public int YearsOfExperience { get; set; }
     public string? Bio { get; set; }
     public DoctorStatus Status { get; set; } = DoctorStatus.Pending;
+    public string? CertificationUrl { get; set; }
 
     public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
     public ICollection<Message> Messages { get; set; } = new List<Message>();
+    public ICollection<DoctorCertification> Certifications { get; set; } = new List<DoctorCertification>();
 }

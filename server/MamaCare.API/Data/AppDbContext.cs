@@ -24,6 +24,7 @@ public class AppDbContext : DbContext
     public DbSet<Patient> Patients => Set<Patient>();
     public DbSet<PatientAppointment> PatientAppointments => Set<PatientAppointment>();
     public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
+    public DbSet<DoctorCertification> DoctorCertifications => Set<DoctorCertification>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -81,6 +82,12 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<PatientAppointment>()
             .Property(a => a.Status)
             .HasConversion<string>();
+
+        modelBuilder.Entity<DoctorCertification>()
+            .HasOne(c => c.Doctor)
+            .WithMany(d => d.Certifications)
+            .HasForeignKey(c => c.DoctorId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         SeedData(modelBuilder);
     }

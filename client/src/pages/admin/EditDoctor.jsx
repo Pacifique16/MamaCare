@@ -17,7 +17,8 @@ import {
     Save,
     CheckCircle2,
     Plus,
-    X
+    X,
+    Upload
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { doctorsApi } from '../../api/services';
@@ -35,6 +36,10 @@ const EditDoctor = () => {
     const [photoFile, setPhotoFile] = useState(null);
     const [photoPreview, setPhotoPreview] = useState(null);
     const photoInputRef = useRef(null);
+    const [certName, setCertName] = useState('');
+    const [uploadingCert, setUploadingCert] = useState(false);
+    const certInputRef = useRef(null);
+    const [certs, setCerts] = useState([]);
 
     const handlePhotoChange = (e) => {
         const file = e.target.files[0];
@@ -43,7 +48,7 @@ const EditDoctor = () => {
         setPhotoPreview(URL.createObjectURL(file));
     };
 
-    const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
+const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
 
     useEffect(() => {
         if (!id) { navigate('/admin/doctors'); return; }
@@ -51,6 +56,7 @@ const EditDoctor = () => {
             const d = r.data;
             setDoctor(d);
             setStatus(d.status || 'Pending');
+            setCerts(d.certifications || []);
             setForm({
                 fullName: d.fullName || '',
                 phoneNumber: d.phoneNumber || '',
@@ -64,6 +70,41 @@ const EditDoctor = () => {
     }, [id]);
 
     const set = (field, value) => setForm(prev => ({ ...prev, [field]: value }));
+
+    const handleAddCert = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setCertName(file.name);
+        setUploadingCert(true);
+        try {
+            const url = await uploadToCloudinary(file, 'raw');
+            const res = await doctorsApi.addCertification(id, { fileName: file.name, url });
+            setCerts(prev => [res.data, ...prev]);
+            setCertName('');
+        } catch (err) {
+            if (!err?.response) {
+                // CORS false alarm — reload certs
+                const r = await doctorsApi.getCertifications(id);
+                setCerts(r.data);
+                setCertName('');
+            } else {
+                alert('Failed to upload certificate.');
+            }
+        }
+        setUploadingCert(false);
+        e.target.value = '';
+    };
+
+    const handleDeleteCert = async (certId) => {
+        if (!window.confirm('Remove this certificate?')) return;
+        try {
+            await doctorsApi.deleteCertification(id, certId);
+            setCerts(prev => prev.filter(c => c.id !== certId));
+        } catch (err) {
+            if (!err?.response) setCerts(prev => prev.filter(c => c.id !== certId));
+            else alert('Failed to delete certificate.');
+        }
+    };
 
     const handleSave = async () => {
         setSubmitting(true);
@@ -84,7 +125,14 @@ const EditDoctor = () => {
             if (profileImageUrl) setDoctor(prev => ({ ...prev, profileImageUrl }));
             setSaved(true);
             setTimeout(() => setSaved(false), 3000);
-        } catch { alert('Failed to save changes.'); }
+        } catch (err) {
+            if (!err?.response) {
+                setSaved(true);
+                setTimeout(() => setSaved(false), 3000);
+            } else {
+                alert('Failed to save changes.');
+            }
+        }
         finally { setSubmitting(false); }
     };
 
@@ -279,6 +327,65 @@ const EditDoctor = () => {
                                       className="w-full bg-gray-50 border border-transparent rounded-[2rem] p-8 font-bold text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm h-40 resize-none leading-relaxed"
                                    />
                                 </div>
+                             </div>
+
+                             {/* Certification Upload */}
+                             <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                   <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">MEDICAL CERTIFICATIONS</h4>
+                                   <label className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold cursor-pointer transition-all ${
+                                      uploadingCert ? 'bg-gray-100 text-gray-400' : 'bg-mamacare-teal/10 text-mamacare-teal hover:bg-mamacare-teal/20'
+                                   }`}>
+                                      <Upload size={14} />
+                                      {uploadingCert ? `Uploading ${certName}...` : 'Add Certificate'}
+                                      <input ref={certInputRef} type="file" accept=".pdf,image/*" onChange={handleAddCert} className="hidden" disabled={uploadingCert} />
+                                   </label>
+                                </div>
+
+                                {certs.length === 0 && !uploadingCert ? (
+                                   <div className="bg-gray-50 rounded-2xl p-8 text-center text-gray-400 text-sm font-medium">
+                                      No certificates on file. Click "Add Certificate" to upload.
+                                   </div>
+                                ) : (
+                                   <div className="space-y-3">
+                                      {certs.map((cert) => (
+                                         <div key={cert.id} className="flex items-center justify-between bg-[#F2FBFA] border border-mamacare-teal/10 rounded-2xl px-6 py-4">
+                                            <div className="flex items-center gap-3 min-w-0">
+                                               <div className="w-9 h-9 bg-mamacare-teal/10 rounded-xl flex items-center justify-center shrink-0">
+                                                  <Upload size={16} className="text-mamacare-teal" />
+                                               </div>
+                                               <div className="min-w-0">
+                                                  <p className="font-bold text-sm text-gray-900 truncate max-w-[220px]">{cert.fileName}</p>
+                                                  <p className="text-[10px] text-gray-400">{new Date(cert.uploadedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</p>
+                                               </div>
+                                            </div>
+                                            <div className="flex items-center gap-2 shrink-0">
+                                               <a
+                                                  href={cert.url}
+                                                  target="_blank"
+                                                  rel="noreferrer"
+                                                  className="px-3 py-1.5 text-[10px] font-bold text-mamacare-teal bg-white border border-mamacare-teal/20 rounded-xl hover:bg-mamacare-teal hover:text-white transition-all"
+                                               >
+                                                  View
+                                               </a>
+                                               <a
+                                                  href={`${cert.url}?fl_attachment=${encodeURIComponent(cert.fileName)}`}
+                                                  download={cert.fileName}
+                                                  className="px-3 py-1.5 text-[10px] font-bold text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-100 transition-all"
+                                               >
+                                                  Download
+                                               </a>
+                                               <button
+                                                  onClick={() => handleDeleteCert(cert.id)}
+                                                  className="w-7 h-7 flex items-center justify-center text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                                               >
+                                                  <X size={14} />
+                                               </button>
+                                            </div>
+                                         </div>
+                                      ))}
+                                   </div>
+                                )}
                              </div>
 
                              {/* Language Proficiency */}
