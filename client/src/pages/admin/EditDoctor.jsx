@@ -84,7 +84,15 @@ const EditDoctor = () => {
             if (profileImageUrl) setDoctor(prev => ({ ...prev, profileImageUrl }));
             setSaved(true);
             setTimeout(() => setSaved(false), 3000);
-        } catch { alert('Failed to save changes.'); }
+        } catch (err) {
+            // If changes were saved despite response error, still show success
+            if (err?.response?.status >= 200 && err?.response?.status < 300) {
+                setSaved(true);
+                setTimeout(() => setSaved(false), 3000);
+            } else {
+                alert('Failed to save changes.');
+            }
+        }
         finally { setSubmitting(false); }
     };
 

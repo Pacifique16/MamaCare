@@ -116,7 +116,8 @@ public class DoctorsController : ControllerBase
         if (dto.Institution is not null) doctor.Institution = dto.Institution;
         if (dto.YearsOfExperience.HasValue) doctor.YearsOfExperience = dto.YearsOfExperience.Value;
         if (dto.Bio is not null) doctor.Bio = dto.Bio;
-        if (dto.Status.HasValue) doctor.Status = dto.Status.Value;
+        if (dto.Status is not null && Enum.TryParse<DoctorStatus>(dto.Status, out var parsedStatus))
+            doctor.Status = parsedStatus;
         if (dto.ProfileImageUrl is not null) doctor.User.ProfileImageUrl = dto.ProfileImageUrl;
 
         await _db.SaveChangesAsync();
