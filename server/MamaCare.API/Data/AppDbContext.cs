@@ -75,7 +75,7 @@ public class AppDbContext : DbContext
             .HasOne(a => a.Patient)
             .WithMany()
             .HasForeignKey(a => a.PatientId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         // Store PatientAppointmentStatus enum as its string name (no DDL migration needed)
         modelBuilder.Entity<PatientAppointment>()
