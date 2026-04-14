@@ -85,6 +85,7 @@ public class DoctorsController : ControllerBase
         {
             FullName = dto.FullName, Email = dto.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password), PhoneNumber = dto.PhoneNumber,
+            ProfileImageUrl = dto.ProfileImageUrl,
             Role = UserRole.Doctor
         };
         _db.Users.Add(user);
@@ -98,7 +99,7 @@ public class DoctorsController : ControllerBase
         };
         _db.Doctors.Add(doctor);
         await _db.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetById), new { id = doctor.Id }, doctor);
+        return Ok(new { doctor.Id, doctor.UserId });
     }
 
     [HttpPut("{id}")]
@@ -116,6 +117,7 @@ public class DoctorsController : ControllerBase
         if (dto.YearsOfExperience.HasValue) doctor.YearsOfExperience = dto.YearsOfExperience.Value;
         if (dto.Bio is not null) doctor.Bio = dto.Bio;
         if (dto.Status.HasValue) doctor.Status = dto.Status.Value;
+        if (dto.ProfileImageUrl is not null) doctor.User.ProfileImageUrl = dto.ProfileImageUrl;
 
         await _db.SaveChangesAsync();
         return Ok(doctor);

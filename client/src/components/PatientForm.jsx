@@ -194,7 +194,7 @@ function PatientForm({ patient, onSuccess, onCancel }) {
           <div>
             <label className="form-label">Date of Birth *</label>
             <DatePicker
-              selected={form.dateOfBirth ? new Date(form.dateOfBirth) : null}
+              selected={form.dateOfBirth && !isNaN(new Date(form.dateOfBirth)) ? new Date(form.dateOfBirth) : null}
               onChange={(date) => {
                 const val = date
                   ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`

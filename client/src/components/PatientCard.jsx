@@ -1,4 +1,4 @@
-import { Edit2, Trash2, Phone, MapPin, Baby, Droplets, AlertTriangle, UserCheck, FileText, CalendarDays } from 'lucide-react'
+import { Edit2, Trash2, Phone, MapPin, Droplets, AlertTriangle, UserCheck, FileText, CalendarDays } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 const RISK_STYLES = {
@@ -86,10 +86,6 @@ function PatientCard({ patient, onEdit, onDelete }) {
             <span className="font-medium">{patient.address}</span>
           </div>
         )}
-        <div className="flex items-center gap-3 text-sm text-gray-500">
-          <Baby size={14} className="text-gray-300 shrink-0" />
-          <span className="font-medium">{patient.weeksPregnant} weeks pregnant</span>
-        </div>
         {bloodType !== '—' && (
           <div className="flex items-center gap-3 text-sm text-gray-500">
             <Droplets size={14} className="text-gray-300 shrink-0" />

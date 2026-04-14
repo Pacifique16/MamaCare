@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import AdminLayout from '../../components/layout/AdminLayout';
 import { 
     ChevronLeft, 
@@ -19,14 +19,80 @@ import {
     Plus,
     X
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { doctorsApi } from '../../api/services';
+import { uploadToCloudinary } from '../../api/cloudinary';
 
 const EditDoctor = () => {
     const navigate = useNavigate();
+    const { id } = useParams();
     const [activeTab, setActiveTab] = useState('Basic Info');
     const [status, setStatus] = useState('Pending');
+    const [doctor, setDoctor] = useState(null);
+    const [form, setForm] = useState({ fullName: '', phoneNumber: '', specialty: '', licenseNumber: '', institution: '', yearsOfExperience: '', bio: '' });
+    const [submitting, setSubmitting] = useState(false);
+    const [saved, setSaved] = useState(false);
+    const [photoFile, setPhotoFile] = useState(null);
+    const [photoPreview, setPhotoPreview] = useState(null);
+    const photoInputRef = useRef(null);
+
+    const handlePhotoChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setPhotoFile(file);
+        setPhotoPreview(URL.createObjectURL(file));
+    };
 
     const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
+
+    useEffect(() => {
+        if (!id) { navigate('/admin/doctors'); return; }
+        doctorsApi.getById(id).then(r => {
+            const d = r.data;
+            setDoctor(d);
+            setStatus(d.status || 'Pending');
+            setForm({
+                fullName: d.fullName || '',
+                phoneNumber: d.phoneNumber || '',
+                specialty: d.specialty || '',
+                licenseNumber: d.licenseNumber || '',
+                institution: d.institution || '',
+                yearsOfExperience: d.yearsOfExperience?.toString() || '',
+                bio: d.bio || '',
+            });
+        }).catch(() => navigate('/admin/doctors'));
+    }, [id]);
+
+    const set = (field, value) => setForm(prev => ({ ...prev, [field]: value }));
+
+    const handleSave = async () => {
+        setSubmitting(true);
+        try {
+            let profileImageUrl = doctor?.profileImageUrl || null;
+            if (photoFile) profileImageUrl = await uploadToCloudinary(photoFile);
+            await doctorsApi.update(id, {
+                fullName: form.fullName.trim(),
+                phoneNumber: form.phoneNumber.trim() || null,
+                specialty: form.specialty,
+                licenseNumber: form.licenseNumber.trim(),
+                institution: form.institution.trim() || null,
+                yearsOfExperience: parseInt(form.yearsOfExperience) || 0,
+                bio: form.bio.trim() || null,
+                status,
+                profileImageUrl,
+            });
+            if (profileImageUrl) setDoctor(prev => ({ ...prev, profileImageUrl }));
+            setSaved(true);
+            setTimeout(() => setSaved(false), 3000);
+        } catch { alert('Failed to save changes.'); }
+        finally { setSubmitting(false); }
+    };
+
+    const handleSuspend = async () => {
+        if (!window.confirm('Suspend this doctor?')) return;
+        await doctorsApi.suspend(id);
+        setStatus('Inactive');
+    };
 
     return (
         <AdminLayout>
@@ -44,7 +110,7 @@ const EditDoctor = () => {
                               <ChevronLeft size={20} />
                            </button>
                            <div className="flex items-center gap-4">
-                              <h2 className="text-xl font-bold text-gray-900">Edit Profile: Dr. Michael Chen</h2>
+                              <h2 className="text-xl font-bold text-gray-900">Edit Profile: {doctor?.fullName || '...'}</h2>
                               <span className="px-4 py-1.5 bg-orange-50 text-orange-400 text-[10px] font-extrabold uppercase tracking-widest rounded-full">
                                  {status === 'Pending' ? 'PENDING VERIFICATION' : status.toUpperCase()}
                               </span>
@@ -72,19 +138,20 @@ const EditDoctor = () => {
                           {/* Profile Card */}
                           <div className="bg-white rounded-[3rem] p-10 border border-white shadow-card space-y-10 text-center animate-in-up duration-700">
                              <div className="relative w-40 h-40 mx-auto">
+                                <input ref={photoInputRef} type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" />
                                 <img 
-                                   src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=200" 
-                                   alt="Dr. Chen" 
+                                   src={photoPreview || doctor?.profileImageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(doctor?.fullName || '')}&background=005C5C&color=fff&size=200`}
+                                   alt={doctor?.fullName} 
                                    className="w-full h-full rounded-[40px] object-cover ring-8 ring-gray-50 shadow-xl"
                                 />
-                                <button className="absolute bottom-2 right-2 p-3 bg-mamacare-teal text-white rounded-2xl shadow-xl hover:scale-110 active:scale-95 transition-all border-4 border-white">
+                                <button type="button" onClick={() => photoInputRef.current?.click()} className="absolute bottom-2 right-2 p-3 bg-mamacare-teal text-white rounded-2xl shadow-xl hover:scale-110 active:scale-95 transition-all border-4 border-white">
                                    <Camera size={18} />
                                 </button>
                              </div>
 
                              <div className="space-y-2">
-                                <h3 className="text-3xl font-bold text-gray-900 tracking-tight">Dr. Michael Chen</h3>
-                                <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Senior Obstetrician • ID: #MC-8829</p>
+                                <h3 className="text-3xl font-bold text-gray-900 tracking-tight">{doctor?.fullName}</h3>
+                                <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">{doctor?.specialty} • ID: {doctor?.licenseNumber}</p>
                              </div>
 
                              <div className="space-y-4 pt-4 border-t border-gray-50">
@@ -92,7 +159,7 @@ const EditDoctor = () => {
                                    <RefreshCcw size={16} />
                                    Reset Password
                                 </button>
-                                <button className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-bold text-sm bg-red-50 text-red-500 hover:bg-red-100 transition-all">
+                                <button onClick={handleSuspend} className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-bold text-sm bg-red-50 text-red-500 hover:bg-red-100 transition-all">
                                    <Lock size={16} className="rotate-12" />
                                    Suspend Access
                                 </button>
@@ -155,33 +222,30 @@ const EditDoctor = () => {
                                 <div className="grid md:grid-cols-2 gap-8">
                                    <div className="space-y-3">
                                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Full Name</label>
-                                      <input 
-                                         type="text" 
-                                         defaultValue="Dr. Michael Chen" 
+                                      <input type="text" value={form.fullName} onChange={e => set('fullName', e.target.value)} 
                                          className="w-full bg-gray-50 border border-transparent rounded-2xl p-6 font-bold text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm"
                                       />
                                    </div>
                                    <div className="space-y-3">
                                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Primary Specialty</label>
-                                      <select className="w-full bg-gray-50 border border-transparent rounded-2xl p-6 font-bold text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm appearance-none">
+                                      <select value={form.specialty} onChange={e => set('specialty', e.target.value)} className="w-full bg-gray-50 border border-transparent rounded-2xl p-6 font-bold text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm appearance-none">
                                          <option>Obstetrics & Gynecology</option>
-                                         <option>Neonatal Care</option>
+                                         <option>Fetal Medicine Specialist</option>
+                                         <option>Neonatologist</option>
                                          <option>Pediatrics</option>
+                                         <option>Midwifery</option>
+                                         <option>General Practice</option>
                                       </select>
                                    </div>
                                    <div className="space-y-3">
                                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Medical License Number</label>
-                                      <input 
-                                         type="text" 
-                                         defaultValue="MD-99120-X8" 
+                                      <input type="text" value={form.licenseNumber} onChange={e => set('licenseNumber', e.target.value)} 
                                          className="w-full bg-gray-50 border border-transparent rounded-2xl p-6 font-bold text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm"
                                       />
                                    </div>
                                    <div className="space-y-3">
                                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Years of Experience</label>
-                                      <input 
-                                         type="number" 
-                                         defaultValue="14" 
+                                      <input type="number" value={form.yearsOfExperience} onChange={e => set('yearsOfExperience', e.target.value)} 
                                          className="w-full bg-gray-50 border border-transparent rounded-2xl p-6 font-bold text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm"
                                       />
                                    </div>
@@ -195,9 +259,7 @@ const EditDoctor = () => {
                                    <div className="space-y-3">
                                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Work Email</label>
                                       <div className="relative">
-                                         <input 
-                                            type="email" 
-                                            defaultValue="m.chen@mamacare.hosp" 
+                                         <input type="email" value={doctor?.email || ''} disabled 
                                             className="w-full bg-gray-100 border border-transparent rounded-2xl p-6 pl-16 font-bold text-gray-900 shadow-sm opacity-60 cursor-not-allowed"
                                             disabled
                                          />
@@ -206,18 +268,15 @@ const EditDoctor = () => {
                                    </div>
                                    <div className="space-y-3">
                                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Mobile Contact</label>
-                                      <input 
-                                         type="tel" 
-                                         defaultValue="+1 (555) 092-4411" 
+                                      <input type="tel" value={form.phoneNumber} onChange={e => set('phoneNumber', e.target.value)} 
                                          className="w-full bg-gray-50 border border-transparent rounded-2xl p-6 font-bold text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm"
                                       />
                                    </div>
                                 </div>
                                 <div className="space-y-3">
                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Clinical Bio</label>
-                                   <textarea 
+                                   <textarea value={form.bio} onChange={e => set('bio', e.target.value)}
                                       className="w-full bg-gray-50 border border-transparent rounded-[2rem] p-8 font-bold text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm h-40 resize-none leading-relaxed"
-                                      defaultValue="Dr. Chen specialized in high-risk pregnancy management with a focus on maternal wellness and proactive postpartum care. Dedicated to patient education and empathetic clinical practice."
                                    />
                                 </div>
                              </div>
@@ -254,9 +313,9 @@ const EditDoctor = () => {
                              </div>
                              <div className="flex items-center gap-6">
                                 <button className="text-gray-400 font-extrabold text-xs uppercase tracking-widest hover:text-gray-600 transition-all">Discard Changes</button>
-                                <button className="bg-[#005C5C] text-white px-10 py-5 rounded-2xl font-bold text-sm shadow-xl shadow-mamacare-teal/20 transition-all hover:scale-105 active:scale-95 flex items-center gap-3">
+                                <button onClick={handleSave} disabled={submitting} className="bg-[#005C5C] text-white px-10 py-5 rounded-2xl font-bold text-sm shadow-xl shadow-mamacare-teal/20 transition-all hover:scale-105 active:scale-95 flex items-center gap-3 disabled:opacity-50">
                                    <Save size={18} />
-                                   Save Updates
+                                   {submitting ? 'Saving...' : saved ? '✓ Saved!' : 'Save Updates'}
                                 </button>
                              </div>
                           </div>
