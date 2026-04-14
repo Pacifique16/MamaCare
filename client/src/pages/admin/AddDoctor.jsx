@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { doctorsApi } from '../../api/services';
-import { uploadToCloudinary } from '../../api/cloudinary';
+import { uploadToCloudinary, uploadCertToCloudinary } from '../../api/cloudinary';
 
 const AddDoctor = () => {
     const navigate = useNavigate();
@@ -68,7 +68,7 @@ const AddDoctor = () => {
             let certificationUrl = null;
             if (certFile) {
                 setUploadingCert(true);
-                certificationUrl = await uploadToCloudinary(certFile, 'raw');
+                certificationUrl = await uploadCertToCloudinary(certFile);
                 setUploadingCert(false);
             }
             await doctorsApi.create({
