@@ -59,7 +59,7 @@ function App() {
         {/* Admin Portal */}
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/doctors" element={<DoctorManagement />} />
-        <Route path="/admin/edit-doctor" element={<EditDoctor />} />
+        <Route path="/admin/edit-doctor/:id" element={<EditDoctor />} />
         <Route path="/admin/add-doctor" element={<AddDoctor />} />
 
         {/* Doctor Portal */}
