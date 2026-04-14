@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AdminLayout from '../../components/layout/AdminLayout';
 import AdminFooter from '../../components/layout/AdminFooter';
-import { Users, ShieldCheck, Heart, Search, Filter, Download, Edit2, Ban, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Users, ShieldCheck, Heart, Search, Filter, Download, Edit2, Ban, ChevronLeft, ChevronRight, Trash2, XCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { doctorsApi, adminApi } from '../../api/services';
 
@@ -10,6 +10,7 @@ const DoctorManagement = () => {
   const [doctors, setDoctors] = useState([]);
   const [stats, setStats] = useState(null);
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All');
 
   useEffect(() => {
     doctorsApi.getAll().then(r => setDoctors(r.data)).catch(() => {});
@@ -26,10 +27,37 @@ const DoctorManagement = () => {
     setDoctors(prev => prev.map(d => d.id === id ? { ...d, status: 'Inactive' } : d));
   };
 
-  const filtered = doctors.filter(d =>
-    d.fullName.toLowerCase().includes(search.toLowerCase()) ||
-    d.licenseNumber.toLowerCase().includes(search.toLowerCase())
-  );
+  const handleReject = async (id) => {
+    if (!window.confirm('Reject this doctor? They will be set to Inactive.')) return;
+    await doctorsApi.suspend(id);
+    setDoctors(prev => prev.map(d => d.id === id ? { ...d, status: 'Inactive' } : d));
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Permanently delete this doctor? This cannot be undone.')) return;
+    try {
+      await doctorsApi.delete(id);
+      setDoctors(prev => prev.filter(d => d.id !== id));
+    } catch { alert('Failed to delete doctor.'); }
+  };
+
+  const handleExport = () => {
+    const headers = ['Full Name', 'Specialty', 'License Number', 'Status'];
+    const rows = filtered.map(d => [d.fullName, d.specialty, d.licenseNumber, d.status]);
+    const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `doctors-${new Date().toISOString().slice(0,10)}.csv`; a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const filtered = doctors.filter(d => {
+    const matchSearch = d.fullName.toLowerCase().includes(search.toLowerCase()) ||
+      d.licenseNumber.toLowerCase().includes(search.toLowerCase());
+    const matchStatus = statusFilter === 'All' || d.status === statusFilter;
+    return matchSearch && matchStatus;
+  });
 
   return (
     <AdminLayout>
@@ -83,8 +111,16 @@ const DoctorManagement = () => {
             />
           </div>
           <div className="flex items-center gap-4">
-            <button className="flex items-center gap-2 bg-white border border-gray-100 px-8 py-5 rounded-2xl font-bold text-sm text-gray-500 hover:bg-gray-50"><Filter size={18} />Filters</button>
-            <button className="flex items-center gap-2 bg-white border border-gray-100 px-8 py-5 rounded-2xl font-bold text-sm text-gray-500 hover:bg-gray-50"><Download size={18} />Export</button>
+            <button className="flex items-center gap-2 bg-white border border-gray-100 px-8 py-5 rounded-2xl font-bold text-sm text-gray-500 hover:bg-gray-50">
+              <Filter size={18} />
+              <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="bg-transparent font-bold text-sm text-gray-500 focus:outline-none cursor-pointer">
+                <option value="All">All</option>
+                <option value="Verified">Verified</option>
+                <option value="Pending">Pending</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+            </button>
+            <button onClick={handleExport} className="flex items-center gap-2 bg-white border border-gray-100 px-8 py-5 rounded-2xl font-bold text-sm text-gray-500 hover:bg-gray-50"><Download size={18} />Export</button>
           </div>
         </div>
 
@@ -129,16 +165,24 @@ const DoctorManagement = () => {
                   <td className="p-10">
                     <div className="flex items-center gap-4">
                       {doc.status === 'Pending' ? (
-                        <button onClick={() => handleVerify(doc.id)} className="bg-mamacare-teal text-white px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-mamacare-teal-dark transition-all">
-                          Verify
-                        </button>
+                        <>
+                          <button onClick={() => handleVerify(doc.id)} className="bg-mamacare-teal text-white px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-mamacare-teal-dark transition-all">
+                            Verify
+                          </button>
+                          <button onClick={() => handleReject(doc.id)} className="bg-red-50 text-red-400 px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-red-100 transition-all flex items-center gap-1">
+                            <XCircle size={13} /> Reject
+                          </button>
+                        </>
                       ) : (
-                        <button onClick={() => navigate('/admin/edit-doctor')} className="p-2.5 text-gray-300 hover:text-mamacare-teal bg-gray-50 rounded-xl transition-all">
+                        <button onClick={() => navigate(`/admin/edit-doctor/${doc.id}`)} className="p-2.5 text-gray-300 hover:text-mamacare-teal bg-gray-50 rounded-xl transition-all">
                           <Edit2 size={16} />
                         </button>
                       )}
                       <button onClick={() => handleSuspend(doc.id)} className="p-2.5 text-gray-300 hover:text-red-400 bg-gray-50 rounded-xl transition-all">
                         <Ban size={16} />
+                      </button>
+                      <button onClick={() => handleDelete(doc.id)} className="p-2.5 text-gray-300 hover:text-red-500 bg-gray-50 rounded-xl transition-all">
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </td>

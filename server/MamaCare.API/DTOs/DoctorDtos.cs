@@ -35,7 +35,8 @@ public record CreateDoctorDto(
     string LicenseNumber,
     string? Institution,
     int YearsOfExperience,
-    string? Bio
+    string? Bio,
+    string? ProfileImageUrl
 );
 
 public record UpdateDoctorDto(
@@ -46,5 +47,6 @@ public record UpdateDoctorDto(
     string? Institution,
     int? YearsOfExperience,
     string? Bio,
-    DoctorStatus? Status
+    DoctorStatus? Status,
+    string? ProfileImageUrl
 );
