@@ -47,6 +47,6 @@ public record UpdateDoctorDto(
     string? Institution,
     int? YearsOfExperience,
     string? Bio,
-    DoctorStatus? Status,
+    string? Status,
     string? ProfileImageUrl
 );
