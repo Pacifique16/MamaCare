@@ -7,4 +7,13 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://mamacare-fbjq.onrender.com',
+        changeOrigin: true,
+        secure: true,
+      }
+    }
+  }
 })

@@ -30,12 +30,52 @@ public class DoctorsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var d = await _db.Doctors.Include(d => d.User).FirstOrDefaultAsync(d => d.Id == id);
+        var d = await _db.Doctors
+            .Include(d => d.User)
+            .Include(d => d.Certifications)
+            .FirstOrDefaultAsync(d => d.Id == id);
         if (d is null) return NotFound();
         return Ok(new DoctorDetailDto(
             d.Id, d.User.FullName, d.User.Email, d.User.PhoneNumber,
             d.User.ProfileImageUrl, d.Specialty, d.LicenseNumber,
-            d.Institution, d.YearsOfExperience, d.Bio, d.Status));
+            d.Institution, d.YearsOfExperience, d.Bio, d.Status, d.CertificationUrl,
+            d.Certifications.OrderByDescending(c => c.UploadedAt)
+                .Select(c => new CertificationDto(c.Id, c.FileName, c.Url, c.UploadedAt))
+                .ToList()));
+    }
+
+    [HttpGet("{id}/certifications")]
+    public async Task<IActionResult> GetCertifications(int id)
+    {
+        var certs = await _db.DoctorCertifications
+            .Where(c => c.DoctorId == id)
+            .OrderByDescending(c => c.UploadedAt)
+            .Select(c => new CertificationDto(c.Id, c.FileName, c.Url, c.UploadedAt))
+            .ToListAsync();
+        return Ok(certs);
+    }
+
+    [HttpPost("{id}/certifications")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> AddCertification(int id, AddCertificationDto dto)
+    {
+        var doctor = await _db.Doctors.FindAsync(id);
+        if (doctor is null) return NotFound();
+        var cert = new DoctorCertification { DoctorId = id, FileName = dto.FileName, Url = dto.Url };
+        _db.DoctorCertifications.Add(cert);
+        await _db.SaveChangesAsync();
+        return Ok(new CertificationDto(cert.Id, cert.FileName, cert.Url, cert.UploadedAt));
+    }
+
+    [HttpDelete("{id}/certifications/{certId}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeleteCertification(int id, int certId)
+    {
+        var cert = await _db.DoctorCertifications.FirstOrDefaultAsync(c => c.Id == certId && c.DoctorId == id);
+        if (cert is null) return NotFound();
+        _db.DoctorCertifications.Remove(cert);
+        await _db.SaveChangesAsync();
+        return NoContent();
     }
 
     [HttpGet("{id}/patients")]
@@ -95,7 +135,8 @@ public class DoctorsController : ControllerBase
         {
             UserId = user.Id, Specialty = dto.Specialty,
             LicenseNumber = dto.LicenseNumber, Institution = dto.Institution,
-            YearsOfExperience = dto.YearsOfExperience, Bio = dto.Bio
+            YearsOfExperience = dto.YearsOfExperience, Bio = dto.Bio,
+            CertificationUrl = dto.CertificationUrl
         };
         _db.Doctors.Add(doctor);
         await _db.SaveChangesAsync();
@@ -116,8 +157,10 @@ public class DoctorsController : ControllerBase
         if (dto.Institution is not null) doctor.Institution = dto.Institution;
         if (dto.YearsOfExperience.HasValue) doctor.YearsOfExperience = dto.YearsOfExperience.Value;
         if (dto.Bio is not null) doctor.Bio = dto.Bio;
-        if (dto.Status.HasValue) doctor.Status = dto.Status.Value;
+        if (dto.Status is not null && Enum.TryParse<DoctorStatus>(dto.Status, out var parsedStatus))
+            doctor.Status = parsedStatus;
         if (dto.ProfileImageUrl is not null) doctor.User.ProfileImageUrl = dto.ProfileImageUrl;
+        if (dto.CertificationUrl is not null) doctor.CertificationUrl = dto.CertificationUrl;
 
         await _db.SaveChangesAsync();
         return Ok(doctor);

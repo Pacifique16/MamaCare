@@ -21,6 +21,9 @@ export const doctorsApi = {
   verify: (id) => api.patch(`/doctors/${id}/verify`),
   suspend: (id) => api.patch(`/doctors/${id}/suspend`),
   delete: (id) => api.delete(`/doctors/${id}`),
+  getCertifications: (id) => api.get(`/doctors/${id}/certifications`),
+  addCertification: (id, data) => api.post(`/doctors/${id}/certifications`, data),
+  deleteCertification: (id, certId) => api.delete(`/doctors/${id}/certifications/${certId}`),
 }
 
 export const appointmentsApi = {
