@@ -12,6 +12,8 @@ public record DoctorSummaryDto(
     string? LastActive
 );
 
+public record CertificationDto(int Id, string FileName, string Url, DateTime UploadedAt);
+
 public record DoctorDetailDto(
     int Id,
     string FullName,
@@ -23,7 +25,9 @@ public record DoctorDetailDto(
     string? Institution,
     int YearsOfExperience,
     string? Bio,
-    DoctorStatus Status
+    DoctorStatus Status,
+    string? CertificationUrl,
+    List<CertificationDto> Certifications
 );
 
 public record CreateDoctorDto(
@@ -36,7 +40,8 @@ public record CreateDoctorDto(
     string? Institution,
     int YearsOfExperience,
     string? Bio,
-    string? ProfileImageUrl
+    string? ProfileImageUrl,
+    string? CertificationUrl
 );
 
 public record UpdateDoctorDto(
@@ -47,6 +52,9 @@ public record UpdateDoctorDto(
     string? Institution,
     int? YearsOfExperience,
     string? Bio,
-    DoctorStatus? Status,
-    string? ProfileImageUrl
+    string? Status,
+    string? ProfileImageUrl,
+    string? CertificationUrl
 );
+
+public record AddCertificationDto(string FileName, string Url);
