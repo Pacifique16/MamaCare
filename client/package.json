@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@cloudinary/url-gen": "^1.22.0",
     "@tailwindcss/vite": "^4.2.2",
     "axios": "^1.14.0",
     "react": "^19.2.4",
+    "react-datepicker": "^9.1.0",
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.14.0"
   },
