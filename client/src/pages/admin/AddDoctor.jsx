@@ -21,7 +21,7 @@ const AddDoctor = () => {
     const navigate = useNavigate();
     const [form, setForm] = useState({
         fullName: '', specialty: 'Obstetrics & Gynecology',
-        email: '', phoneNumber: '', password: '789456123',
+        email: '', phoneNumber: '', password: '',
         licenseNumber: '', institution: '', yearsOfExperience: '', bio: '',
     });
     const [submitting, setSubmitting] = useState(false);
@@ -52,8 +52,12 @@ const AddDoctor = () => {
     };
 
     const handleSubmit = async () => {
-        if (!form.fullName || !form.email || !form.licenseNumber) {
-            setError('Full name, email and license number are required.');
+        if (!form.fullName || !form.email || !form.licenseNumber || !form.password) {
+            setError('Full name, email, license number and password are required.');
+            return;
+        }
+        if (form.password.length < 6) {
+            setError('Password must be at least 6 characters.');
             return;
         }
         setSubmitting(true);
@@ -71,10 +75,10 @@ const AddDoctor = () => {
                 certificationUrl = await uploadCertToCloudinary(certFile);
                 setUploadingCert(false);
             }
-            await doctorsApi.create({
+            const res = await doctorsApi.create({
                 fullName: form.fullName.trim(),
                 email: form.email.trim(),
-                password: form.password || '789456123',
+                password: form.password,
                 phoneNumber: form.phoneNumber.trim() || null,
                 specialty: form.specialty,
                 licenseNumber: form.licenseNumber.trim(),
@@ -82,12 +86,15 @@ const AddDoctor = () => {
                 yearsOfExperience: parseInt(form.yearsOfExperience) || 0,
                 bio: form.bio.trim() || null,
                 profileImageUrl,
-                certificationUrl,
+                certificationUrl: null,
             });
+            // Save cert as a DoctorCertification record if uploaded
+            if (certFile && certificationUrl && res?.data?.id) {
+                await doctorsApi.addCertification(res.data.id, { fileName: certFile.name, url: certificationUrl });
+            }
             navigate('/admin/doctors');
         } catch (err) {
-            // If status is 200/201 the doctor was saved despite CORS error on response
-            if (err?.response?.status === 200 || err?.response?.status === 201 || !err?.response) {
+            if (!err?.response) {
                 navigate('/admin/doctors');
                 return;
             }
@@ -169,6 +176,28 @@ const AddDoctor = () => {
                                         value={form.phoneNumber}
                                         onChange={e => set('phoneNumber', e.target.value)}
                                         placeholder="+1 (555) 000-0000" 
+                                        className="w-full bg-gray-50 border border-transparent rounded-2xl p-6 font-bold text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm"
+                                     />
+                                  </div>
+                               </div>
+                               <div className="grid md:grid-cols-2 gap-8">
+                                  <div className="space-y-3">
+                                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Password</label>
+                                     <input 
+                                        type="password" 
+                                        value={form.password}
+                                        onChange={e => set('password', e.target.value)}
+                                        placeholder="Min. 6 characters" 
+                                        className="w-full bg-gray-50 border border-transparent rounded-2xl p-6 font-bold text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm"
+                                     />
+                                  </div>
+                                  <div className="space-y-3">
+                                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Years of Experience</label>
+                                     <input 
+                                        type="number" 
+                                        value={form.yearsOfExperience}
+                                        onChange={e => set('yearsOfExperience', e.target.value)}
+                                        placeholder="e.g. 5" 
                                         className="w-full bg-gray-50 border border-transparent rounded-2xl p-6 font-bold text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm"
                                      />
                                   </div>
