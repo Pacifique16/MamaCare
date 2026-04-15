@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { doctorsApi } from '../../api/services';
-import { uploadToCloudinary } from '../../api/cloudinary';
+import { uploadToCloudinary, downloadFile, uploadCertToCloudinary } from '../../api/cloudinary';
 
 const EditDoctor = () => {
     const navigate = useNavigate();
@@ -77,7 +77,7 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
         setCertName(file.name);
         setUploadingCert(true);
         try {
-            const url = await uploadToCloudinary(file, 'raw');
+            const url = await uploadCertToCloudinary(file);
             const res = await doctorsApi.addCertification(id, { fileName: file.name, url });
             setCerts(prev => [res.data, ...prev]);
             setCertName('');
@@ -363,18 +363,18 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
                                                <a
                                                   href={cert.url}
                                                   target="_blank"
-                                                  rel="noreferrer"
+<<<<<<< HEAD
+                                                  rel="noopener noreferrer"
                                                   className="px-3 py-1.5 text-[10px] font-bold text-mamacare-teal bg-white border border-mamacare-teal/20 rounded-xl hover:bg-mamacare-teal hover:text-white transition-all"
                                                >
                                                   View
                                                </a>
-                                               <a
-                                                  href={`${cert.url}?fl_attachment=${encodeURIComponent(cert.fileName)}`}
-                                                  download={cert.fileName}
+                                               <button
+                                                  onClick={() => downloadFile(cert.url, cert.fileName)}
                                                   className="px-3 py-1.5 text-[10px] font-bold text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-100 transition-all"
                                                >
                                                   Download
-                                               </a>
+                                               </button>
                                                <button
                                                   onClick={() => handleDeleteCert(cert.id)}
                                                   className="w-7 h-7 flex items-center justify-center text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
