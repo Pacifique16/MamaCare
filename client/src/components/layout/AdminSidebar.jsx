@@ -7,13 +7,17 @@ import {
   PlusCircle, 
   HelpCircle, 
   LogOut,
-  ChevronRight
+  ChevronRight,
+  Baby,
+  CalendarDays
 } from 'lucide-react';
 
 const AdminSidebar = () => {
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
     { name: 'Staff Directory', icon: Users, path: '/admin/doctors' },
+    { name: 'Patients', icon: Baby, path: '/patients' },
+    { name: 'Appointments', icon: CalendarDays, path: '/patient-appointments' },
   ];
 
   return (

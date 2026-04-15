@@ -25,7 +25,9 @@ import DoctorDashboard from './pages/DoctorDashboard';
 import PatientRoster from './pages/doctor/PatientRoster';
 import PatientProfile from './pages/doctor/PatientProfile';
 import DoctorAppointments from './pages/doctor/Appointments';
-import Messaging from './pages/doctor/Messaging';
+import Messaging from './pages/doctor/Messaging'
+import PatientsPage from './pages/PatientsPage';
+import PatientAppointmentsPage from './pages/PatientAppointmentsPage';
 
 import LandingPage from './pages/LandingPage';
 
@@ -60,7 +62,7 @@ function App() {
         {/* Admin Portal */}
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/doctors" element={<DoctorManagement />} />
-        <Route path="/admin/edit-doctor" element={<EditDoctor />} />
+        <Route path="/admin/edit-doctor/:id" element={<EditDoctor />} />
         <Route path="/admin/add-doctor" element={<AddDoctor />} />
 
         {/* Doctor Portal */}
@@ -69,6 +71,11 @@ function App() {
         <Route path="/doctor/patients/:id" element={<PatientProfile />} />
         <Route path="/doctor/appointments" element={<DoctorAppointments />} />
         <Route path="/doctor/messaging" element={<Messaging />} />
+
+        <Route path="/patients" element={<PatientsPage />} />
+        <Route path="/patient-appointments" element={<PatientAppointmentsPage />} />
+
+        <Route path="/" element={<Navigate to="/signup" replace />} />
       </Routes>
     </Router>
   );
