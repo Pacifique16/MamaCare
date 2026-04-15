@@ -75,7 +75,7 @@ const SignIn = () => {
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <label className="form-label text-base">Password</label>
-              <Link to="/forgot-password" university-teal className="text-base font-bold text-mamacare-teal hover:underline mb-2">Forgot Password?</Link>
+              <Link to="/forgot-password" className="text-base font-bold text-mamacare-teal hover:underline mb-2">Forgot Password?</Link>
             </div>
             <div className="relative">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"><Lock size={18} /></div>
