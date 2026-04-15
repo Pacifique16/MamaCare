@@ -14,8 +14,8 @@ const FAQCard = ({ icon: Icon, question, answer }) => {
       </div>
       
       <div className="space-y-3">
-        <h3 className="text-xl font-bold text-gray-900">{question}</h3>
-        <p className="text-gray-500 font-medium leading-relaxed text-sm">
+        <h3 className="text-2xl font-bold text-on-surface-lp">{question}</h3>
+        <p className="text-lg text-on-surface-variant-lp leading-relaxed">
           {answer}
         </p>
       </div>

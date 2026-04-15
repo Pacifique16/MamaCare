@@ -1,7 +1,7 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import pregnantWoman from '../assets/pregnantwoman.png';
-import { Link } from 'react-router-dom';
+import { Baby } from 'lucide-react';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -11,7 +11,10 @@ const LandingPage = () => {
       {/* TopNavBar */}
       <nav className="fixed top-0 w-full z-50 bg-stone-50/70 backdrop-blur-md">
         <div className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
-          <span className="text-2xl font-bold tracking-tighter text-mamacare-teal">MamaCare</span>
+          <span className="flex items-center gap-2 text-2xl font-bold tracking-tighter text-mamacare-teal">
+            <Baby size={26} />
+            MamaCare
+          </span>
           <div className="hidden md:flex items-center gap-8">
             <a className="font-headline tracking-tight text-base font-medium text-stone-600 hover:text-primary-lp transition-colors" href="#features">Features</a>
             <a className="font-headline tracking-tight text-base font-medium text-stone-600 hover:text-primary-lp transition-colors" href="#how-it-works">How it Works</a>
