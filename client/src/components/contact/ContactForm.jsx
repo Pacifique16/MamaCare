@@ -95,8 +95,8 @@ const ContactForm = () => {
           <CheckCircle size={40} />
         </div>
         <div className="space-y-2">
-          <h3 className="text-2xl font-bold text-gray-900">Message Sent!</h3>
-          <p className="text-gray-500 font-medium max-w-sm">
+          <h3 className="text-3xl font-extrabold text-on-surface-lp tracking-tight">Message Sent!</h3>
+          <p className="text-lg text-on-surface-variant-lp leading-relaxed max-w-sm">
             Thank you for reaching out. Our care team will get back to you within 24 hours.
           </p>
         </div>
@@ -113,7 +113,7 @@ const ContactForm = () => {
   // ── Form ─────────────────────────────────────────────────────────────────
   return (
     <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-card border border-gray-50 h-full">
-      <h2 className="text-3xl font-bold text-gray-900 mb-8">Send us a Message</h2>
+      <h2 className="text-4xl font-extrabold text-on-surface-lp tracking-tight mb-8">Send us a Message</h2>
 
       <form onSubmit={handleSubmit} noValidate className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
