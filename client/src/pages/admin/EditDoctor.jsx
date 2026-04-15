@@ -363,7 +363,6 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
                                                <a
                                                   href={cert.url}
                                                   target="_blank"
-<<<<<<< HEAD
                                                   rel="noopener noreferrer"
                                                   className="px-3 py-1.5 text-[10px] font-bold text-mamacare-teal bg-white border border-mamacare-teal/20 rounded-xl hover:bg-mamacare-teal hover:text-white transition-all"
                                                >
