@@ -27,7 +27,8 @@ public record DoctorDetailDto(
     string? Bio,
     DoctorStatus Status,
     string? CertificationUrl,
-    List<CertificationDto> Certifications
+    List<CertificationDto> Certifications,
+    List<string> Languages
 );
 
 public record CreateDoctorDto(
@@ -54,7 +55,8 @@ public record UpdateDoctorDto(
     string? Bio,
     string? Status,
     string? ProfileImageUrl,
-    string? CertificationUrl
+    string? CertificationUrl,
+    List<string>? Languages
 );
 
 public record AddCertificationDto(string FileName, string Url);

@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import AdminLayout from '../../components/layout/AdminLayout';
 import AdminFooter from '../../components/layout/AdminFooter';
-import { Users, ShieldCheck, Heart, Search, Filter, Download, Edit2, Ban, ChevronLeft, ChevronRight, Trash2, XCircle } from 'lucide-react';
+import { Users, ShieldCheck, CheckCircle2, Search, Filter, Download, Edit2, Ban, ChevronLeft, ChevronRight, Trash2, XCircle, ChevronUp, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { doctorsApi, adminApi } from '../../api/services';
+import { doctorsApi } from '../../api/services';
+
+const PAGE_SIZE = 8;
 
 const DoctorManagement = () => {
   const navigate = useNavigate();
   const [doctors, setDoctors] = useState([]);
-  const [stats, setStats] = useState(null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [specialtyFilter, setSpecialtyFilter] = useState('All');
+  const [sortField, setSortField] = useState('fullName');
+  const [sortDir, setSortDir] = useState('asc');
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     doctorsApi.getAll().then(r => setDoctors(r.data)).catch(() => {});
-    adminApi.getStats().then(r => setStats(r.data)).catch(() => {});
   }, []);
 
   const handleVerify = async (id) => {
@@ -23,6 +27,7 @@ const DoctorManagement = () => {
   };
 
   const handleSuspend = async (id) => {
+    if (!window.confirm('Suspend this doctor?')) return;
     await doctorsApi.suspend(id);
     setDoctors(prev => prev.map(d => d.id === id ? { ...d, status: 'Inactive' } : d));
   };
@@ -41,6 +46,31 @@ const DoctorManagement = () => {
     } catch { alert('Failed to delete doctor.'); }
   };
 
+  const handleSort = (field) => {
+    if (sortField === field) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    else { setSortField(field); setSortDir('asc'); }
+    setPage(1);
+  };
+
+  const specialties = ['All', ...Array.from(new Set(doctors.map(d => d.specialty)))];
+
+  const filtered = doctors
+    .filter(d => {
+      const q = search.toLowerCase();
+      const matchSearch = d.fullName.toLowerCase().includes(q) || d.licenseNumber.toLowerCase().includes(q);
+      const matchStatus = statusFilter === 'All' || d.status === statusFilter;
+      const matchSpecialty = specialtyFilter === 'All' || d.specialty === specialtyFilter;
+      return matchSearch && matchStatus && matchSpecialty;
+    })
+    .sort((a, b) => {
+      const av = (a[sortField] || '').toString().toLowerCase();
+      const bv = (b[sortField] || '').toString().toLowerCase();
+      return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+    });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
   const handleExport = () => {
     const headers = ['Full Name', 'Specialty', 'License Number', 'Status'];
     const rows = filtered.map(d => [d.fullName, d.specialty, d.licenseNumber, d.status]);
@@ -48,16 +78,18 @@ const DoctorManagement = () => {
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = `doctors-${new Date().toISOString().slice(0,10)}.csv`; a.click();
+    a.href = url; a.download = `doctors-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
     URL.revokeObjectURL(url);
   };
 
-  const filtered = doctors.filter(d => {
-    const matchSearch = d.fullName.toLowerCase().includes(search.toLowerCase()) ||
-      d.licenseNumber.toLowerCase().includes(search.toLowerCase());
-    const matchStatus = statusFilter === 'All' || d.status === statusFilter;
-    return matchSearch && matchStatus;
-  });
+  const SortIcon = ({ field }) => {
+    if (sortField !== field) return <ChevronUp size={12} className="text-gray-200" />;
+    return sortDir === 'asc' ? <ChevronUp size={12} className="text-mamacare-teal" /> : <ChevronDown size={12} className="text-mamacare-teal" />;
+  };
+
+  const totalDoctors = doctors.length;
+  const verifiedDoctors = doctors.filter(d => d.status === 'Verified').length;
+  const pendingDoctors = doctors.filter(d => d.status === 'Pending').length;
 
   return (
     <AdminLayout>
@@ -73,72 +105,98 @@ const DoctorManagement = () => {
           </button>
         </div>
 
-        {/* Live KPI Cards */}
+        {/* KPI Cards */}
         <div className="grid md:grid-cols-3 gap-8 pt-4">
           <div className="bg-white rounded-[2.5rem] p-10 border border-white shadow-card flex items-center justify-between">
             <div className="space-y-4">
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Practitioners</p>
-              <h3 className="text-6xl font-extrabold text-gray-900 tracking-tighter">{stats?.totalDoctors ?? '—'}</h3>
+              <h3 className="text-6xl font-extrabold text-gray-900 tracking-tighter">{totalDoctors}</h3>
             </div>
             <div className="w-16 h-16 bg-teal-50 text-mamacare-teal rounded-3xl flex items-center justify-center"><Users size={32} /></div>
           </div>
           <div className="bg-red-50/50 rounded-[2.5rem] p-10 border border-white shadow-card flex items-center justify-between">
             <div className="space-y-4">
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Pending Verification</p>
-              <h3 className="text-6xl font-extrabold text-gray-900 tracking-tighter">{stats?.pendingDoctors ?? '—'}</h3>
+              <h3 className="text-6xl font-extrabold text-gray-900 tracking-tighter">{pendingDoctors}</h3>
             </div>
             <div className="w-16 h-16 bg-red-100 text-red-400 rounded-3xl flex items-center justify-center"><ShieldCheck size={32} /></div>
           </div>
-          <div className="bg-blue-50/50 rounded-[2.5rem] p-10 border border-white shadow-card flex items-center justify-between">
+          <div className="bg-teal-50/50 rounded-[2.5rem] p-10 border border-white shadow-card flex items-center justify-between">
             <div className="space-y-4">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Active Sessions</p>
-              <h3 className="text-6xl font-extrabold text-gray-900 tracking-tighter">{stats?.activeSessions ?? '—'}</h3>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Verified Doctors</p>
+              <h3 className="text-6xl font-extrabold text-gray-900 tracking-tighter">{verifiedDoctors}</h3>
             </div>
-            <div className="w-16 h-16 bg-blue-100 text-blue-400 rounded-3xl flex items-center justify-center"><Heart size={32} /></div>
+            <div className="w-16 h-16 bg-teal-100 text-mamacare-teal rounded-3xl flex items-center justify-center"><CheckCircle2 size={32} /></div>
           </div>
         </div>
 
-        {/* Search */}
+        {/* Filters */}
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white/50 p-4 rounded-[2rem]">
-          <div className="relative w-full md:w-[600px] group">
+          <div className="relative w-full md:w-[400px]">
             <Search size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={e => { setSearch(e.target.value); setPage(1); }}
               placeholder="Search by name or medical ID..."
               className="w-full bg-white border border-gray-100 rounded-2xl py-5 pl-16 pr-6 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-mamacare-teal/5 transition-all"
             />
           </div>
-          <div className="flex items-center gap-4">
-            <button className="flex items-center gap-2 bg-white border border-gray-100 px-8 py-5 rounded-2xl font-bold text-sm text-gray-500 hover:bg-gray-50">
-              <Filter size={18} />
-              <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="bg-transparent font-bold text-sm text-gray-500 focus:outline-none cursor-pointer">
-                <option value="All">All</option>
+          <div className="flex items-center gap-4 flex-wrap">
+            <div className="flex items-center gap-2 bg-white border border-gray-100 px-6 py-4 rounded-2xl">
+              <Filter size={16} className="text-gray-400" />
+              <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }} className="bg-transparent font-bold text-sm text-gray-500 focus:outline-none cursor-pointer">
+                <option value="All">All Status</option>
                 <option value="Verified">Verified</option>
                 <option value="Pending">Pending</option>
                 <option value="Inactive">Inactive</option>
               </select>
+            </div>
+            <div className="flex items-center gap-2 bg-white border border-gray-100 px-6 py-4 rounded-2xl">
+              <Filter size={16} className="text-gray-400" />
+              <select value={specialtyFilter} onChange={e => { setSpecialtyFilter(e.target.value); setPage(1); }} className="bg-transparent font-bold text-sm text-gray-500 focus:outline-none cursor-pointer max-w-[180px]">
+                {specialties.map(s => <option key={s}>{s}</option>)}
+              </select>
+            </div>
+            <button onClick={handleExport} className="flex items-center gap-2 bg-white border border-gray-100 px-6 py-4 rounded-2xl font-bold text-sm text-gray-500 hover:bg-gray-50">
+              <Download size={16} /> Export
             </button>
-            <button onClick={handleExport} className="flex items-center gap-2 bg-white border border-gray-100 px-8 py-5 rounded-2xl font-bold text-sm text-gray-500 hover:bg-gray-50"><Download size={18} />Export</button>
           </div>
         </div>
 
-        {/* Doctors Table — live from API */}
+        {/* Table */}
         <div className="bg-white rounded-[3rem] overflow-hidden border border-white shadow-card">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-50/50">
-                <th className="p-10 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Doctor Details</th>
-                <th className="p-10 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Specialty</th>
-                <th className="p-10 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
-                <th className="p-10 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Actions</th>
+                <th className="p-8 text-[10px] font-bold text-gray-400 uppercase tracking-widest cursor-pointer select-none" onClick={() => handleSort('fullName')}>
+                  <div className="flex items-center gap-2">Doctor Details <SortIcon field="fullName" /></div>
+                </th>
+                <th className="p-8 text-[10px] font-bold text-gray-400 uppercase tracking-widest cursor-pointer select-none" onClick={() => handleSort('specialty')}>
+                  <div className="flex items-center gap-2">Specialty <SortIcon field="specialty" /></div>
+                </th>
+                <th className="p-8 text-[10px] font-bold text-gray-400 uppercase tracking-widest cursor-pointer select-none" onClick={() => handleSort('status')}>
+                  <div className="flex items-center gap-2">Status <SortIcon field="status" /></div>
+                </th>
+                <th className="p-8 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filtered.map((doc) => (
+              {paginated.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="p-20 text-center">
+                    <div className="space-y-3">
+                      <div className="w-16 h-16 bg-gray-50 rounded-3xl flex items-center justify-center mx-auto">
+                        <Users size={28} className="text-gray-300" />
+                      </div>
+                      <p className="font-bold text-gray-400">No doctors found</p>
+                      <p className="text-sm text-gray-300">Try adjusting your search or filters</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : paginated.map((doc) => (
                 <tr key={doc.id} className="group border-b border-gray-50 last:border-0 hover:bg-gray-50/30 transition-all">
-                  <td className="p-10">
+                  <td className="p-8">
                     <div className="flex items-center gap-4">
                       <img
                         src={doc.profileImageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(doc.fullName)}&background=005C5C&color=fff`}
@@ -151,8 +209,8 @@ const DoctorManagement = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="p-10"><p className="text-sm font-bold text-gray-600">{doc.specialty}</p></td>
-                  <td className="p-10">
+                  <td className="p-8"><p className="text-sm font-bold text-gray-600">{doc.specialty}</p></td>
+                  <td className="p-8">
                     <span className={`flex items-center gap-2 w-fit px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest ${
                       doc.status === 'Verified' ? 'bg-teal-50 text-mamacare-teal' :
                       doc.status === 'Inactive' ? 'bg-gray-100 text-gray-400' :
@@ -162,22 +220,21 @@ const DoctorManagement = () => {
                       {doc.status}
                     </span>
                   </td>
-                  <td className="p-10">
-                    <div className="flex items-center gap-4">
-                      {doc.status === 'Pending' ? (
+                  <td className="p-8">
+                    <div className="flex items-center gap-3">
+                      {doc.status === 'Pending' && (
                         <>
-                          <button onClick={() => handleVerify(doc.id)} className="bg-mamacare-teal text-white px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-mamacare-teal-dark transition-all">
+                          <button onClick={() => handleVerify(doc.id)} className="bg-mamacare-teal text-white px-5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-mamacare-teal-dark transition-all">
                             Verify
                           </button>
-                          <button onClick={() => handleReject(doc.id)} className="bg-red-50 text-red-400 px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-red-100 transition-all flex items-center gap-1">
+                          <button onClick={() => handleReject(doc.id)} className="bg-red-50 text-red-400 px-5 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-red-100 transition-all flex items-center gap-1">
                             <XCircle size={13} /> Reject
                           </button>
                         </>
-                      ) : (
-                        <button onClick={() => navigate(`/admin/edit-doctor/${doc.id}`)} className="p-2.5 text-gray-300 hover:text-mamacare-teal bg-gray-50 rounded-xl transition-all">
-                          <Edit2 size={16} />
-                        </button>
                       )}
+                      <button onClick={() => navigate(`/admin/edit-doctor/${doc.id}`)} className="p-2.5 text-gray-300 hover:text-mamacare-teal bg-gray-50 rounded-xl transition-all">
+                        <Edit2 size={16} />
+                      </button>
                       <button onClick={() => handleSuspend(doc.id)} className="p-2.5 text-gray-300 hover:text-red-400 bg-gray-50 rounded-xl transition-all">
                         <Ban size={16} />
                       </button>
@@ -191,12 +248,23 @@ const DoctorManagement = () => {
             </tbody>
           </table>
 
-          <div className="p-10 bg-gray-50/50 flex items-center justify-between border-t border-gray-50">
-            <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">Showing {filtered.length} of {doctors.length} doctors</p>
+          {/* Pagination */}
+          <div className="p-8 bg-gray-50/50 flex items-center justify-between border-t border-gray-50">
+            <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">
+              Showing {filtered.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length}
+            </p>
             <div className="flex items-center gap-2">
-              <button className="p-3 text-gray-300 hover:text-mamacare-teal transition-all"><ChevronLeft size={20} /></button>
-              <button className="w-10 h-10 bg-mamacare-teal text-white rounded-xl font-bold text-sm">1</button>
-              <button className="p-3 text-gray-400 hover:text-mamacare-teal transition-all"><ChevronRight size={20} /></button>
+              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="p-3 text-gray-300 hover:text-mamacare-teal transition-all disabled:opacity-30">
+                <ChevronLeft size={20} />
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                <button key={p} onClick={() => setPage(p)} className={`w-10 h-10 rounded-xl font-bold text-sm transition-all ${p === page ? 'bg-mamacare-teal text-white' : 'text-gray-400 hover:bg-gray-100'}`}>
+                  {p}
+                </button>
+              ))}
+              <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="p-3 text-gray-400 hover:text-mamacare-teal transition-all disabled:opacity-30">
+                <ChevronRight size={20} />
+              </button>
             </div>
           </div>
         </div>
