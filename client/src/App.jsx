@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 import ForgotPassword from './pages/ForgotPassword';
@@ -35,6 +36,7 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<SignIn />} />
@@ -43,39 +45,48 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/reset-success" element={<ResetSuccess />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/onboarding/step-1" element={<OnboardingStep1 />} />
-        <Route path="/onboarding/complete" element={<OnboardingSummary />} />
-        <Route path="/dashboard" element={<MotherDashboard />} />
 
-        {/* Triage Flow */}
-        <Route path="/triage/symptom-profile" element={<SymptomProfile />} />
-        <Route path="/triage/severity-duration" element={<SeverityDuration />} />
-        <Route path="/triage/vitals-clinical" element={<VitalsClinical />} />
-        <Route path="/triage/analysis-results" element={<AnalysisResults />} />
-        <Route path="/triage/rest-monitor" element={<RestMonitor />} />
+        {/* Mother Protected Routes */}
+        <Route element={<ProtectedRoute allowedRoles={['Mother']} />}>
+          <Route path="/onboarding/step-1" element={<OnboardingStep1 />} />
+          <Route path="/onboarding/complete" element={<OnboardingSummary />} />
+          <Route path="/dashboard" element={<MotherDashboard />} />
+          
+          {/* Triage Flow */}
+          <Route path="/triage/symptom-profile" element={<SymptomProfile />} />
+          <Route path="/triage/severity-duration" element={<SeverityDuration />} />
+          <Route path="/triage/vitals-clinical" element={<VitalsClinical />} />
+          <Route path="/triage/analysis-results" element={<AnalysisResults />} />
+          <Route path="/triage/rest-monitor" element={<RestMonitor />} />
 
-        {/* Library & Appointments */}
-        <Route path="/library" element={<Library />} />
-        <Route path="/appointments" element={<Appointments />} />
-        <Route path="/rest-monitor" element={<RestMonitor />} />
+          {/* Library & Appointments */}
+          <Route path="/library" element={<Library />} />
+          <Route path="/appointments" element={<Appointments />} />
+          <Route path="/rest-monitor" element={<RestMonitor />} />
+        </Route>
 
-        {/* Admin Portal */}
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/doctors" element={<DoctorManagement />} />
-        <Route path="/admin/edit-doctor/:id" element={<EditDoctor />} />
-        <Route path="/admin/add-doctor" element={<AddDoctor />} />
+        {/* Admin Protected Portal */}
+        <Route element={<ProtectedRoute allowedRoles={['Admin']} />}>
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/doctors" element={<DoctorManagement />} />
+          <Route path="/admin/edit-doctor/:id" element={<EditDoctor />} />
+          <Route path="/admin/add-doctor" element={<AddDoctor />} />
+        </Route>
 
-        {/* Doctor Portal */}
-        <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
-        <Route path="/doctor/patients" element={<PatientRoster />} />
-        <Route path="/doctor/patients/:id" element={<PatientProfile />} />
-        <Route path="/doctor/appointments" element={<DoctorAppointments />} />
-        <Route path="/doctor/messaging" element={<Messaging />} />
+        {/* Doctor Protected Portal */}
+        <Route element={<ProtectedRoute allowedRoles={['Doctor']} />}>
+          <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
+          <Route path="/doctor/patients" element={<PatientRoster />} />
+          <Route path="/doctor/patients/:id" element={<PatientProfile />} />
+          <Route path="/doctor/appointments" element={<DoctorAppointments />} />
+          <Route path="/doctor/messaging" element={<Messaging />} />
+          
+          <Route path="/patients" element={<PatientsPage />} />
+          <Route path="/patient-appointments" element={<PatientAppointmentsPage />} />
+        </Route>
 
-        <Route path="/patients" element={<PatientsPage />} />
-        <Route path="/patient-appointments" element={<PatientAppointmentsPage />} />
-
-        <Route path="/" element={<Navigate to="/signup" replace />} />
+        {/* Fallback routing */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
   );
