@@ -249,8 +249,19 @@ public class DoctorsController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
-        var doctor = await _db.Doctors.FindAsync(id);
+        var doctor = await _db.Doctors
+            .Include(d => d.Certifications)
+            .FirstOrDefaultAsync(d => d.Id == id);
         if (doctor is null) return NotFound();
+
+        // Remove related records blocked by Restrict FK
+        var appointments = _db.Appointments.Where(a => a.DoctorId == id);
+        var messages = _db.Messages.Where(m => m.DoctorId == id);
+        var patientAppointments = _db.PatientAppointments.Where(a => a.DoctorId == id);
+        _db.Appointments.RemoveRange(appointments);
+        _db.Messages.RemoveRange(messages);
+        _db.PatientAppointments.RemoveRange(patientAppointments);
+
         _db.Doctors.Remove(doctor);
         await _db.SaveChangesAsync();
         return NoContent();
