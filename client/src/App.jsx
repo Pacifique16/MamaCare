@@ -29,10 +29,13 @@ import Messaging from './pages/doctor/Messaging'
 import PatientsPage from './pages/PatientsPage';
 import PatientAppointmentsPage from './pages/PatientAppointmentsPage';
 
+import LandingPage from './pages/LandingPage';
+
 function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<SignIn />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
