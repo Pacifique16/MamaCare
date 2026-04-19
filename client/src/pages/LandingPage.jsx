@@ -202,11 +202,11 @@ const LandingPage = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-background-lp w-full py-12 px-8 border-t border-gray-200">
+      <footer className="bg-background-lp w-full py-4 px-8 border-t border-gray-200">
         <div className="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto gap-4">
           <div className="space-y-1 text-center md:text-left">
             <span className="font-headline font-semibold text-lg text-mamacare-teal">MamaCare</span>
-            <p className="text-sm text-on-surface-variant-lp"> © 2026 MamaCare Digital Sanctuary. All rights reserved.</p>
+            <p className="text-[10px] font-bold text-[#005c5c]/60 uppercase tracking-widest">© 2026 MamaCare Maternal Health Platform.</p>
           </div>
           <div className="flex gap-8">
             <a className="text-sm text-on-surface-variant-lp hover:text-primary-lp transition-colors" href="#">Privacy Policy</a>

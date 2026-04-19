@@ -34,7 +34,7 @@ const MotherDashboard = () => {
   const weight = latestVital?.weightKg ?? '—';
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] font-poppins pb-20">
+    <div className="min-h-screen bg-[#FAFAFA] font-poppins pb-4">
       <Navbar />
       <main className="pt-32 px-4 md:px-8 max-w-7xl mx-auto space-y-12">
         <DashboardHero userName={mother?.fullName?.split(' ')[0] || 'Aline'} week={mother?.gestationalWeek || 28} />
@@ -49,7 +49,7 @@ const MotherDashboard = () => {
                 title="WEIGHT"
                 value={weight}
                 unit="kg"
-                status="Your progress is within normal range."
+                status=""
                 chartType="bar"
               />
               <MetricCard
@@ -96,8 +96,7 @@ const MotherDashboard = () => {
         </div>
       </main>
 
-      <footer className="pt-32 pb-12 px-8 border-t border-gray-100 mt-20">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+      <footer className="py-4 px-8 border-t border-gray-100 mt-8">        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
           <span className="text-xl font-bold text-mamacare-teal tracking-tight">MamaCare</span>
           <div className="flex flex-wrap justify-center items-center gap-8 text-[10px] font-bold text-[#006a68] uppercase tracking-widest">
             <a href="#" className="text-red-500 flex items-center gap-2"><Phone size={12} />Emergency Call</a>

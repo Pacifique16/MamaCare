@@ -2,12 +2,12 @@ import React from 'react';
 
 const AdminFooter = () => {
   return (
-    <footer className="py-12 border-t border-gray-100 mt-20 px-8">
+    <footer className="py-4 border-t border-gray-100 mt-8 px-8">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
         <div className="space-y-1">
           <h4 className="text-sm font-bold text-gray-900 tracking-tight">MamaCare Admin Portal</h4>
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-            © 2026 MamaCare Platform. All rights reserved.
+          <p className="text-[10px] font-bold text-[#005c5c]/60 uppercase tracking-widest">
+            © 2026 MamaCare Maternal Health Platform.
           </p>
         </div>
 

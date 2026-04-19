@@ -30,7 +30,7 @@ const Library = () => {
   }));
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] font-poppins pb-20">
+    <div className="min-h-screen bg-[#FAFAFA] font-poppins pb-4">
       <Navbar />
 
       <main className="pt-32 px-4 md:px-8 max-w-7xl mx-auto space-y-12">
@@ -156,7 +156,7 @@ const Library = () => {
         </section>
       </main>
 
-      <footer className="pt-32 pb-12 px-8 border-t border-gray-100 mt-20">
+      <footer className="py-4 px-8 border-t border-gray-100 mt-8">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
           <span className="text-xl font-bold text-mamacare-teal tracking-tight">MamaCare</span>
           <div className="flex flex-wrap justify-center items-center gap-8 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
@@ -165,7 +165,7 @@ const Library = () => {
             <a href="/help" className="hover:text-mamacare-teal transition-colors">Help Center</a>
             <a href="/terms" className="hover:text-mamacare-teal transition-colors">Terms</a>
           </div>
-          <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">© 2026 MamaCare Maternal Health Platform.</p>
+          <p className="text-[10px] font-bold text-[#005c5c]/60 uppercase tracking-widest">© 2026 MamaCare Maternal Health Platform.</p>
         </div>
       </footer>
     </div>

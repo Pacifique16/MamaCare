@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 const Footer = () => {
     const navigate = useNavigate();
   return (
-    <footer className="py-12 bg-white border-t border-gray-100">
+    <footer className="py-4 bg-white border-t border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2">
@@ -16,8 +16,8 @@ const Footer = () => {
             <Link to="/contact" className="text-gray-500 hover:text-mamacare-teal text-sm transition-colors">Contact Support</Link>
           </div>
 
-          <div className="text-gray-400 text-sm">
-            © 2026 MamaCare Digital Sanctuary. All rights reserved.
+          <div className="text-[10px] font-bold text-[#005c5c]/60 uppercase tracking-widest">
+            © 2026 MamaCare Maternal Health Platform.
           </div>
         </div>
       </div>
