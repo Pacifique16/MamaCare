@@ -36,9 +36,9 @@ const Navbar = () => {
             <Link
               key={link.name}
               to={link.path}
-              className={`text-sm font-bold transition-colors relative py-2 ${location.pathname.startsWith(link.path)
-                ? 'text-mamacare-teal after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-mamacare-teal'
-                : 'text-gray-800 hover:text-mamacare-teal'
+              className={`text-sm transition-colors relative py-2 ${location.pathname.startsWith(link.path)
+                ? 'text-mamacare-teal font-bold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-mamacare-teal'
+                : 'text-gray-800 font-medium hover:text-mamacare-teal'
                 }`}
             >
               {link.name}

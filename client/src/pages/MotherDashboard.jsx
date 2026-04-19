@@ -5,7 +5,7 @@ import DashboardHero from '../components/dashboard/DashboardHero';
 import TriageCard from '../components/dashboard/TriageCard';
 import AppointmentCard from '../components/dashboard/AppointmentCard';
 import LibraryResource from '../components/dashboard/LibraryResource';
-import { ArrowRight, Phone } from 'lucide-react';
+import { ArrowRight, Phone, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { mothersApi, vitalsApi, appointmentsApi, libraryApi } from '../api/services';
@@ -55,20 +55,41 @@ const MotherDashboard = () => {
         </div>
 
         {/* Resources Section Moved Below for better focus */}
-        <section className="space-y-8">
-          <div className="flex justify-between items-center px-2">
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 font-headline">Resources for You</h2>
-            <Link to="/library" className="text-sm font-bold uppercase tracking-[0.2em] text-mamacare-teal hover:opacity-70 transition-opacity">
-              View All
+        <section className="space-y-10 pt-10">
+          <div className="flex justify-between items-end px-2">
+            <div>
+              <h2 className="text-4xl font-bold tracking-tight text-gray-900 font-headline leading-none">Resources for You</h2>
+              <p className="text-gray-500 font-medium mt-2">Curated healthcare guidance for your healthy pregnancy</p>
+            </div>
+            <Link to="/library" className="group flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.2em] text-mamacare-teal hover:opacity-70 transition-all">
+              View All Resources
+              <ChevronRight size={18} className="transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
-            {articles.length > 0 ? articles.map(a => (
-              <LibraryResource key={a.id} title={a.title} category={a.category.toUpperCase()} image={a.imageUrl} />
+          
+          <div className="grid grid-cols-1 gap-10">
+            {articles.length > 0 ? articles.map((a, i) => (
+              <LibraryResource 
+                key={a.id} 
+                title={a.title} 
+                category={a.category.toUpperCase()} 
+                image={a.imageUrl} 
+                index={i}
+              />
             )) : (
               <>
-                <LibraryResource title="The Third Trimester Diet: What to Eat" category="NUTRITION" image="https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&q=80&w=200" />
-                <LibraryResource title="Pregnancy Safety: Gentle Movement Guide" category="SAFETY" image="https://images.unsplash.com/photo-1518611012118-2969c63b07b7?auto=format&fit=crop&q=80&w=200" />
+                <LibraryResource 
+                  title="The Third Trimester Diet: What to Eat" 
+                  category="NUTRITION" 
+                  image="https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&q=80&w=600" 
+                  index={0}
+                />
+                <LibraryResource 
+                  title="Pregnancy Safety: Gentle Movement Guide" 
+                  category="SAFETY" 
+                  image="https://images.unsplash.com/photo-1518611012118-2969c63b07b7?auto=format&fit=crop&q=80&w=600" 
+                  index={1}
+                />
               </>
             )}
           </div>
