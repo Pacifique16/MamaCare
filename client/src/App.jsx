@@ -11,10 +11,7 @@ import Contact from './pages/Contact';
 import OnboardingStep1 from './pages/OnboardingStep1';
 import OnboardingSummary from './pages/OnboardingSummary';
 import MotherDashboard from './pages/MotherDashboard';
-import SymptomProfile from './pages/triage/SymptomProfile';
-import SeverityDuration from './pages/triage/SeverityDuration';
-import VitalsClinical from './pages/triage/VitalsClinical';
-import AnalysisResults from './pages/triage/AnalysisResults';
+import TriageWizard from './pages/triage/TriageWizard';
 import Library from './pages/Library';
 import Appointments from './pages/Appointments';
 import RestMonitor from './pages/RestMonitor';
@@ -53,10 +50,7 @@ function App() {
           <Route path="/dashboard" element={<MotherDashboard />} />
           
           {/* Triage Flow */}
-          <Route path="/triage/symptom-profile" element={<SymptomProfile />} />
-          <Route path="/triage/severity-duration" element={<SeverityDuration />} />
-          <Route path="/triage/vitals-clinical" element={<VitalsClinical />} />
-          <Route path="/triage/analysis-results" element={<AnalysisResults />} />
+          <Route path="/triage" element={<TriageWizard />} />
           <Route path="/triage/rest-monitor" element={<RestMonitor />} />
 
           {/* Library & Appointments */}

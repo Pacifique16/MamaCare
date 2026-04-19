@@ -16,7 +16,7 @@ const Navbar = () => {
 
   const links = [
     { name: 'Home', path: '/dashboard', icon: LayoutDashboard },
-    { name: 'Triage', path: '/triage/symptom-profile', icon: Stethoscope },
+    { name: 'Triage', path: '/triage', icon: Stethoscope },
     { name: 'Library', path: '/library', icon: BookOpen },
     { name: 'Appointments', path: '/appointments', icon: CalendarIcon },
   ];

@@ -39,7 +39,7 @@ const MotherDashboard = () => {
         <div className="grid lg:grid-cols-12 gap-8 items-stretch">
           {/* Main Action Center: Triage & Appointment */}
           <div className="lg:col-span-8">
-            <Link to="/triage/symptom-profile" className="block h-full group">
+            <Link to="/triage" className="block h-full group">
               <TriageCard />
             </Link>
           </div>

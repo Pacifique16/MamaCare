@@ -68,18 +68,16 @@ const Library = () => {
 
       <main className="pt-32 pb-20 max-w-[1200px] mx-auto px-6">
         {/* Hero & Controls Section */}
-        <header className="flex flex-col gap-12 mb-20">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-            <div className="max-w-2xl">
-              <h1 className="text-5xl md:text-6xl font-black tracking-tight text-[#003e3d] mb-4">Health Library</h1>
-              <p className="text-gray-500 text-lg leading-relaxed italic font-medium">
-                Your sanctuary for clinical guidance, nurturing wisdom, and maternal support.
-              </p>
-            </div>
+        <header className="flex flex-col gap-12 mb-20 text-center items-center">
+          <div className="max-w-2xl mx-auto">
+            <h1 className="text-5xl md:text-6xl font-black tracking-tight text-[#003e3d] mb-4">Health Library</h1>
+            <p className="text-gray-500 text-lg leading-relaxed italic font-medium">
+              Your sanctuary for clinical guidance, nurturing, and maternal support.
+            </p>
           </div>
 
           {/* Search & Filter Area */}
-          <div className="flex flex-col lg:flex-row gap-6 items-center">
+          <div className="flex flex-col lg:flex-row gap-6 items-center w-full">
             <div className="relative w-full lg:flex-1 group">
               <Search size={22} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 transition-colors group-focus-within:text-mamacare-teal" />
               <input 
@@ -91,7 +89,7 @@ const Library = () => {
               />
             </div>
             
-            <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2 w-full lg:w-auto px-1">
+            <div className="flex flex-wrap justify-center gap-3 w-full lg:w-auto px-1">
               {UI_CATEGORIES.map(cat => (
                 <button 
                   key={cat.id}
