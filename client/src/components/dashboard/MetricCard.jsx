@@ -2,13 +2,13 @@ import React from 'react';
 
 const MetricCard = ({ title, value, unit, status, chartType = 'bar' }) => {
   return (
-    <div className="bg-white rounded-[2rem] p-8 shadow-card border border-gray-50 flex flex-col gap-6 group hover:border-mamacare-teal/10 transition-all duration-300 relative overflow-hidden">
+    <div className="bg-white rounded-[2rem] p-8 shadow-card border border-[#008484]/10 flex flex-col gap-6 group hover:border-[#005c5c]/20 transition-all duration-300 relative overflow-hidden">
       <div className="flex justify-between items-start">
         <div className="space-y-1">
-          <h3 className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400">{title}</h3>
+          <h3 className="text-[10px] font-extrabold uppercase tracking-widest text-[#006a68]">{title}</h3>
           <div className="flex items-baseline gap-1">
-            <span className="text-3xl font-bold text-gray-900">{value}</span>
-            <span className="text-sm font-bold text-gray-400">{unit}</span>
+            <span className="text-3xl font-bold text-[#003e3d]">{value}</span>
+            <span className="text-sm font-bold text-[#006a68]">{unit}</span>
           </div>
         </div>
         <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
@@ -58,7 +58,7 @@ const MetricCard = ({ title, value, unit, status, chartType = 'bar' }) => {
 
       <div className="flex items-center gap-2 mt-auto">
         <div className={`w-1.5 h-1.5 rounded-full ${chartType === 'bar' ? 'bg-mamacare-teal' : 'bg-red-400'}`}></div>
-        <p className="text-[10px] font-bold text-gray-400 italic">
+        <p className="text-[10px] font-bold text-[#005c5c]/80 italic">
           {status}
         </p>
       </div>

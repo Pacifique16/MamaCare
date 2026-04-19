@@ -76,7 +76,7 @@ const MotherDashboard = () => {
 
             <div className="bg-white rounded-[2.5rem] p-8 space-y-8 border border-gray-50 flex flex-col shadow-card">
               <div className="flex justify-between items-center">
-                <h3 className="text-xl font-bold text-gray-900">Library Resources</h3>
+                <h3 className="text-xl font-bold text-[#003e3d]">Library Resources</h3>
                 <Link to="/library" className="text-mamacare-teal flex items-center gap-1 group">
                   <span className="text-xs font-bold uppercase tracking-widest group-hover:underline">Browse Full Library</span>
                   <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
@@ -100,12 +100,12 @@ const MotherDashboard = () => {
       <footer className="pt-32 pb-12 px-8 border-t border-gray-100 mt-20">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
           <span className="text-xl font-bold text-mamacare-teal tracking-tight">MamaCare</span>
-          <div className="flex flex-wrap justify-center items-center gap-8 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+          <div className="flex flex-wrap justify-center items-center gap-8 text-[10px] font-bold text-[#006a68] uppercase tracking-widest">
             <a href="#" className="text-red-500 flex items-center gap-2"><Phone size={12} />Emergency Call</a>
             <a href="#" className="hover:text-mamacare-teal transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-mamacare-teal transition-colors">Help Center</a>
           </div>
-          <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">© 2026 MamaCare Maternal Health Platform.</p>
+          <p className="text-[10px] font-bold text-[#005c5c]/60 uppercase tracking-widest">© 2026 MamaCare Maternal Health Platform.</p>
         </div>
       </footer>
     </div>
