@@ -130,14 +130,14 @@ const Appointments = () => {
                 <h3 className="text-2xl font-bold text-gray-900">2. Select Time & Details</h3>
               </div>
               <div className="space-y-4">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Reason for Visit</label>
+                <label className="text-[10px] font-bold text-gray-700 uppercase tracking-widest">Reason for Visit</label>
                 <div className="bg-[#E5EAEB] rounded-2xl p-6 flex justify-between items-center cursor-pointer group">
                   <span className="font-bold text-gray-900">Routine Check-up</span>
                   <ChevronRight size={20} className="text-gray-400 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
               <div className="space-y-6">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Available Times</label>
+                <label className="text-[10px] font-bold text-gray-700 uppercase tracking-widest">Available Times</label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {times.map(time => (
                     <button
@@ -169,7 +169,7 @@ const Appointments = () => {
             <div className="flex justify-between items-end">
               <div>
                 <h2 className="text-4xl font-bold text-gray-900 tracking-tight">Upcoming Appointments</h2>
-                <p className="text-gray-400 font-medium">Manage your scheduled healthcare visits</p>
+                <p className="text-gray-700 font-medium">Manage your scheduled healthcare visits</p>
               </div>
               <button className="text-mamacare-teal font-bold flex items-center gap-2 group text-sm uppercase tracking-widest">
                 View History
@@ -217,7 +217,7 @@ const Appointments = () => {
                         </div>
                         <div>
                           <p className="text-sm font-bold text-gray-900">{item.doctorName}</p>
-                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Primary Care</p>
+                          <p className="text-[10px] font-bold text-gray-700 uppercase tracking-widest">Primary Care</p>
                         </div>
                       </div>
 

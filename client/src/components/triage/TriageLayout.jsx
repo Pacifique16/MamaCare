@@ -13,7 +13,7 @@ const TriageLayout = ({ children, step = 1, totalSteps = 4, stepTitle = "Symptom
       <main className="pt-32 px-4 md:px-8 max-w-7xl mx-auto space-y-12">
         {/* Progress Header */}
         <div className="space-y-4">
-            <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
+            <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-[0.2em] text-gray-700">
                 <span>Step {step} of {totalSteps}: {stepTitle}</span>
                 <span>{progress}% Complete</span>
             </div>
@@ -26,7 +26,7 @@ const TriageLayout = ({ children, step = 1, totalSteps = 4, stepTitle = "Symptom
         </div>
 
         {/* Content Area */}
-        <div className="min-h-[600px]">
+        <div className="min-h-[400px]">
             {children}
         </div>
       </main>

@@ -38,7 +38,7 @@ const Library = () => {
         {/* Header */}
         <div className="text-center space-y-4">
           <h1 className="text-7xl font-bold text-[#005C5C] tracking-tight">Health Library</h1>
-          <p className="text-gray-400 font-medium max-w-2xl mx-auto text-lg leading-relaxed">
+          <p className="text-gray-700 font-medium max-w-2xl mx-auto text-lg leading-relaxed">
             Empowering your journey with evidence-based guidance. Explore curated articles on maternal health and newborn care.
           </p>
         </div>
@@ -127,7 +127,7 @@ const Library = () => {
           <div className="flex justify-between items-end">
             <div className="space-y-2">
               <h2 className="text-4xl font-bold text-gray-900 tracking-tight">Explore by Category</h2>
-              <p className="text-gray-400 font-medium">Specialized knowledge for every stage of motherhood.</p>
+              <p className="text-gray-700 font-medium">Specialized knowledge for every stage of motherhood.</p>
             </div>
             <button className="text-mamacare-teal font-bold flex items-center gap-2 group text-sm uppercase tracking-widest">
               View All Categories

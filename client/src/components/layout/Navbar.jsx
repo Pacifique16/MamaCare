@@ -37,7 +37,7 @@ const Navbar = () => {
               to={link.path}
               className={`text-sm font-bold transition-colors relative py-2 ${location.pathname.startsWith(link.path)
                 ? 'text-mamacare-teal after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-mamacare-teal'
-                : 'text-gray-400 hover:text-mamacare-teal'
+                : 'text-gray-800 hover:text-mamacare-teal'
                 }`}
             >
               {link.name}
@@ -49,7 +49,7 @@ const Navbar = () => {
           <button className="p-2 text-mamacare-teal bg-[#E6F3F3] rounded-full">
             <Activity size={18} />
           </button>
-          <button className="p-2 text-gray-400">
+          <button className="p-2 text-gray-700 hover:text-mamacare-teal transition-colors">
             <Bell size={20} />
           </button>
           <div className="relative">

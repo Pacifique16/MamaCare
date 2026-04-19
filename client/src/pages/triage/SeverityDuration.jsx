@@ -49,7 +49,7 @@ const SeverityDuration = () => {
                                             <div className="w-2 h-2 rounded-full bg-mamacare-teal"></div>
                                             <h3 className="text-xl font-bold text-gray-900">Headache</h3>
                                         </div>
-                                        <span className="px-5 py-2 bg-gray-100 rounded-full text-[10px] font-bold uppercase tracking-widest text-gray-400">SYMPTOM 01</span>
+                                        <span className="px-5 py-2 bg-gray-100 rounded-full text-[10px] font-bold uppercase tracking-widest text-gray-700">SYMPTOM 01</span>
                                     </div>
                                     <div className="grid grid-cols-3 gap-6">
                                         {severityLevels.map((lvl) => (
@@ -76,7 +76,7 @@ const SeverityDuration = () => {
                                             <div className="w-2 h-2 rounded-full bg-mamacare-teal"></div>
                                             <h3 className="text-xl font-bold text-gray-900">Blurred Vision</h3>
                                         </div>
-                                        <span className="px-5 py-2 bg-gray-100 rounded-full text-[10px] font-bold uppercase tracking-widest text-gray-400">SYMPTOM 02</span>
+                                        <span className="px-5 py-2 bg-gray-100 rounded-full text-[10px] font-bold uppercase tracking-widest text-gray-700">SYMPTOM 02</span>
                                     </div>
                                     <div className="grid grid-cols-3 gap-6">
                                         {severityLevels.map((lvl) => (
