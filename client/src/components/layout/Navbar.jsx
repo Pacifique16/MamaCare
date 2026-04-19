@@ -1,4 +1,4 @@
-import { User, ChevronDown, Globe, Bell, LayoutDashboard, Stethoscope, BookOpen, Calendar as CalendarIcon, Heart, Activity, LogOut } from 'lucide-react';
+import { User, ChevronDown, Globe, Bell, LayoutDashboard, Stethoscope, BookOpen, Calendar as CalendarIcon, Heart, Activity, LogOut, Baby } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
@@ -25,7 +25,8 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 px-8 py-4">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2 group">
+          <Baby className="text-mamacare-teal transition-transform group-hover:rotate-12" size={24} />
           <span className="text-xl font-bold text-mamacare-teal tracking-tighter">MamaCare</span>
         </Link>
 
