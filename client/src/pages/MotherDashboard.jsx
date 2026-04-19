@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
 import DashboardHero from '../components/dashboard/DashboardHero';
 import TriageCard from '../components/dashboard/TriageCard';
 import MetricCard from '../components/dashboard/MetricCard';
@@ -96,16 +97,7 @@ const MotherDashboard = () => {
         </div>
       </main>
 
-      <footer className="py-4 px-8 border-t border-gray-100 mt-8">        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-          <span className="text-xl font-bold text-mamacare-teal tracking-tight">MamaCare</span>
-          <div className="flex flex-wrap justify-center items-center gap-8 text-[10px] font-bold text-[#006a68] uppercase tracking-widest">
-            <a href="#" className="text-red-500 flex items-center gap-2"><Phone size={12} />Emergency Call</a>
-            <a href="#" className="hover:text-mamacare-teal transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-mamacare-teal transition-colors">Help Center</a>
-          </div>
-          <p className="text-[10px] font-bold text-[#005c5c]/60 uppercase tracking-widest">© 2026 MamaCare Maternal Health Platform.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

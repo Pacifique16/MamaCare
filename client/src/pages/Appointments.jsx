@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
 import { AlertCircle, Phone, Calendar as CalendarIcon, Clock, ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react';
 import { appointmentsApi } from '../api/services';
 import { useAuth } from '../context/AuthContext';
@@ -33,7 +34,7 @@ const Appointments = () => {
   const badgeBg = (type) => type === 'UrgentFollowUp' ? 'bg-red-50 text-red-500' : 'bg-teal-50 text-mamacare-teal';
 
   return (
-    <div className="min-h-screen bg-[#F5F7F8] font-poppins pb-20 overflow-x-hidden">
+    <div className="min-h-screen bg-[#F5F7F8] font-poppins pb-4 overflow-x-hidden">
       <Navbar />
 
       <div className="flex h-full pt-20">
@@ -236,6 +237,7 @@ const Appointments = () => {
           </section>
         </main>
       </div>
+      <Footer />
     </div>
   );
 };
