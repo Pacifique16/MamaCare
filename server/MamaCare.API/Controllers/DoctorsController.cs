@@ -41,7 +41,10 @@ public class DoctorsController : ControllerBase
             d.Institution, d.YearsOfExperience, d.Bio, d.Status, d.CertificationUrl,
             d.Certifications.OrderByDescending(c => c.UploadedAt)
                 .Select(c => new CertificationDto(c.Id, c.FileName, c.Url, c.UploadedAt))
-                .ToList()));
+                .ToList(),
+            string.IsNullOrEmpty(d.Languages)
+                ? new List<string>()
+                : d.Languages.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()));
     }
 
     [HttpGet("{id}/certifications")]
@@ -76,6 +79,46 @@ public class DoctorsController : ControllerBase
         _db.DoctorCertifications.Remove(cert);
         await _db.SaveChangesAsync();
         return NoContent();
+    }
+
+    [HttpGet("{id}/schedule")]
+    public async Task<IActionResult> GetSchedule(int id)
+    {
+        var appointments = await _db.PatientAppointments
+            .Where(a => a.DoctorId == id)
+            .Include(a => a.Patient)
+            .OrderBy(a => a.AppointmentDate)
+            .Select(a => new {
+                a.Id,
+                PatientName = a.Patient.FullName,
+                PatientImage = (string?)null,
+                a.AppointmentDate,
+                Type = a.Type.ToString(),
+                Status = a.Status.ToString(),
+                a.Notes
+            })
+            .ToListAsync();
+        return Ok(appointments);
+    }
+
+    [HttpGet("{id}/activity")]
+    public async Task<IActionResult> GetActivity(int id)
+    {
+        var appointments = await _db.PatientAppointments
+            .Where(a => a.DoctorId == id)
+            .Include(a => a.Patient)
+            .OrderByDescending(a => a.CreatedAt)
+            .Take(20)
+            .Select(a => new {
+                a.Id,
+                PatientName = a.Patient.FullName,
+                Type = a.Type.ToString(),
+                Status = a.Status.ToString(),
+                a.CreatedAt,
+                a.AppointmentDate
+            })
+            .ToListAsync();
+        return Ok(appointments);
     }
 
     [HttpGet("{id}/patients")]
@@ -161,9 +204,23 @@ public class DoctorsController : ControllerBase
             doctor.Status = parsedStatus;
         if (dto.ProfileImageUrl is not null) doctor.User.ProfileImageUrl = dto.ProfileImageUrl;
         if (dto.CertificationUrl is not null) doctor.CertificationUrl = dto.CertificationUrl;
+        if (dto.Languages is not null) doctor.Languages = string.Join(',', dto.Languages.Select(l => l.Trim()).Where(l => l.Length > 0));
 
         await _db.SaveChangesAsync();
-        return Ok(doctor);
+        return Ok(new { doctor.Id, doctor.Status });
+    }
+
+    [HttpPatch("{id}/reset-password")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> ResetPassword(int id, [FromBody] string newPassword)
+    {
+        var doctor = await _db.Doctors.Include(d => d.User).FirstOrDefaultAsync(d => d.Id == id);
+        if (doctor is null) return NotFound();
+        if (string.IsNullOrWhiteSpace(newPassword) || newPassword.Length < 6)
+            return BadRequest(new { message = "Password must be at least 6 characters." });
+        doctor.User.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+        await _db.SaveChangesAsync();
+        return Ok(new { message = "Password updated successfully." });
     }
 
     [HttpPatch("{id}/verify")]

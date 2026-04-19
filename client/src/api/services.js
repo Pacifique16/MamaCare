@@ -24,6 +24,9 @@ export const doctorsApi = {
   getCertifications: (id) => api.get(`/doctors/${id}/certifications`),
   addCertification: (id, data) => api.post(`/doctors/${id}/certifications`, data),
   deleteCertification: (id, certId) => api.delete(`/doctors/${id}/certifications/${certId}`),
+  getSchedule: (id) => api.get(`/doctors/${id}/schedule`),
+  getActivity: (id) => api.get(`/doctors/${id}/activity`),
+  resetPassword: (id, password) => api.patch(`/doctors/${id}/reset-password`, JSON.stringify(password), { headers: { 'Content-Type': 'application/json' } }),
 }
 
 export const appointmentsApi = {
