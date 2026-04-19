@@ -12,16 +12,17 @@ const StepIndicator = ({ currentStep }) => {
 
   return (
     <div className="flex items-center justify-between max-w-2xl mx-auto mb-16 relative">
-      {/* Background Line */}
-      <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-100 -translate-y-1/2 z-0 rounded-full" />
-      
-      {/* Progress Line */}
-      <motion.div 
-        className="absolute top-1/2 left-0 h-1 bg-mamacare-teal -translate-y-1/2 z-0 rounded-full"
-        initial={{ width: '0%' }}
-        animate={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
-        transition={{ duration: 0.8, ease: "circOut" }}
-      />
+      {/* Background & Progress Line Container */}
+      <div className="absolute top-1/2 left-0 right-0 h-1 px-6 -translate-y-1/2 z-0">
+        <div className="w-full h-full bg-gray-100 rounded-full overflow-hidden relative">
+          <motion.div 
+            className="absolute top-0 left-0 h-full bg-mamacare-teal rounded-full transition-all duration-1000 ease-out shadow-lg shadow-mamacare-teal/20"
+            initial={{ width: '0%' }}
+            animate={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
+            transition={{ duration: 0.8, ease: "circOut" }}
+          />
+        </div>
+      </div>
 
       {steps.map((step) => {
         const Icon = step.icon;
