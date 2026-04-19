@@ -76,22 +76,6 @@ const Library = () => {
                 Your sanctuary for clinical guidance, nurturing wisdom, and maternal support.
               </p>
             </div>
-            
-            {/* Bilingual Toggle */}
-            <div className="inline-flex p-1.5 bg-gray-50 rounded-full border border-gray-100">
-              <button 
-                onClick={() => setLanguage('English')}
-                className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${language === 'English' ? 'bg-[#003e3d] text-white' : 'text-gray-400 hover:text-gray-600'}`}
-              >
-                English
-              </button>
-              <button 
-                onClick={() => setLanguage('Kinyarwanda')}
-                className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${language === 'Kinyarwanda' ? 'bg-[#003e3d] text-white' : 'text-gray-400 hover:text-gray-600'}`}
-              >
-                Kinyarwanda
-              </button>
-            </div>
           </div>
 
           {/* Search & Filter Area */}
@@ -103,7 +87,7 @@ const Library = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search for nutrition, safety, or newborn care..." 
-                className="w-full pl-16 pr-6 py-5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-mamacare-teal/20 text-gray-700 placeholder:text-gray-400 transition-all shadow-inner"
+                className="w-full pl-16 pr-6 py-5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-mamacare-teal/20 text-gray-700 font-poppins placeholder:text-gray-400 transition-all shadow-inner"
               />
             </div>
             
@@ -112,7 +96,7 @@ const Library = () => {
                 <button 
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`whitespace-nowrap px-8 py-3 rounded-full font-bold text-xs uppercase tracking-widest transition-all active:scale-95 ${activeCategory === cat.id ? 'bg-[#003e3d] text-white' : 'bg-white text-gray-400 border border-gray-100 hover:text-mamacare-teal'}`}
+                  className={`whitespace-nowrap px-8 py-3 rounded-full font-semibold font-poppins text-sm transition-all active:scale-95 ${activeCategory === cat.id ? 'bg-[#003e3d] text-white' : 'bg-white text-gray-700 border border-gray-100 hover:text-mamacare-teal'}`}
                 >
                   {cat.label}
                 </button>
