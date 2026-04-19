@@ -1,8 +1,18 @@
-import { User, ChevronDown, Globe, Bell, LayoutDashboard, Stethoscope, BookOpen, Calendar as CalendarIcon, Heart, Activity } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { User, ChevronDown, Globe, Bell, LayoutDashboard, Stethoscope, BookOpen, Calendar as CalendarIcon, Heart, Activity, LogOut } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   const links = [
     { name: 'Home', path: '/dashboard', icon: LayoutDashboard },
@@ -42,8 +52,25 @@ const Navbar = () => {
           <button className="p-2 text-gray-400">
             <Bell size={20} />
           </button>
-          <div className="w-10 h-10 rounded-full border-2 border-mamacare-teal/20 overflow-hidden">
-            <User size={20} className="m-auto" />
+          <div className="relative">
+            <button 
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="w-10 h-10 rounded-full border-2 border-mamacare-teal/20 overflow-hidden flex items-center justify-center hover:bg-mamacare-teal/5 transition-colors focus:outline-none"
+            >
+              <User size={20} className="text-gray-600 m-auto" />
+            </button>
+            
+            {isDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 overflow-hidden z-50">
+                <button
+                  onClick={handleLogout}
+                  className="w-full px-4 py-3 text-left text-sm font-bold text-red-500 hover:bg-red-50 flex items-center gap-2 transition-colors"
+                >
+                  <LogOut size={16} />
+                  Sign Out
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
