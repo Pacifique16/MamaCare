@@ -137,7 +137,7 @@ const AddDoctor = () => {
                             <div className="flex-1 grid md:grid-cols-1 gap-8 w-full">
                                <div className="grid md:grid-cols-2 gap-8">
                                   <div className="space-y-3">
-                                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1 font-outfit">Full Name</label>
+                                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1 font-poppins">Full Name</label>
                                      <input 
                                         type="text" 
                                         value={form.fullName}
@@ -210,7 +210,7 @@ const AddDoctor = () => {
                    {/* Section 2: Credentials & Verification */}
                    <div className="space-y-10 animate-in-up duration-700">
                       <div className="space-y-2">
-                        <h2 className="text-4xl font-bold text-gray-900 tracking-tight font-outfit">Credentials & Verification</h2>
+                        <h2 className="text-4xl font-bold text-gray-900 tracking-tight font-poppins">Credentials & Verification</h2>
                         <p className="text-gray-400 font-medium">Verification documents are required to grant system-wide prescription and surgery access.</p>
                       </div>
 

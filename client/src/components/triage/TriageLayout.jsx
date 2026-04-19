@@ -6,7 +6,7 @@ const TriageLayout = ({ children, step = 1, totalSteps = 4, stepTitle = "Symptom
   const progress = (step / totalSteps) * 100;
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] font-outfit pb-20">
+    <div className="min-h-screen bg-[#FAFAFA] font-poppins pb-20">
       <Navbar />
 
       <main className="pt-32 px-4 md:px-8 max-w-7xl mx-auto space-y-12">

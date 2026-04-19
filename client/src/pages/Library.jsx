@@ -30,7 +30,7 @@ const Library = () => {
   }));
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] font-outfit pb-20">
+    <div className="min-h-screen bg-[#FAFAFA] font-poppins pb-20">
       <Navbar />
 
       <main className="pt-32 px-4 md:px-8 max-w-7xl mx-auto space-y-12">
@@ -65,7 +65,7 @@ const Library = () => {
             ) : featured ? (
               <>
                 <img
-                  src={featured.imageUrl || 'https://images.unsplash.com/photo-1544126592-807daa2b569b?auto=format&fit=crop&q=80&w=2000'}
+                  src={featured.imageUrl && !featured.imageUrl.includes('unsplash') ? featured.imageUrl : '/SleepingPrWoman.jpg'}
                   alt={featured.title}
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-110"
                 />

@@ -15,7 +15,7 @@ const DoctorLayout = ({ children, title, subtitle, activeActionButton }) => {
         navigate('/login');
     };
     return (
-        <div className="flex min-h-screen bg-[#F5F7F8] font-outfit">
+        <div className="flex min-h-screen bg-[#F5F7F8] font-poppins">
             <DoctorSidebar />
             
             <div className="flex-1 flex flex-col min-w-0">

@@ -4,7 +4,7 @@ import { AlertCircle, Phone, MessageSquare, BookOpen, Clock, Activity, Scale, Sh
 
 const RestMonitor = () => {
    return (
-      <div className="min-h-screen bg-[#FDFDFD] font-outfit pb-20 overflow-x-hidden">
+      <div className="min-h-screen bg-[#FDFDFD] font-poppins pb-20 overflow-x-hidden">
          {/* Top Red Alert Bar */}
          <div className="fixed top-20 left-0 right-0 z-40 bg-[#BA1A1A] text-white py-3 px-8 flex items-center justify-between shadow-xl animate-pulse">
             <div className="flex items-center gap-3">

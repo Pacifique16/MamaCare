@@ -33,7 +33,7 @@ const Appointments = () => {
   const badgeBg = (type) => type === 'UrgentFollowUp' ? 'bg-red-50 text-red-500' : 'bg-teal-50 text-mamacare-teal';
 
   return (
-    <div className="min-h-screen bg-[#F5F7F8] font-outfit pb-20 overflow-x-hidden">
+    <div className="min-h-screen bg-[#F5F7F8] font-poppins pb-20 overflow-x-hidden">
       <Navbar />
 
       <div className="flex h-full pt-20">

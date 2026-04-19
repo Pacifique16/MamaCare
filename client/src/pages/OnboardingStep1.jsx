@@ -57,7 +57,7 @@ const OnboardingStep1 = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] font-outfit pb-20">
+    <div className="min-h-screen bg-[#FAFAFA] font-poppins pb-20">
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 px-8 py-5">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <span className="text-2xl font-bold text-[#005C5C] tracking-tight">MamaCare</span>

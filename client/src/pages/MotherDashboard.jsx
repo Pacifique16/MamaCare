@@ -34,7 +34,7 @@ const MotherDashboard = () => {
   const weight = latestVital?.weightKg ?? '—';
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] font-outfit pb-20">
+    <div className="min-h-screen bg-[#FAFAFA] font-poppins pb-20">
       <Navbar />
       <main className="pt-32 px-4 md:px-8 max-w-7xl mx-auto space-y-12">
         <DashboardHero userName={mother?.fullName?.split(' ')[0] || 'Aline'} week={mother?.gestationalWeek || 28} />
@@ -74,12 +74,11 @@ const MotherDashboard = () => {
               <AppointmentCard />
             )}
 
-            <div className="bg-white rounded-[2.5rem] p-8 space-y-8 border border-gray-50 flex flex-col shadow-card">
-              <div className="flex justify-between items-center">
-                <h3 className="text-xl font-bold text-[#003e3d]">Library Resources</h3>
-                <Link to="/library" className="text-mamacare-teal flex items-center gap-1 group">
-                  <span className="text-xs font-bold uppercase tracking-widest group-hover:underline">Browse Full Library</span>
-                  <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+            <div className="space-y-6">
+              <div className="flex justify-between items-center px-2">
+                <h3 className="font-headline text-xl font-bold tracking-tight">Resources for You</h3>
+                <Link to="/library" className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-[#007B83] hover:opacity-70 transition-opacity">
+                  View All
                 </Link>
               </div>
               <div className="space-y-4">

@@ -1,19 +1,23 @@
 import React from 'react';
-import { ChevronRight } from 'lucide-react';
 
 const LibraryResource = ({ title, category, image }) => {
+  let displayImage = image;
+  if (title?.includes('Safe Exercises for Pregnancy') || image?.includes('1518611012118-2969c63b07b7')) {
+    displayImage = '/sportsprWoman.jpg';
+  } else if (title?.includes('Safe Sleep Positions') || image?.includes('1544126592-807daa2b569b')) {
+    displayImage = '/SleepingPrWoman.jpg';
+  }
+
   return (
-    <div className="flex items-center gap-4 group cursor-pointer p-2 rounded-2xl hover:bg-[#4cafad]/5 transition-all duration-300">
-      <div className="w-16 h-16 rounded-xl overflow-hidden shadow-sm border border-[#008484]/10 flex-shrink-0">
-        <img src={image} alt={title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+    <div className="bg-white p-4 rounded-lg shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] flex items-center gap-4 hover:bg-slate-50 transition-colors cursor-pointer group">
+      <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+        <img src={displayImage} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
       </div>
-      <div className="flex-1 min-w-0">
-        <p className={`text-[10px] font-extrabold uppercase tracking-widest mb-1 ${
-            category === 'NUTRITION' ? 'text-mamacare-teal' : 'text-blue-400'
-        }`}>{category}</p>
-        <h4 className="text-sm font-bold text-[#003e3d] leading-tight truncate-2-lines">{title}</h4>
+      <div>
+        <span className="text-[9px] font-extrabold uppercase tracking-[0.2em] text-[#007B83]">{category}</span>
+        <h5 className="font-bold text-slate-900 leading-snug">{title}</h5>
+        <p className="text-xs text-slate-500 mt-1">6 min read • Helpful Guide</p>
       </div>
-      <ChevronRight size={16} className="text-[#005c5c]/40 group-hover:text-mamacare-teal transition-all group-hover:translate-x-1" />
     </div>
   );
 };

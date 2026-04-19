@@ -15,7 +15,7 @@ const Contact = () => {
   ];
 
   return (
-    <div className="antialiased min-h-screen bg-[#FDFDFD] font-outfit selection:bg-primary-lp/30">
+    <div className="antialiased min-h-screen bg-[#FDFDFD] font-poppins selection:bg-primary-lp/30">
       {/* TopNavBar — same as LandingPage */}
       <nav className="fixed top-0 w-full z-50 bg-stone-50/70 backdrop-blur-md">
         <div className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
