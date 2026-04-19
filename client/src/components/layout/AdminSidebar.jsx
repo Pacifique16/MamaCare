@@ -1,11 +1,11 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Users, 
-  ShieldCheck, 
-  PlusCircle, 
-  HelpCircle, 
+import {
+  LayoutDashboard,
+  Users,
+  ShieldCheck,
+  PlusCircle,
+  HelpCircle,
   LogOut,
   ChevronRight,
   Baby,
@@ -22,7 +22,6 @@ const AdminSidebar = () => {
 
   return (
     <aside className="w-72 bg-white border-r border-gray-100 flex flex-col h-screen sticky top-0 font-outfit">
-      {/* Brand */}
       <div className="p-8 border-b border-gray-50">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-mamacare-teal rounded-xl flex items-center justify-center text-white shadow-lg shadow-mamacare-teal/20">
@@ -43,27 +42,26 @@ const AdminSidebar = () => {
             <NavLink
               key={item.name}
               to={item.path}
-              className={({ isActive }) => 
-                `flex items-center justify-between px-6 py-4 rounded-2xl font-bold text-sm transition-all group ${
-                  (isActive || isStaffSection) 
-                    ? 'bg-mamacare-teal/5 text-mamacare-teal' 
-                    : 'text-gray-400 hover:bg-gray-50 hover:text-gray-600'
+              className={({ isActive }) =>
+                `flex items-center justify-between px-6 py-4 rounded-2xl font-bold text-sm transition-all group ${(isActive || isStaffSection)
+                  ? 'bg-mamacare-teal/5 text-mamacare-teal'
+                  : 'text-gray-400 hover:bg-gray-50 hover:text-gray-600'
                 }`
               }
             >
-            <div className="flex items-center gap-4">
-              <item.icon size={20} className="transition-transform group-hover:scale-110" />
-              <span>{item.name}</span>
-            </div>
-            <ChevronRight size={16} className="opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
-          </NavLink>
-            );
+              <div className="flex items-center gap-4">
+                <item.icon size={20} className="transition-transform group-hover:scale-110" />
+                <span>{item.name}</span>
+              </div>
+              <ChevronRight size={16} className="opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
+            </NavLink>
+          );
         })}
       </nav>
 
       {/* Lower Actions */}
       <div className="p-6 border-t border-gray-50 space-y-4">
-        <NavLink 
+        <NavLink
           to="/admin/add-doctor"
           className="w-full bg-mamacare-teal text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 shadow-xl shadow-mamacare-teal/20 hover:bg-mamacare-teal-dark transition-all active:scale-[0.98]"
         >
