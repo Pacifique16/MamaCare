@@ -1,5 +1,6 @@
 import React from 'react';
 import { Calendar, MapPin, Clock, CheckCircle2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const AppointmentCard = ({ date, time, location, clinic }) => {
   const isEmpty = !date && !clinic;
@@ -16,9 +17,11 @@ const AppointmentCard = ({ date, time, location, clinic }) => {
             You don't have any upcoming medical visits scheduled.
           </p>
         </div>
-        <button className="bg-mamacare-teal text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-mamacare-teal/10 hover:bg-mamacare-teal-dark transition-all mt-4">
-          Book Now
-        </button>
+        <Link to="/appointments">
+          <button className="bg-mamacare-teal text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-mamacare-teal/10 hover:bg-mamacare-teal-dark transition-all mt-4">
+            Book Now
+          </button>
+        </Link>
       </div>
     );
   }
