@@ -121,20 +121,20 @@ const DoctorManagement = () => {
         {/* Professional SaaS Stats Row */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 font-poppins pt-4">
           {[
-            { label: 'Total Practitioners', value: totalDoctors, trend: 'stable', progress: '100%', color: 'text-mamacare-teal' },
-            { label: 'Pending Verification', value: pendingDoctors, trend: 'attention', progress: `${(pendingDoctors/totalDoctors)*100}%`, color: 'text-red-500' },
-            { label: 'Verified Doctors', value: verifiedDoctors, trend: 'active', progress: `${(verifiedDoctors/totalDoctors)*100}%`, color: 'text-teal-600' },
+            { label: 'Total Practitioners', value: totalDoctors, trend: 'stable', progress: '100%', color: 'text-mamacare-teal', bg: 'bg-white' },
+            { label: 'Pending Verification', value: pendingDoctors, trend: 'attention', progress: `${(pendingDoctors/totalDoctors)*100}%`, color: 'text-red-500', bg: 'bg-red-50' },
+            { label: 'Verified Doctors', value: verifiedDoctors, trend: 'active', progress: `${(verifiedDoctors/totalDoctors)*100}%`, color: 'text-cyan-600', bg: 'bg-cyan-50' },
           ].map((s) => (
-            <div key={s.label} className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm transition-all duration-300">
+            <div key={s.label} className={`${s.bg} rounded-3xl p-8 border border-gray-100/50 shadow-sm transition-all duration-300 hover:shadow-md`}>
               <div className="space-y-4">
                 <div className="flex justify-between items-start">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{s.label}</span>
-                  <div className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-gray-50 ${s.color}`}>
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{s.label}</span>
+                  <div className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-white/60 ${s.color}`}>
                     {s.trend}
                   </div>
                 </div>
-                <h3 className="text-3xl font-bold text-gray-900 tracking-tight">{s.value}</h3>
-                <div className="h-1 w-full bg-gray-50 rounded-full overflow-hidden">
+                <h3 className="text-4xl font-bold text-gray-900 tracking-tight">{s.value}</h3>
+                <div className="h-1.5 w-full bg-black/5 rounded-full overflow-hidden">
                   <div className="h-full bg-mamacare-teal rounded-full" style={{ width: s.progress }} />
                 </div>
               </div>
@@ -244,13 +244,13 @@ const DoctorManagement = () => {
                           </button>
                         </>
                       )}
-                      <button onClick={() => navigate(`/admin/edit-doctor/${doc.id}`)} className="p-2.5 text-gray-300 hover:text-mamacare-teal bg-gray-50 rounded-xl transition-all">
+                      <button onClick={() => navigate(`/admin/edit-doctor/${doc.id}`)} className="p-2.5 text-mamacare-teal hover:bg-teal-50 bg-gray-50 rounded-xl transition-all">
                         <Edit2 size={16} />
                       </button>
-                      <button onClick={() => handleSuspend(doc.id)} className="p-2.5 text-gray-300 hover:text-red-400 bg-gray-50 rounded-xl transition-all">
+                      <button onClick={() => handleSuspend(doc.id)} className="p-2.5 text-orange-500 hover:bg-orange-50 bg-gray-50 rounded-xl transition-all">
                         <Ban size={16} />
                       </button>
-                      <button onClick={() => handleDelete(doc.id)} className="p-2.5 text-gray-300 hover:text-red-500 bg-gray-50 rounded-xl transition-all">
+                      <button onClick={() => handleDelete(doc.id)} className="p-2.5 text-red-500 hover:bg-red-50 bg-gray-50 rounded-xl transition-all">
                         <Trash2 size={16} />
                       </button>
                     </div>

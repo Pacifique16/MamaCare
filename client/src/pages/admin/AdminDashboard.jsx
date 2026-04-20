@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AdminLayout from '../../components/layout/AdminLayout';
 import AdminFooter from '../../components/layout/AdminFooter';
-import { BarChart3, Heart, Plus, Edit2, Trash2 } from 'lucide-react';
+import { BarChart3, Heart, Plus, Edit2, Trash2, Calendar, TrendingUp } from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { adminApi, libraryApi, doctorsApi } from '../../api/services';
 
 const AdminDashboard = () => {
@@ -22,6 +23,24 @@ const AdminDashboard = () => {
     setStats(s => s ? { ...s, pendingDoctors: s.pendingDoctors - 1 } : s);
   };
 
+  const CATEGORY_THEMES = {
+    Nutrition: { bg: 'bg-[#FFEBEE]', text: 'text-[#E91E63]', label: 'Nutrition' },
+    Safety: { bg: 'bg-[#FFF3E0]', text: 'text-[#EF6C00]', label: 'Safety' },
+    Fitness: { bg: 'bg-[#F3E5F5]', text: 'text-[#7B1FA2]', label: 'Wellness' },
+    MentalHealth: { bg: 'bg-[#F3E5F5]', text: 'text-[#7B1FA2]', label: 'Wellness' },
+    Default: { bg: 'bg-gray-100', text: 'text-gray-600', label: 'Other' }
+  };
+
+  const growthData = [
+    { day: 'Tue', registrations: 190 },
+    { day: 'Wed', registrations: 140 },
+    { day: 'Thu', registrations: 180 },
+    { day: 'Fri', registrations: 210 },
+    { day: 'Sat', registrations: 260 },
+    { day: 'Sun', registrations: 220 },
+    { day: 'Mon', registrations: 250 },
+  ];
+
   return (
     <AdminLayout>
       <div className="max-w-7xl mx-auto p-8 space-y-12 font-poppins animate-in fade-in duration-1000">
@@ -33,9 +52,12 @@ const AdminDashboard = () => {
             <h1 className="text-6xl font-bold text-gray-900 tracking-tighter">Central Oversight</h1>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50 px-4 py-2 rounded-lg border border-gray-100">
-              Live System Status
-            </span>
+            <div className="flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-100 rounded-lg shadow-sm">
+              <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+              <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">
+                Live System Status
+              </span>
+            </div>
             <button className="bg-mamacare-teal text-white px-8 py-3 rounded-xl font-bold text-xs shadow-lg shadow-mamacare-teal/10 transition-all hover:bg-mamacare-teal-dark active:scale-[0.98]">
               Generate Report
             </button>
@@ -83,102 +105,113 @@ const AdminDashboard = () => {
         )}
 
         <div className="grid lg:grid-cols-12 gap-8 items-stretch font-poppins">
-          {/* High-Fidelity Pie Chart (Risk Analysis) */}
+          {/* High-Fidelity Area Chart (Platform Growth) */}
           <div className="lg:col-span-8 bg-white rounded-3xl p-10 border border-gray-100 shadow-sm space-y-10 group overflow-hidden relative">
             <div className="flex justify-between items-center relative z-10">
               <div className="space-y-1 pt-2">
-                <span className="text-[9px] font-black text-mamacare-teal uppercase tracking-[0.2em]">PATIENT ACUITY</span>
-                <h3 className="text-xl font-bold text-gray-900 tracking-tight">Risk Distribution</h3>
+                <span className="text-[9px] font-black text-mamacare-teal uppercase tracking-[0.2em]">PLATFORM TRENDS</span>
+                <h3 className="text-xl font-bold text-gray-900 tracking-tight">Enrollment Trends</h3>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-lg text-[10px] font-bold text-gray-500 uppercase tracking-widest border border-gray-100 shadow-sm">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                Live Analysis
+              <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-lg text-[10px] font-bold text-gray-500 uppercase tracking-widest border border-gray-100 shadow-sm text-nowrap">
+                <Calendar size={14} className="text-mamacare-teal" />
+                Last 7 Days
               </div>
             </div>
 
-            <div className="flex flex-col md:flex-row items-center justify-around gap-12 py-10">
-              {/* Premium Donut Chart */}
-              <div className="relative w-64 h-64 shrink-0 transition-transform duration-700 group-hover:scale-105">
-                <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
-                  {/* Background Track */}
-                  <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f9fafb" strokeWidth="12" />
-                  
-                  {/* Stable (60%) - Teal */}
-                  <circle 
-                    cx="50" cy="50" r="40" fill="transparent" 
-                    stroke="#005C5C" strokeWidth="12" 
-                    strokeDasharray="150.8 251.2" 
-                    className="transition-all duration-1000"
+            <div className="h-[300px] w-full pt-10">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={growthData}>
+                  <defs>
+                    <linearGradient id="colorTeal" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#005C5C" stopOpacity={0.2}/>
+                      <stop offset="95%" stopColor="#005C5C" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <Tooltip 
+                    contentStyle={{ 
+                      borderRadius: '16px', 
+                      border: '1px solid #f1f5f9',
+                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                      fontSize: '11px',
+                      fontWeight: 'bold',
+                      fontFamily: 'Poppins, sans-serif'
+                    }}
+                    labelStyle={{ color: '#64748b', marginBottom: '4px' }}
+                    itemStyle={{ color: '#005C5C' }}
                   />
-                  
-                  {/* Moderate (28%) - Orange-500 */}
-                  <circle 
-                    cx="50" cy="50" r="40" fill="transparent" 
-                    stroke="#f97316" strokeWidth="12" 
-                    strokeDasharray="70.4 251.2" 
-                    strokeDashoffset="-150.8"
-                    className="transition-all duration-1000"
+                  <XAxis 
+                    dataKey="day" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 700 }}
+                    dy={15}
                   />
-
-                  {/* High Risk (12%) - Red-400 */}
-                  <circle 
-                    cx="50" cy="50" r="40" fill="transparent" 
-                    stroke="#f87171" strokeWidth="12" 
-                    strokeDasharray="30.1 251.2" 
-                    strokeDashoffset="-221.2"
-                    className="transition-all duration-1000"
+                  <Area 
+                    type="monotone" 
+                    dataKey="registrations" 
+                    stroke="#005C5C" 
+                    strokeWidth={4}
+                    fillOpacity={1} 
+                    fill="url(#colorTeal)" 
+                    animationDuration={2000}
                   />
-                </svg>
-                
-                {/* Center Content */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                  <span className="text-4xl font-extrabold text-gray-900 tracking-tight">842</span>
-                  <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Total Monitored</span>
-                </div>
-              </div>
-
-              {/* Data Legend */}
-              <div className="flex-1 space-y-6 w-full md:max-w-xs">
-                {[
-                  { label: 'Low Risk / Stable', value: '60%', count: '505', color: 'bg-mamacare-teal', lightBg: 'bg-teal-50' },
-                  { label: 'Moderate Monitoring', value: '28%', count: '236', color: 'bg-orange-500', lightBg: 'bg-orange-50' },
-                  { label: 'High Risk / Critical', value: '12%', count: '101', color: 'bg-red-400', lightBg: 'bg-red-50' },
-                ].map((item) => (
-                  <div key={item.label} className={`flex items-center justify-between p-4 rounded-2xl border border-gray-100/50 ${item.lightBg} shadow-sm transition-all hover:translate-x-1`}>
-                    <div className="flex items-center gap-3">
-                      <div className={`w-3 h-3 rounded-full ${item.color}`} />
-                      <span className="text-[11px] font-bold text-gray-700">{item.label}</span>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs font-black text-gray-900">{item.value}</p>
-                      <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">{item.count} pts</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+            
+            <div className="flex items-center gap-8 pt-8 border-t border-gray-50">
+               <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 rounded-full bg-mamacare-teal shadow-lg shadow-mamacare-teal/20" />
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">New Registrations</span>
+               </div>
+               <div className="flex items-center gap-2 text-mamacare-teal">
+                  <TrendingUp size={16} />
+                  <span className="text-[10px] font-black uppercase tracking-widest">+24% Increase</span>
+               </div>
             </div>
           </div>
 
-          {/* Secondary Metrics - Color Optimized */}
-          <div className="lg:col-span-4 space-y-6">
-            <div className="bg-white rounded-3xl p-10 border border-gray-100 shadow-sm flex flex-col justify-between h-[calc(50%-12px)] transition-all hover:bg-orange-50/20 group">
-              <div className="space-y-1">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Avg Response Time</span>
-                <h4 className="text-4xl font-bold text-gray-900 tracking-tight">14.2m</h4>
-              </div>
-              <div className="flex items-center gap-2 text-[10px] font-bold text-orange-500 bg-orange-50 w-fit px-3 py-1 rounded-lg border border-orange-100 transition-all group-hover:scale-105">
-                <span>-2.4m from last month</span>
-              </div>
+          {/* Secondary Column: Risk Distribution (Restored Pie Chart) */}
+          <div className="lg:col-span-4 bg-white rounded-3xl p-10 border border-gray-100 shadow-sm space-y-8 flex flex-col items-center">
+            <div className="w-full text-left space-y-1">
+              <span className="text-[9px] font-black text-mamacare-teal uppercase tracking-[0.2em]">PATIENT ACUITY</span>
+              <h3 className="text-xl font-bold text-gray-900 tracking-tight">Risk Analysis</h3>
             </div>
             
-            <div className="bg-white rounded-3xl p-10 border border-gray-100 shadow-sm flex flex-col justify-between h-[calc(50%-12px)] transition-all hover:bg-red-50/20 group">
-              <div className="space-y-1">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">System Trust Score</span>
-                <h4 className="text-4xl font-bold text-gray-900 tracking-tight">98.4%</h4>
+            {/* Compact Donut Chart */}
+            <div className="relative w-48 h-48 transition-transform duration-700 hover:scale-105">
+              <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
+                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f9fafb" strokeWidth="12" />
+                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#005C5C" strokeWidth="12" strokeDasharray="150.8 251.2" className="transition-all duration-1000" />
+                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f97316" strokeWidth="12" strokeDasharray="70.4 251.2" strokeDashoffset="-150.8" className="transition-all duration-1000" />
+                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f87171" strokeWidth="12" strokeDasharray="30.1 251.2" strokeDashoffset="-221.2" className="transition-all duration-1000" />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <span className="text-3xl font-extrabold text-gray-900 tracking-tight">12%</span>
+                <span className="text-[8px] font-black text-red-400 uppercase tracking-widest">High Risk</span>
               </div>
-              <div className="flex items-center gap-2 text-[10px] font-bold text-red-500 bg-red-50 w-fit px-3 py-1 rounded-lg border border-red-100 transition-all group-hover:scale-105">
-                <span>Excellent Stability</span>
-              </div>
+            </div>
+
+            {/* Legend - Vertical Stacking for Sidebar */}
+            <div className="w-full space-y-4">
+              {[
+                { label: 'Stable', value: '60%', color: 'bg-mamacare-teal', text: 'text-mamacare-teal' },
+                { label: 'Moderate', value: '28%', color: 'bg-orange-500', text: 'text-orange-500' },
+                { label: 'High Risk', value: '12%', color: 'bg-red-400', text: 'text-red-400' },
+              ].map((item) => (
+                <div key={item.label} className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-2 h-2 rounded-full ${item.color}`} />
+                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{item.label}</span>
+                    </div>
+                    <span className={`text-[10px] font-black ${item.text}`}>{item.value}</span>
+                  </div>
+                  <div className="h-1 w-full bg-gray-50 rounded-full overflow-hidden">
+                    <div className={`h-full ${item.color}`} style={{ width: item.value }} />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -249,7 +282,11 @@ const AdminDashboard = () => {
                     <tr key={i} className="hover:bg-gray-50/30 transition-all">
                       <td className="p-6">
                         <p className="font-bold text-gray-900 text-sm leading-snug">{item.title}</p>
-                        <p className="text-[9px] font-bold text-gray-300 uppercase tracking-widest mt-1">{item.category}</p>
+                        <div className="mt-2">
+                          <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${CATEGORY_THEMES[item.category]?.bg || CATEGORY_THEMES.Default.bg} ${CATEGORY_THEMES[item.category]?.text || CATEGORY_THEMES.Default.text}`}>
+                            {CATEGORY_THEMES[item.category]?.label || item.category}
+                          </span>
+                        </div>
                       </td>
                       <td className="p-6">
                         <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${item.status === 'Published' ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-400'}`}>
@@ -258,8 +295,8 @@ const AdminDashboard = () => {
                       </td>
                       <td className="p-6">
                         <div className="flex items-center gap-2">
-                          <button className="text-gray-300 hover:text-mamacare-teal transition-colors"><Edit2 size={14} /></button>
-                          <button className="text-gray-300 hover:text-red-400 transition-colors"><Trash2 size={14} /></button>
+                          <button className="text-mamacare-teal hover:scale-110 transition-all"><Edit2 size={14} /></button>
+                          <button className="text-red-500 hover:scale-110 transition-all"><Trash2 size={14} /></button>
                         </div>
                       </td>
                     </tr>
