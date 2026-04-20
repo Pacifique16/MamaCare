@@ -139,7 +139,7 @@ const Appointments = () => {
                                         time={selectedTime}
                                         reason={reasons.find(r => r.id === selectedReason)}
                                         onBack={prevStep}
-                                        onConfirm={() => navigate('/appointments')}
+                                        onConfirm={() => navigate('/rest-monitor')}
                                     />
                                 )}
                             </motion.div>
@@ -256,7 +256,7 @@ const DateStep = ({ selectedDate, onSelect, onNext }) => (
                         <button
                             key={day}
                             onClick={() => !isInactive && onSelect(day)}
-                            className={`w-10 h-10 mx-auto rounded-xl flex items-center justify-center font-bold text-sm transition-all ${isInactive ? 'text-gray-100 cursor-default' :
+                            className={`w-10 h-10 mx-auto rounded-xl flex items-center justify-center font-bold text-sm transition-all ${isInactive ? 'text-gray-300 cursor-default' :
                                     isSelected ? 'bg-[#005C5C] text-white shadow-xl scale-105' :
                                         'text-gray-600 hover:bg-white hover:shadow-sm'
                                 }`}
