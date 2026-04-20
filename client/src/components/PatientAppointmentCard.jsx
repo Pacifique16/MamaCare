@@ -113,14 +113,14 @@ function PatientAppointmentCard({ appointment, onEdit, onDelete }) {
       <div className="flex items-center gap-3 pt-6 border-t border-gray-50">
         <button
           onClick={() => onEdit(appointment)}
-          className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-gray-50 hover:bg-teal-50 text-gray-400 hover:text-mamacare-teal rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all"
+          className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-teal-50/50 hover:bg-teal-50 text-mamacare-teal rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all"
         >
           <Edit2 size={13} />
           Edit
         </button>
         <button
           onClick={() => onDelete(appointment.id)}
-          className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-400 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all"
+          className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-red-50/50 hover:bg-red-50 text-red-500 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all"
         >
           <Trash2 size={13} />
           Delete

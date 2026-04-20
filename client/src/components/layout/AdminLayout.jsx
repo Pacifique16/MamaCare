@@ -27,25 +27,25 @@ const AdminLayout = ({ children }) => {
         <header className="h-20 bg-white border-b border-gray-100 px-8 sticky top-0 z-40">
            <div className="max-w-7xl mx-auto h-full flex justify-between items-center">
               <div className="flex items-center gap-2">
-                 <span className="text-[10px] font-bold text-gray-300 tracking-widest uppercase">System Administration</span>
+                 <span className="text-[10px] font-bold text-slate-500 tracking-widest uppercase">System Administration</span>
               </div>
 
               <div className="flex items-center gap-6">
                  <div className="relative group hidden md:block">
-                    <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none group-focus-within:text-mamacare-teal" />
+                    <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none group-focus-within:text-mamacare-teal" />
                     <input 
                       type="text" 
                       placeholder="Search systems..." 
-                      className="bg-gray-50 border border-gray-100 rounded-xl py-2 pl-10 pr-4 text-sm font-bold placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 transition-all w-64"
+                      className="bg-gray-50/50 border border-gray-200 rounded-xl py-2 pl-10 pr-4 text-sm font-bold placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 transition-all w-64 text-gray-900"
                     />
                  </div>
                  
                  <div className="flex items-center gap-4">
-                    <button className="p-2 text-gray-400 hover:text-mamacare-teal bg-gray-50 rounded-xl transition-all relative">
+                    <button className="p-2 text-slate-500 hover:text-mamacare-teal bg-gray-50 rounded-xl transition-all relative">
                        <Bell size={18} />
                        <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
                     </button>
-                    <div className="h-8 w-[1px] bg-gray-100 mx-1"></div>
+                    <div className="h-8 w-[1px] bg-gray-200 mx-1"></div>
                     <div className="relative">
                         <button 
                             onClick={() => setIsDropdownOpen(!isDropdownOpen)}

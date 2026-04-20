@@ -22,20 +22,20 @@ const AdminSidebar = () => {
 
   return (
     <aside className="w-72 bg-white border-r border-gray-100 flex flex-col h-screen sticky top-0 font-poppins">
-      <div className="p-8 border-b border-gray-50">
+      <div className="p-10 border-b border-gray-50 mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-mamacare-teal rounded-xl flex items-center justify-center text-white shadow-lg shadow-mamacare-teal/20">
-            <ShieldCheck size={24} />
+          <div className="w-10 h-10 bg-mamacare-teal rounded-xl flex items-center justify-center text-white shadow-lg shadow-mamacare-teal/10">
+            <ShieldCheck size={20} />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-gray-900 tracking-tight">Admin Portal</h2>
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">System Management</p>
+            <h2 className="text-lg font-bold text-gray-900 tracking-tight">MamaCare</h2>
+            <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Admin Central</p>
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-6 space-y-2 overflow-y-auto">
+      <nav className="flex-1 px-6 space-y-1 overflow-y-auto">
         {menuItems.map((item) => {
           const isStaffSection = item.name === 'Staff Directory' && window.location.pathname.includes('/admin/edit-doctor');
           return (
@@ -43,40 +43,47 @@ const AdminSidebar = () => {
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center justify-between px-6 py-4 rounded-2xl font-bold text-sm transition-all group ${(isActive || isStaffSection)
-                  ? 'bg-mamacare-teal/5 text-mamacare-teal'
-                  : 'text-gray-400 hover:bg-gray-50 hover:text-gray-600'
+                `flex items-center justify-between px-6 py-4 rounded-xl font-bold text-xs transition-all group relative ${
+                  (isActive || isStaffSection)
+                  ? 'bg-gray-50 text-mamacare-teal'
+                  : 'text-gray-400 hover:bg-gray-50/50 hover:text-gray-600'
                 }`
               }
             >
               <div className="flex items-center gap-4">
-                <item.icon size={20} className="transition-transform group-hover:scale-110" />
-                <span>{item.name}</span>
+                <item.icon size={18} className="transition-transform group-hover:scale-110" />
+                <span className="tracking-tight">{item.name}</span>
               </div>
-              <ChevronRight size={16} className="opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
+              
+              {/* Active Marker */}
+              <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1/2 bg-mamacare-teal rounded-r-full transition-all duration-300 ${
+                window.location.pathname === item.path ? 'opacity-100' : 'opacity-0'
+              }`} />
+              
+              <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0" />
             </NavLink>
           );
         })}
       </nav>
 
       {/* Lower Actions */}
-      <div className="p-6 border-t border-gray-50 space-y-4">
+      <div className="p-8 border-t border-gray-50 space-y-6">
         <NavLink
           to="/admin/add-doctor"
-          className="w-full bg-mamacare-teal text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 shadow-xl shadow-mamacare-teal/20 hover:bg-mamacare-teal-dark transition-all active:scale-[0.98]"
+          className="w-full bg-mamacare-teal text-white py-4 rounded-xl font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl shadow-mamacare-teal/10 hover:bg-mamacare-teal-dark transition-all"
         >
-          <PlusCircle size={18} />
-          Add New Doctor
+          <PlusCircle size={16} />
+          Register Clinician
         </NavLink>
 
         <div className="space-y-1">
-          <button className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold text-sm text-gray-400 hover:bg-gray-50 transition-all">
-            <HelpCircle size={18} />
+          <button className="w-full flex items-center gap-4 px-6 py-3 rounded-xl font-bold text-xs text-gray-400 hover:bg-gray-50 transition-all">
+            <HelpCircle size={16} />
             Support
           </button>
-          <NavLink to="/login" className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold text-sm text-red-500 hover:bg-red-50 transition-all">
-            <LogOut size={18} />
-            Logout
+          <NavLink to="/login" className="w-full flex items-center gap-4 px-6 py-3 rounded-xl font-bold text-xs text-red-400 hover:bg-red-50 transition-all mt-4 border border-red-50">
+            <LogOut size={16} />
+            Sign Out
           </NavLink>
         </div>
       </div>

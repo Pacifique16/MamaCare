@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AdminLayout from '../../components/layout/AdminLayout';
 import AdminFooter from '../../components/layout/AdminFooter';
-import { Users, ShieldCheck, CheckCircle2, Search, Filter, Download, Edit2, Ban, ChevronLeft, ChevronRight, Trash2, XCircle, ChevronUp, ChevronDown } from 'lucide-react';
+import { Users, ShieldCheck, CheckCircle2, Search, Filter, Download, Edit2, Ban, ChevronLeft, ChevronRight, Trash2, XCircle, ChevronUp, ChevronDown, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { doctorsApi } from '../../api/services';
 
@@ -94,40 +94,52 @@ const DoctorManagement = () => {
   return (
     <AdminLayout>
       <div className="max-w-7xl mx-auto p-8 space-y-12 animate-in slide-in-from-bottom-4 duration-700">
-        <div className="flex justify-between items-end gap-4">
-          <div className="space-y-2">
-            <span className="text-[10px] font-bold text-mamacare-teal uppercase tracking-[0.25em]">STAFF DIRECTORY</span>
-            <h1 className="text-6xl font-bold text-gray-900 tracking-tighter">Doctor Management</h1>
-            <p className="text-gray-400 font-medium">Verify credentials and manage clinical staff access.</p>
+        {/* High-Fidelity Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-gray-100 pb-10 font-poppins">
+          <div className="space-y-1">
+            <span className="text-[10px] font-bold text-mamacare-teal uppercase tracking-[0.25em]">CLINICAL STAFF</span>
+            <h1 className="text-6xl font-bold text-gray-900 tracking-tighter">Staff Directory</h1>
           </div>
-          <button onClick={() => navigate('/admin/add-doctor')} className="bg-[#005C5C] text-white px-10 py-5 rounded-2xl font-bold text-sm shadow-xl shadow-mamacare-teal/20 transition-all hover:scale-105 active:scale-95 flex items-center gap-2">
-            + Add New Doctor
-          </button>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handleExport}
+              className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-100 rounded-xl text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-mamacare-teal hover:border-mamacare-teal/30 transition-all font-poppins shadow-sm"
+            >
+              <Download size={14} />
+              Export
+            </button>
+            <button
+              onClick={() => navigate('/admin/add-doctor')}
+              className="bg-mamacare-teal text-white px-8 py-3 rounded-xl font-bold text-xs shadow-lg shadow-mamacare-teal/10 transition-all hover:bg-mamacare-teal-dark active:scale-[0.98] flex items-center gap-2 font-poppins"
+            >
+              <Plus size={18} />
+              Add New Doctor
+            </button>
+          </div>
         </div>
 
-        {/* KPI Cards */}
-        <div className="grid md:grid-cols-3 gap-8 pt-4">
-          <div className="bg-white rounded-[2.5rem] p-10 border border-white shadow-card flex items-center justify-between">
-            <div className="space-y-4">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Practitioners</p>
-              <h3 className="text-6xl font-extrabold text-gray-900 tracking-tighter">{totalDoctors}</h3>
+        {/* Professional SaaS Stats Row */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 font-poppins pt-4">
+          {[
+            { label: 'Total Practitioners', value: totalDoctors, trend: 'stable', progress: '100%', color: 'text-mamacare-teal', bg: 'bg-white' },
+            { label: 'Pending Verification', value: pendingDoctors, trend: 'attention', progress: `${(pendingDoctors/totalDoctors)*100}%`, color: 'text-red-500', bg: 'bg-red-50' },
+            { label: 'Verified Doctors', value: verifiedDoctors, trend: 'active', progress: `${(verifiedDoctors/totalDoctors)*100}%`, color: 'text-cyan-600', bg: 'bg-cyan-50' },
+          ].map((s) => (
+            <div key={s.label} className={`${s.bg} rounded-3xl p-8 border border-gray-100/50 shadow-sm transition-all duration-300 hover:shadow-md`}>
+              <div className="space-y-4">
+                <div className="flex justify-between items-start">
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{s.label}</span>
+                  <div className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-white/60 ${s.color}`}>
+                    {s.trend}
+                  </div>
+                </div>
+                <h3 className="text-4xl font-bold text-gray-900 tracking-tight">{s.value}</h3>
+                <div className="h-1.5 w-full bg-black/5 rounded-full overflow-hidden">
+                  <div className="h-full bg-mamacare-teal rounded-full" style={{ width: s.progress }} />
+                </div>
+              </div>
             </div>
-            <div className="w-16 h-16 bg-teal-50 text-mamacare-teal rounded-3xl flex items-center justify-center"><Users size={32} /></div>
-          </div>
-          <div className="bg-red-50/50 rounded-[2.5rem] p-10 border border-white shadow-card flex items-center justify-between">
-            <div className="space-y-4">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Pending Verification</p>
-              <h3 className="text-6xl font-extrabold text-gray-900 tracking-tighter">{pendingDoctors}</h3>
-            </div>
-            <div className="w-16 h-16 bg-red-100 text-red-400 rounded-3xl flex items-center justify-center"><ShieldCheck size={32} /></div>
-          </div>
-          <div className="bg-teal-50/50 rounded-[2.5rem] p-10 border border-white shadow-card flex items-center justify-between">
-            <div className="space-y-4">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Verified Doctors</p>
-              <h3 className="text-6xl font-extrabold text-gray-900 tracking-tighter">{verifiedDoctors}</h3>
-            </div>
-            <div className="w-16 h-16 bg-teal-100 text-mamacare-teal rounded-3xl flex items-center justify-center"><CheckCircle2 size={32} /></div>
-          </div>
+          ))}
         </div>
 
         {/* Filters */}
@@ -232,13 +244,13 @@ const DoctorManagement = () => {
                           </button>
                         </>
                       )}
-                      <button onClick={() => navigate(`/admin/edit-doctor/${doc.id}`)} className="p-2.5 text-gray-300 hover:text-mamacare-teal bg-gray-50 rounded-xl transition-all">
+                      <button onClick={() => navigate(`/admin/edit-doctor/${doc.id}`)} className="p-2.5 text-mamacare-teal hover:bg-teal-50 bg-gray-50 rounded-xl transition-all">
                         <Edit2 size={16} />
                       </button>
-                      <button onClick={() => handleSuspend(doc.id)} className="p-2.5 text-gray-300 hover:text-red-400 bg-gray-50 rounded-xl transition-all">
+                      <button onClick={() => handleSuspend(doc.id)} className="p-2.5 text-orange-500 hover:bg-orange-50 bg-gray-50 rounded-xl transition-all">
                         <Ban size={16} />
                       </button>
-                      <button onClick={() => handleDelete(doc.id)} className="p-2.5 text-gray-300 hover:text-red-500 bg-gray-50 rounded-xl transition-all">
+                      <button onClick={() => handleDelete(doc.id)} className="p-2.5 text-red-500 hover:bg-red-50 bg-gray-50 rounded-xl transition-all">
                         <Trash2 size={16} />
                       </button>
                     </div>
