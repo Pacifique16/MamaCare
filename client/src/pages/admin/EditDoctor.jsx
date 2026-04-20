@@ -227,7 +227,7 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
                                 Discard Changes
                             </button>
                             <button
-                                onClick={handleSubmit}
+                                onClick={handleSave}
                                 disabled={submitting}
                                 className="bg-mamacare-teal text-white px-8 py-3 rounded-xl font-bold text-xs shadow-lg shadow-mamacare-teal/10 transition-all hover:bg-mamacare-teal-dark active:scale-[0.98] flex items-center gap-2"
                             >
@@ -366,9 +366,8 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
                                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Work Email</label>
                                       <div className="relative">
                                          <input type="email" value={doctor?.email || ''} disabled 
-                                            className="w-full bg-gray-100 border border-transparent rounded-2xl p-6 pl-16 font-bold text-gray-900 shadow-sm opacity-60 cursor-not-allowed"
-                                            disabled
-                                         />
+                                             className="w-full bg-gray-100 border border-transparent rounded-2xl p-6 pl-16 font-bold text-gray-900 shadow-sm opacity-60 cursor-not-allowed"
+                                          />
                                          <Users size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400" />
                                       </div>
                                    </div>
