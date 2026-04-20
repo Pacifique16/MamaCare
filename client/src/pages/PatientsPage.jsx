@@ -134,11 +134,11 @@ function PatientsPage() {
     <AdminLayout>
       <div className="max-w-7xl mx-auto p-8 space-y-10 animate-in fade-in duration-700">
 
-        {/* Professional Header */}
+        {/* Restoration of Premium Branding */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-gray-100 pb-10 font-poppins">
           <div className="space-y-1">
-            <h1 className="text-4xl font-bold text-gray-900 tracking-tight">Patients Directory</h1>
-            <p className="text-gray-500 font-medium tracking-tight">Active pregnancy monitoring and risk management.</p>
+            <span className="text-[10px] font-bold text-mamacare-teal uppercase tracking-[0.25em]">PATIENT MANAGEMENT</span>
+            <h1 className="text-6xl font-bold text-gray-900 tracking-tighter">Patients</h1>
           </div>
           <div className="flex items-center gap-4">
             <button

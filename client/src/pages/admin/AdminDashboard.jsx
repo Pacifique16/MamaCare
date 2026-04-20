@@ -26,11 +26,11 @@ const AdminDashboard = () => {
     <AdminLayout>
       <div className="max-w-7xl mx-auto p-8 space-y-12 font-poppins animate-in fade-in duration-1000">
         
-        {/* Professional Header */}
+        {/* Restoration of Premium Branding */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-gray-100 pb-10">
           <div className="space-y-1">
-            <h1 className="text-4xl font-bold text-gray-900 tracking-tight">Admin Dashboard</h1>
-            <p className="text-gray-500 font-medium tracking-tight">System overview and administrative controls.</p>
+            <span className="text-[10px] font-bold text-mamacare-teal uppercase tracking-[0.25em]">SYSTEM ADMINISTRATION</span>
+            <h1 className="text-6xl font-bold text-gray-900 tracking-tighter">Central Oversight</h1>
           </div>
           <div className="flex items-center gap-4">
             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50 px-4 py-2 rounded-lg border border-gray-100">
@@ -82,51 +82,101 @@ const AdminDashboard = () => {
           </div>
         )}
 
-        {/* Growth and Metrics Split */}
-        <div className="grid lg:grid-cols-12 gap-8 items-stretch">
-          {/* Professional Bar Chart */}
-          <div className="lg:col-span-8 bg-white rounded-3xl p-10 border border-gray-100 shadow-sm space-y-10">
-            <div className="flex justify-between items-center">
-              <h3 className="text-xl font-bold text-gray-900 tracking-tight font-poppins">Growth Analytics</h3>
-              <select className="bg-gray-50 border-none rounded-lg text-[10px] font-bold uppercase tracking-widest px-3 py-2 text-gray-500 focus:ring-0">
-                <option>Last 9 Months</option>
-                <option>Last Year</option>
-              </select>
+        <div className="grid lg:grid-cols-12 gap-8 items-stretch font-poppins">
+          {/* High-Fidelity Pie Chart (Risk Analysis) */}
+          <div className="lg:col-span-8 bg-white rounded-3xl p-10 border border-gray-100 shadow-sm space-y-10 group overflow-hidden relative">
+            <div className="flex justify-between items-center relative z-10">
+              <div className="space-y-1 pt-2">
+                <span className="text-[9px] font-black text-mamacare-teal uppercase tracking-[0.2em]">PATIENT ACUITY</span>
+                <h3 className="text-xl font-bold text-gray-900 tracking-tight">Risk Distribution</h3>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-lg text-[10px] font-bold text-gray-500 uppercase tracking-widest border border-gray-100 shadow-sm">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                Live Analysis
+              </div>
             </div>
-            <div className="flex items-end justify-between h-[250px] gap-3 px-4">
-              {[{ m: 'Jan', v: 40 }, { m: 'Feb', v: 55 }, { m: 'Mar', v: 65 }, { m: 'Apr', v: 50 }, { m: 'May', v: 45 }, { m: 'Jun', v: 80 }, { m: 'Jul', v: 60 }, { m: 'Aug', v: 55 }, { m: 'Sep', v: 90 }].map((d, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center gap-4 group">
-                  <div className="w-full relative h-[200px] flex items-end">
-                    <div 
-                      className={`w-full rounded-t-md transition-all duration-500 ${i === 8 ? 'bg-mamacare-teal' : 'bg-gray-100 group-hover:bg-mamacare-teal/20'}`} 
-                      style={{ height: `${d.v}%` }}
-                    ></div>
-                    {i === 8 && <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-mamacare-teal">+24%</div>}
-                  </div>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{d.m}</span>
+
+            <div className="flex flex-col md:flex-row items-center justify-around gap-12 py-10">
+              {/* Premium Donut Chart */}
+              <div className="relative w-64 h-64 shrink-0 transition-transform duration-700 group-hover:scale-105">
+                <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
+                  {/* Background Track */}
+                  <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f9fafb" strokeWidth="12" />
+                  
+                  {/* Stable (60%) - Teal */}
+                  <circle 
+                    cx="50" cy="50" r="40" fill="transparent" 
+                    stroke="#005C5C" strokeWidth="12" 
+                    strokeDasharray="150.8 251.2" 
+                    className="transition-all duration-1000"
+                  />
+                  
+                  {/* Moderate (28%) - Orange-500 */}
+                  <circle 
+                    cx="50" cy="50" r="40" fill="transparent" 
+                    stroke="#f97316" strokeWidth="12" 
+                    strokeDasharray="70.4 251.2" 
+                    strokeDashoffset="-150.8"
+                    className="transition-all duration-1000"
+                  />
+
+                  {/* High Risk (12%) - Red-400 */}
+                  <circle 
+                    cx="50" cy="50" r="40" fill="transparent" 
+                    stroke="#f87171" strokeWidth="12" 
+                    strokeDasharray="30.1 251.2" 
+                    strokeDashoffset="-221.2"
+                    className="transition-all duration-1000"
+                  />
+                </svg>
+                
+                {/* Center Content */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                  <span className="text-4xl font-extrabold text-gray-900 tracking-tight">842</span>
+                  <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Total Monitored</span>
                 </div>
-              ))}
+              </div>
+
+              {/* Data Legend */}
+              <div className="flex-1 space-y-6 w-full md:max-w-xs">
+                {[
+                  { label: 'Low Risk / Stable', value: '60%', count: '505', color: 'bg-mamacare-teal', lightBg: 'bg-teal-50' },
+                  { label: 'Moderate Monitoring', value: '28%', count: '236', color: 'bg-orange-500', lightBg: 'bg-orange-50' },
+                  { label: 'High Risk / Critical', value: '12%', count: '101', color: 'bg-red-400', lightBg: 'bg-red-50' },
+                ].map((item) => (
+                  <div key={item.label} className={`flex items-center justify-between p-4 rounded-2xl border border-gray-100/50 ${item.lightBg} shadow-sm transition-all hover:translate-x-1`}>
+                    <div className="flex items-center gap-3">
+                      <div className={`w-3 h-3 rounded-full ${item.color}`} />
+                      <span className="text-[11px] font-bold text-gray-700">{item.label}</span>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-black text-gray-900">{item.value}</p>
+                      <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">{item.count} pts</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Secondary Metrics */}
+          {/* Secondary Metrics - Color Optimized */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="bg-white rounded-3xl p-10 border border-gray-100 shadow-sm flex flex-col justify-between h-[calc(50%-12px)]">
+            <div className="bg-white rounded-3xl p-10 border border-gray-100 shadow-sm flex flex-col justify-between h-[calc(50%-12px)] transition-all hover:bg-orange-50/20 group">
               <div className="space-y-1">
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Avg Response Time</span>
                 <h4 className="text-4xl font-bold text-gray-900 tracking-tight">14.2m</h4>
               </div>
-              <div className="flex items-center gap-2 text-[10px] font-bold text-green-500 bg-green-50 w-fit px-3 py-1 rounded-lg">
+              <div className="flex items-center gap-2 text-[10px] font-bold text-orange-500 bg-orange-50 w-fit px-3 py-1 rounded-lg border border-orange-100 transition-all group-hover:scale-105">
                 <span>-2.4m from last month</span>
               </div>
             </div>
             
-            <div className="bg-white rounded-3xl p-10 border border-gray-100 shadow-sm flex flex-col justify-between h-[calc(50%-12px)]">
+            <div className="bg-white rounded-3xl p-10 border border-gray-100 shadow-sm flex flex-col justify-between h-[calc(50%-12px)] transition-all hover:bg-red-50/20 group">
               <div className="space-y-1">
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">System Trust Score</span>
                 <h4 className="text-4xl font-bold text-gray-900 tracking-tight">98.4%</h4>
               </div>
-              <div className="flex items-center gap-2 text-[10px] font-bold text-mamacare-teal bg-teal-50 w-fit px-3 py-1 rounded-lg">
+              <div className="flex items-center gap-2 text-[10px] font-bold text-red-500 bg-red-50 w-fit px-3 py-1 rounded-lg border border-red-100 transition-all group-hover:scale-105">
                 <span>Excellent Stability</span>
               </div>
             </div>
@@ -135,11 +185,14 @@ const AdminDashboard = () => {
 
         {/* Verification and CMS Split */}
         <div className="grid lg:grid-cols-2 gap-8 pt-10 pb-20">
-          {/* Verification Queue - SaaS Style */}
+          {/* High-Fidelity Verification Header */}
           <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Verification Queue</h2>
-              <span className="px-3 py-1 bg-mamacare-teal/10 text-mamacare-teal text-[10px] font-extrabold rounded-lg">{queue.length} Tasks</span>
+            <div className="flex justify-between items-end border-b border-gray-50 pb-6">
+              <div className="space-y-1">
+                <span className="text-[9px] font-black text-mamacare-teal uppercase tracking-[0.2em]">CREDENTIAL REVIEW</span>
+                <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Verification Queue</h2>
+              </div>
+              <span className="px-3 py-1 bg-mamacare-teal/5 text-mamacare-teal text-[10px] font-extrabold rounded-lg border border-mamacare-teal/10">{queue.length} Tasks Pending</span>
             </div>
             <div className="space-y-3">
               {queue.length === 0 && (
@@ -171,11 +224,14 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          {/* Library CMS - Clean Data Table */}
+          {/* High-Fidelity Library Header */}
           <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Library CMS</h2>
-              <button className="text-mamacare-teal font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 hover:opacity-70 transition-opacity">
+            <div className="flex justify-between items-end border-b border-gray-50 pb-6">
+              <div className="space-y-1">
+                <span className="text-[9px] font-black text-mamacare-teal uppercase tracking-[0.2em]">CONTENT MANAGEMENT</span>
+                <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Library CMS</h2>
+              </div>
+              <button className="text-mamacare-teal font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 hover:opacity-70 transition-opacity bg-teal-50 px-4 py-2 rounded-lg">
                 <Plus size={16} /> New Article
               </button>
             </div>
