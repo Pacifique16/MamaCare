@@ -74,7 +74,10 @@ function App() {
           <Route path="/doctor/patients/:id" element={<PatientProfile />} />
           <Route path="/doctor/appointments" element={<DoctorAppointments />} />
           <Route path="/doctor/messaging" element={<Messaging />} />
-          
+        </Route>
+
+        {/* Shared Management Portal (Admin & Doctor) */}
+        <Route element={<ProtectedRoute allowedRoles={['Admin', 'Doctor']} />}>
           <Route path="/patients" element={<PatientsPage />} />
           <Route path="/patient-appointments" element={<PatientAppointmentsPage />} />
         </Route>

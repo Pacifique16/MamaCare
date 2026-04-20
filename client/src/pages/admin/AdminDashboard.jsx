@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import AdminLayout from '../../components/layout/AdminLayout';
 import AdminFooter from '../../components/layout/AdminFooter';
 import { BarChart3, Heart, Plus, Edit2, Trash2 } from 'lucide-react';
@@ -38,20 +39,20 @@ const AdminDashboard = () => {
         {stats && (
           <div className="grid md:grid-cols-4 gap-6">
             {[
-              { label: 'Total Mothers', value: stats.totalMothers, color: 'bg-teal-50 text-mamacare-teal' },
-              { label: 'Total Doctors', value: stats.totalDoctors, color: 'bg-blue-50 text-blue-500' },
-              { label: 'Pending Verification', value: stats.pendingDoctors, color: 'bg-orange-50 text-orange-500' },
-              { label: 'High Risk Mothers', value: stats.highRiskMothers, color: 'bg-red-50 text-red-500' },
+              { label: 'Total Mothers', value: stats.totalMothers, color: 'bg-teal-50 text-mamacare-teal', path: '/patients' },
+              { label: 'Total Doctors', value: stats.totalDoctors, color: 'bg-blue-50 text-blue-500', path: '/admin/doctors' },
+              { label: 'Pending Verification', value: stats.pendingDoctors, color: 'bg-orange-50 text-orange-500', path: '#queue' },
+              { label: 'High Risk Mothers', value: stats.highRiskMothers, color: 'bg-red-50 text-red-500', path: '/patients' },
             ].map((s, i) => (
-              <div key={i} className="bg-white rounded-[2.5rem] p-8 border border-white shadow-card flex items-center justify-between">
+              <Link key={i} to={s.path} className="bg-white rounded-[2.5rem] p-8 border border-white shadow-card flex items-center justify-between hover:scale-[1.02] hover:shadow-2xl transition-all cursor-pointer group">
                 <div className="space-y-2">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{s.label}</p>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest group-hover:text-mamacare-teal transition-colors">{s.label}</p>
                   <h3 className="text-5xl font-extrabold text-gray-900 tracking-tighter">{s.value}</h3>
                 </div>
-                <div className={`w-14 h-14 ${s.color} rounded-2xl flex items-center justify-center`}>
+                <div className={`w-14 h-14 ${s.color} rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform`}>
                   <BarChart3 size={24} />
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
