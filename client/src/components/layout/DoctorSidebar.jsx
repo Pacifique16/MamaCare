@@ -11,6 +11,11 @@ import {
 } from 'lucide-react';
 
 const DoctorSidebar = () => {
+    const handleLogout = () => {
+        localStorage.removeItem('mamacare_user');
+        window.location.href = '/';
+    };
+
     const navItems = [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/doctor/dashboard' },
         { icon: Users, label: 'Patients', path: '/doctor/patients' },
@@ -63,7 +68,7 @@ const DoctorSidebar = () => {
                     <Settings size={20} />
                     Settings
                 </NavLink>
-                <button className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl font-bold text-sm text-red-400 hover:bg-red-50 transition-all">
+                <button onClick={handleLogout} className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl font-bold text-sm text-red-400 hover:bg-red-50 transition-all">
                     <LogOut size={20} />
                     Logout
                 </button>

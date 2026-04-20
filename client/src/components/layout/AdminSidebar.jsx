@@ -13,6 +13,11 @@ import {
 } from 'lucide-react';
 
 const AdminSidebar = () => {
+  const handleLogout = () => {
+    localStorage.removeItem('mamacare_user');
+    window.location.href = '/';
+  };
+
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
     { name: 'Staff Directory', icon: Users, path: '/admin/doctors' },
@@ -74,10 +79,10 @@ const AdminSidebar = () => {
             <HelpCircle size={18} />
             Support
           </button>
-          <NavLink to="/login" className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold text-sm text-red-500 hover:bg-red-50 transition-all">
+          <button onClick={handleLogout} className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold text-sm text-red-500 hover:bg-red-50 transition-all">
             <LogOut size={18} />
             Logout
-          </NavLink>
+          </button>
         </div>
       </div>
     </aside>

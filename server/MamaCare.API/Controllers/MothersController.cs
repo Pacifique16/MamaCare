@@ -109,6 +109,19 @@ public class MothersController : ControllerBase
         };
         _db.Mothers.Add(mother);
         await _db.SaveChangesAsync();
+
+        // Also create a Patient record so the admin Patients page shows this mother
+        var patient = new Patient
+        {
+            FullName = dto.FullName,
+            DateOfBirth = DateTime.SpecifyKind(dto.DateOfBirth, DateTimeKind.Utc),
+            WeeksPregnant = dto.GestationalWeek,
+            RiskLevel = PatientRiskLevel.Low,
+            BloodType = PatientBloodType.Unknown,
+        };
+        _db.Patients.Add(patient);
+        await _db.SaveChangesAsync();
+
         return CreatedAtAction(nameof(GetById), new { id = mother.Id }, new { mother.Id, mother.UserId });
     }
 
@@ -116,7 +129,7 @@ public class MothersController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Update(int id, UpdateMotherDto dto)
     {
-        var mother = await _db.Mothers.FindAsync(id);
+        var mother = await _db.Mothers.Include(m => m.User).FirstOrDefaultAsync(m => m.Id == id);
         if (mother is null) return NotFound();
 
         if (dto.Location is not null) mother.Location = dto.Location;
@@ -130,8 +143,22 @@ public class MothersController : ControllerBase
         if (dto.Allergies is not null) mother.Allergies = dto.Allergies;
         if (dto.OnboardingComplete.HasValue) mother.OnboardingComplete = dto.OnboardingComplete.Value;
 
+        // Sync Patient record when onboarding completes
+        if (dto.OnboardingComplete == true)
+        {
+            var patient = await _db.Patients.FirstOrDefaultAsync(p => p.FullName == mother.User.FullName);
+            if (patient != null)
+            {
+                if (dto.GestationalWeek.HasValue) patient.WeeksPregnant = dto.GestationalWeek.Value;
+                if (dto.Location is not null) patient.Address = dto.Location;
+                if (mother.User.PhoneNumber is not null) patient.PhoneNumber = mother.User.PhoneNumber;
+                patient.RiskLevel = mother.HasHypertension || mother.HasGestationalDiabetes
+                    ? PatientRiskLevel.High : PatientRiskLevel.Low;
+            }
+        }
+
         await _db.SaveChangesAsync();
-        return Ok(mother);
+        return Ok(new { mother.Id, mother.OnboardingComplete });
     }
 
     [HttpDelete("{id}")]

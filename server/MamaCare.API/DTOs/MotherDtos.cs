@@ -58,5 +58,6 @@ public record UpdateMotherDto(
     bool? HasGestationalDiabetes,
     bool? HasHypertension,
     string? Allergies,
-    bool? OnboardingComplete
+    bool? OnboardingComplete,
+    string? MedicalNotes
 );

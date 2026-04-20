@@ -9,7 +9,7 @@ import {
     MapPin, User, ArrowRight, ShieldAlert, Sparkles,
     Stethoscope, Activity, HeartPulse
 } from 'lucide-react';
-import { appointmentsApi } from '../api/services';
+import { appointmentsApi, doctorsApi } from '../api/services';
 import { useAuth } from '../context/AuthContext';
 
 const typeLabel = (type) => type?.replace(/([A-Z])/g, ' $1').trim() || type;
@@ -22,17 +22,29 @@ const Appointments = () => {
     // Wizard State
     const [bookingStep, setBookingStep] = useState(1);
     const [direction, setDirection] = useState(0);
+    const [confirming, setConfirming] = useState(false);
 
-    // Selection State
-    const [selectedDate, setSelectedDate] = useState(new Date().getDate());
+    // Calendar State
+    const [calendarDate, setCalendarDate] = useState(new Date());
+    const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedTime, setSelectedTime] = useState('10:30 AM');
     const [selectedReason, setSelectedReason] = useState('RoutineCheckup');
+    const [doctors, setDoctors] = useState([]);
+    const [selectedDoctorId, setSelectedDoctorId] = useState(null);
 
     // Data State
     const [upcoming, setUpcoming] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const times = ['9:00 AM', '10:30 AM', '11:45 AM', '1:15 PM', '2:45 PM', '4:00 PM'];
+
+    const timeToHour = (t) => {
+        const [time, period] = t.split(' ');
+        let [h, m] = time.split(':').map(Number);
+        if (period === 'PM' && h !== 12) h += 12;
+        if (period === 'AM' && h === 12) h = 0;
+        return { h, m };
+    };
 
     const reasons = [
         { id: 'RoutineCheckup', label: 'Routine Check-up', icon: Star, color: 'text-amber-500', desc: 'Standard monthly prenatal visit' },
@@ -47,9 +59,34 @@ const Appointments = () => {
                 const active = r.data.filter(a => a.status !== 'Completed' && a.status !== 'Cancelled');
                 setUpcoming(active);
             })
-            .catch(() => { })
+            .catch(() => {})
             .finally(() => setLoading(false));
+        doctorsApi.getAll().then(r => {
+            const verified = r.data.filter(d => d.status === 'Verified');
+            setDoctors(verified);
+            if (verified.length > 0) setSelectedDoctorId(verified[0].id);
+        }).catch(() => {});
     }, [motherId]);
+
+    const handleConfirm = async () => {
+        setConfirming(true);
+        try {
+            const { h, m } = timeToHour(selectedTime);
+            const scheduledAt = new Date(selectedDate);
+            scheduledAt.setHours(h, m, 0, 0);
+            await appointmentsApi.create({
+                motherId,
+                doctorId: selectedDoctorId,
+                scheduledAt: scheduledAt.toISOString(),
+                type: selectedReason,
+                status: 'Scheduled',
+            });
+            navigate('/rest-monitor');
+        } catch {
+            navigate('/rest-monitor');
+        }
+        setConfirming(false);
+    };
 
     const nextStep = () => {
         setDirection(1);
@@ -110,6 +147,8 @@ const Appointments = () => {
                             >
                                 {bookingStep === 1 && (
                                     <DateStep
+                                        calendarDate={calendarDate}
+                                        setCalendarDate={setCalendarDate}
                                         selectedDate={selectedDate}
                                         onSelect={setSelectedDate}
                                         onNext={nextStep}
@@ -138,8 +177,12 @@ const Appointments = () => {
                                         date={selectedDate}
                                         time={selectedTime}
                                         reason={reasons.find(r => r.id === selectedReason)}
+                                        doctors={doctors}
+                                        selectedDoctorId={selectedDoctorId}
+                                        onSelectDoctor={setSelectedDoctorId}
                                         onBack={prevStep}
-                                        onConfirm={() => navigate('/rest-monitor')}
+                                        confirming={confirming}
+                                        onConfirm={handleConfirm}
                                     />
                                 )}
                             </motion.div>
@@ -231,50 +274,63 @@ const BookingStepper = ({ currentStep }) => {
     );
 };
 
-const DateStep = ({ selectedDate, onSelect, onNext }) => (
-    <div className="max-w-md mx-auto space-y-8">
-        <div className="text-center space-y-2">
-            <h3 className="text-2xl font-bold text-[#005C5C] tracking-tight">Select a Date</h3>
-            <p className="text-gray-600 font-medium tracking-tight uppercase text-[10px]">Choose the day for your clinical visit</p>
-        </div>
-        <div className="bg-[#FAFAFA] rounded-[2rem] p-8 border border-gray-100">
-            <div className="flex justify-between items-center mb-8">
-                <h4 className="font-bold text-lg text-[#005C5C] uppercase tracking-tight">April 2026</h4>
-                <div className="flex gap-1">
-                    <button className="p-1.5 hover:text-mamacare-teal transition-colors"><ChevronLeft size={18} /></button>
-                    <button className="p-1.5 hover:text-mamacare-teal transition-colors"><ChevronRight size={18} /></button>
-                </div>
+const DateStep = ({ calendarDate, setCalendarDate, selectedDate, onSelect, onNext }) => {
+    const year = calendarDate.getFullYear();
+    const month = calendarDate.getMonth();
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = new Date();
+    const monthName = calendarDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+    const prevMonth = () => setCalendarDate(new Date(year, month - 1, 1));
+    const nextMonth = () => setCalendarDate(new Date(year, month + 1, 1));
+
+    const isPast = (day) => new Date(year, month, day) < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const isSelected = (day) => selectedDate.getFullYear() === year && selectedDate.getMonth() === month && selectedDate.getDate() === day;
+
+    return (
+        <div className="max-w-md mx-auto space-y-8">
+            <div className="text-center space-y-2">
+                <h3 className="text-2xl font-bold text-[#005C5C] tracking-tight">Select a Date</h3>
+                <p className="text-gray-600 font-medium tracking-tight uppercase text-[10px]">Choose the day for your clinical visit</p>
             </div>
-            <div className="grid grid-cols-7 gap-y-2 text-center">
-                {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => (
-                    <span key={d} className="text-[10px] font-bold text-gray-300 uppercase tracking-widest pb-3">{d}</span>
-                ))}
-                {Array.from({ length: 31 }, (_, i) => i + 1).map(day => {
-                    const isSelected = selectedDate === day;
-                    const isInactive = day < new Date().getDate();
-                    return (
+            <div className="bg-[#FAFAFA] rounded-[2rem] p-8 border border-gray-100">
+                <div className="flex justify-between items-center mb-8">
+                    <h4 className="font-bold text-lg text-[#005C5C] uppercase tracking-tight">{monthName}</h4>
+                    <div className="flex gap-1">
+                        <button onClick={prevMonth} className="p-1.5 hover:text-mamacare-teal transition-colors"><ChevronLeft size={18} /></button>
+                        <button onClick={nextMonth} className="p-1.5 hover:text-mamacare-teal transition-colors"><ChevronRight size={18} /></button>
+                    </div>
+                </div>
+                <div className="grid grid-cols-7 gap-y-2 text-center">
+                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
+                        <span key={i} className="text-[10px] font-bold text-gray-300 uppercase tracking-widest pb-3">{d}</span>
+                    ))}
+                    {Array.from({ length: firstDay }).map((_, i) => <div key={`e-${i}`} />)}
+                    {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(day => (
                         <button
                             key={day}
-                            onClick={() => !isInactive && onSelect(day)}
-                            className={`w-10 h-10 mx-auto rounded-xl flex items-center justify-center font-bold text-sm transition-all ${isInactive ? 'text-gray-300 cursor-default' :
-                                    isSelected ? 'bg-[#005C5C] text-white shadow-xl scale-105' :
-                                        'text-gray-600 hover:bg-white hover:shadow-sm'
-                                }`}
+                            onClick={() => !isPast(day) && onSelect(new Date(year, month, day))}
+                            className={`w-10 h-10 mx-auto rounded-xl flex items-center justify-center font-bold text-sm transition-all ${
+                                isPast(day) ? 'text-gray-300 cursor-default' :
+                                isSelected(day) ? 'bg-[#005C5C] text-white shadow-xl scale-105' :
+                                'text-gray-600 hover:bg-white hover:shadow-sm'
+                            }`}
                         >
                             {day}
                         </button>
-                    );
-                })}
+                    ))}
+                </div>
+            </div>
+            <div className="flex justify-center">
+                <button onClick={onNext} className="group bg-[#005C5C] text-white px-12 py-5 rounded-[1.5rem] font-bold shadow-2xl hover:scale-105 transition-all flex items-center gap-2 text-sm">
+                    Continue to Time
+                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                </button>
             </div>
         </div>
-        <div className="flex justify-center">
-            <button onClick={onNext} className="group bg-[#005C5C] text-white px-12 py-5 rounded-[1.5rem] font-bold shadow-2xl hover:scale-105 transition-all flex items-center gap-2 text-sm">
-                Continue to Time
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </button>
-        </div>
-    </div>
-);
+    );
+};
 
 const TimeStep = ({ selectedTime, onSelect, onNext, onBack, times }) => (
     <div className="max-w-xl mx-auto space-y-8">
@@ -331,7 +387,9 @@ const ReasonStep = ({ reasons, selectedReason, onSelect, onNext, onBack }) => (
     </div>
 );
 
-const ReviewStep = ({ date, time, reason, onBack, onConfirm }) => (
+const ReviewStep = ({ date, time, reason, doctors, selectedDoctorId, onSelectDoctor, onBack, onConfirm, confirming }) => {
+    const selectedDoctor = doctors.find(d => d.id === selectedDoctorId);
+    return (
     <div className="max-w-lg mx-auto space-y-8">
         <div className="text-center space-y-2">
             <h3 className="text-2xl font-bold text-[#005C5C] tracking-tight">Confirm Visit</h3>
@@ -340,8 +398,8 @@ const ReviewStep = ({ date, time, reason, onBack, onConfirm }) => (
         <div className="bg-white rounded-[2.5rem] p-10 border-2 border-mamacare-teal/10 shadow-xl space-y-8">
             <div className="flex items-center gap-6">
                 <div className="w-20 h-20 bg-mamacare-teal rounded-[1.5rem] flex flex-col items-center justify-center text-white shadow-lg">
-                    <span className="text-[10px] font-bold uppercase">Apr</span>
-                    <span className="text-2xl font-bold">{date}</span>
+                    <span className="text-[10px] font-bold uppercase">{date.toLocaleDateString('en-US', { month: 'short' })}</span>
+                    <span className="text-2xl font-bold">{date.getDate()}</span>
                 </div>
                 <div className="space-y-0.5">
                     <h4 className="text-xl font-bold text-[#003E3D] tracking-tight">{reason?.label}</h4>
@@ -349,29 +407,34 @@ const ReviewStep = ({ date, time, reason, onBack, onConfirm }) => (
                 </div>
             </div>
 
-            <div className="space-y-4 pt-8 border-t border-gray-50">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-mamacare-teal">
-                            <User size={18} />
-                        </div>
-                        <div>
-                            <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Specialist</p>
-                            <p className="text-base font-bold text-[#005C5C]">Dr. Sarah Mitchell</p>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-1 text-amber-500 font-bold text-sm">
-                        <Star size={14} fill="currentColor" /> 4.9
-                    </div>
-                </div>
+            <div className="space-y-3 pt-6 border-t border-gray-50">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Select Doctor</label>
+                {doctors.length === 0 ? (
+                    <p className="text-sm text-gray-400">No verified doctors available.</p>
+                ) : (
+                    <select
+                        value={selectedDoctorId || ''}
+                        onChange={e => onSelectDoctor(Number(e.target.value))}
+                        className="w-full bg-gray-50 rounded-2xl p-4 font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20"
+                    >
+                        {doctors.map(d => (
+                            <option key={d.id} value={d.id}>{d.fullName} — {d.specialty}</option>
+                        ))}
+                    </select>
+                )}
             </div>
 
-            <button onClick={onConfirm} className="w-full bg-[#005C5C] text-white py-6 rounded-[2rem] font-bold text-lg shadow-2xl hover:bg-mamacare-teal-dark transition-all flex items-center justify-center gap-3">
-                <CheckCircle2 size={22} /> Confirm Booking
+            <button
+                onClick={onConfirm}
+                disabled={confirming || !selectedDoctorId}
+                className="w-full bg-[#005C5C] text-white py-6 rounded-[2rem] font-bold text-lg shadow-2xl hover:bg-mamacare-teal-dark transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+            >
+                <CheckCircle2 size={22} /> {confirming ? 'Booking...' : 'Confirm Booking'}
             </button>
         </div>
         <button onClick={onBack} className="w-full text-[#005C5C] font-bold underline underline-offset-8 text-sm">Need to change something?</button>
     </div>
-);
+    );
+};
 
 export default Appointments;
