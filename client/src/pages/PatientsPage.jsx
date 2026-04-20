@@ -134,36 +134,52 @@ function PatientsPage() {
     <AdminLayout>
       <div className="max-w-7xl mx-auto p-8 space-y-10 animate-in fade-in duration-700">
 
-        {/* Header */}
-        <div className="flex justify-between items-end gap-4">
-          <div className="space-y-2">
-            <span className="text-[10px] font-bold text-mamacare-teal uppercase tracking-[0.25em]">Patient Management</span>
-            <h1 className="text-6xl font-bold text-gray-900 tracking-tighter">Patients</h1>
+        {/* Professional Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-gray-100 pb-10 font-poppins">
+          <div className="space-y-1">
+            <h1 className="text-4xl font-bold text-gray-900 tracking-tight">Patients Directory</h1>
+            <p className="text-gray-500 font-medium tracking-tight">Active pregnancy monitoring and risk management.</p>
           </div>
-          <button
-            onClick={() => { setEditingPatient(null); setShowForm(true) }}
-            className="bg-mamacare-teal text-white px-10 py-5 rounded-2xl font-bold text-sm shadow-xl shadow-mamacare-teal/20 transition-all hover:bg-mamacare-teal-dark active:scale-[0.98] flex items-center gap-3"
-          >
-            <Plus size={18} />
-            Add Patient
-          </button>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handleExport}
+              className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-100 rounded-xl text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-mamacare-teal hover:border-mamacare-teal/30 transition-all font-poppins shadow-sm"
+            >
+              <Download size={14} />
+              Export
+            </button>
+            <button
+              onClick={() => { setEditingPatient(null); setShowForm(true) }}
+              className="bg-mamacare-teal text-white px-8 py-3 rounded-xl font-bold text-xs shadow-lg shadow-mamacare-teal/10 transition-all hover:bg-mamacare-teal-dark active:scale-[0.98] flex items-center gap-2 font-poppins"
+            >
+              <Plus size={18} />
+              Add Patient
+            </button>
+          </div>
         </div>
 
-        {/* Stats */}
+        {/* Professional Stats row */}
         {!loading && !error && (
-          <div className="grid md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 font-poppins">
             {[
-              { label: 'Total Patients', value: patients.length, color: 'bg-teal-50 text-mamacare-teal', icon: <Users size={24} /> },
-              { label: 'Avg. Weeks', value: avgWeeks, color: 'bg-pink-50 text-pink-400', icon: <span className="font-bold text-xl">w</span> },
-              { label: 'Third Trimester', value: thirdTrimester, color: 'bg-purple-50 text-purple-400', icon: <span className="font-bold text-sm">T3</span> },
-              { label: 'High Risk', value: highRisk, color: 'bg-red-50 text-red-400', icon: <span className="font-bold text-sm">!</span> },
+              { label: 'Total Patients', value: patients.length, trend: 'stable', progress: '100%', color: 'text-mamacare-teal' },
+              { label: 'Avg. Gestation', value: `${avgWeeks}w`, trend: '+1.2', progress: `${(avgWeeks/40)*100}%`, color: 'text-blue-500' },
+              { label: 'Third Trimester', value: thirdTrimester, trend: 'active', progress: `${(thirdTrimester/patients.length)*100}%`, color: 'text-purple-500' },
+              { label: 'High Risk', value: highRisk, trend: 'critical', progress: `${(highRisk/patients.length)*100}%`, color: 'text-red-500' },
             ].map((s) => (
-              <div key={s.label} className="bg-white rounded-[2.5rem] p-8 border border-white shadow-card flex items-center justify-between">
-                <div className="space-y-2">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{s.label}</p>
-                  <h3 className="text-5xl font-extrabold text-gray-900 tracking-tighter">{s.value}</h3>
+              <div key={s.label} className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm transition-all duration-300">
+                <div className="space-y-4">
+                  <div className="flex justify-between items-start">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{s.label}</span>
+                    <div className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-gray-50 ${s.color}`}>
+                      {s.trend}
+                    </div>
+                  </div>
+                  <h3 className="text-3xl font-bold text-gray-900 tracking-tight">{s.value}</h3>
+                  <div className="h-1 w-full bg-gray-50 rounded-full overflow-hidden">
+                    <div className="h-full bg-mamacare-teal rounded-full" style={{ width: s.progress }} />
+                  </div>
                 </div>
-                <div className={`w-14 h-14 ${s.color} rounded-2xl flex items-center justify-center`}>{s.icon}</div>
               </div>
             ))}
           </div>
@@ -178,18 +194,18 @@ function PatientsPage() {
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search by name, phone or address…"
-                className="w-full pl-10 pr-4 py-3 bg-white border border-gray-100 rounded-2xl text-sm font-medium text-gray-700 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20"
+                placeholder="Find patients by name or phone… "
+                className="w-full pl-10 pr-4 py-3 bg-white border border-gray-100 rounded-xl text-xs font-medium text-gray-700 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/10 font-poppins"
               />
             </div>
 
-            <div className="flex gap-1 bg-gray-100 p-1 rounded-2xl">
+            <div className="flex gap-1 bg-gray-50 border border-gray-100 p-1 rounded-xl font-poppins">
               {TRIMESTER_TABS.map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setTrimesterTab(tab)}
-                  className={`px-3 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all whitespace-nowrap ${
-                    trimesterTab === tab ? 'bg-white text-mamacare-teal shadow-sm' : 'text-gray-400 hover:text-gray-600'
+                  className={`px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-widest transition-all whitespace-nowrap ${
+                    trimesterTab === tab ? 'bg-white text-mamacare-teal shadow-xs' : 'text-gray-400 hover:text-gray-600'
                   }`}
                 >
                   {tab}
@@ -200,34 +216,25 @@ function PatientsPage() {
             <select
               value={riskFilter}
               onChange={(e) => setRiskFilter(e.target.value)}
-              className="px-4 py-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20"
+              className="px-4 py-3 bg-white border border-gray-100 rounded-xl text-[10px] font-bold uppercase tracking-widest text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/10 font-poppins"
             >
-              <option value="All">All Risk Levels</option>
-              <option value="Low">Low Risk</option>
-              <option value="Medium">Medium Risk</option>
-              <option value="High">High Risk</option>
+              <option value="All">Risk Level: All</option>
+              <option value="Low">Risk: Low</option>
+              <option value="Medium">Risk: Medium</option>
+              <option value="High">Risk: High</option>
             </select>
 
-            <div className="flex items-center gap-2">
-              <ArrowUpDown size={14} className="text-gray-400" />
+            <div className="flex items-center gap-2 font-poppins">
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value)}
-                className="px-4 py-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20"
+                className="px-4 py-3 bg-white border border-gray-100 rounded-xl text-[10px] font-bold uppercase tracking-widest text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/10"
               >
                 {SORT_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>{o.label}</option>
                 ))}
               </select>
             </div>
-
-            <button
-              onClick={handleExport}
-              className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-500 hover:text-mamacare-teal hover:border-mamacare-teal/30 transition-all"
-            >
-              <Download size={14} />
-              Export CSV
-            </button>
           </div>
         )}
 
