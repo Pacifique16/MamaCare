@@ -1,8 +1,20 @@
 import React from 'react';
 import AdminSidebar from './AdminSidebar';
-import { Bell, Search, User } from 'lucide-react';
+import { Bell, Search, User, LogOut } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const AdminLayout = ({ children }) => {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const handleLogout = () => {
+      logout();
+      navigate('/login');
+  };
+
   return (
     <div className="flex min-h-screen bg-[#F5F7F8] font-outfit">
       {/* Sidebar Navigation */}
@@ -34,11 +46,27 @@ const AdminLayout = ({ children }) => {
                        <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
                     </button>
                     <div className="h-8 w-[1px] bg-gray-100 mx-1"></div>
-                    <button className="flex items-center gap-3 pl-2 group">
-                       <div className="w-10 h-10 rounded-full border-2 border-mamacare-teal/20 overflow-hidden flex items-center justify-center text-mamacare-teal group-hover:bg-mamacare-teal/5 transition-all">
-                          <User size={20} />
-                       </div>
-                    </button>
+                    <div className="relative">
+                        <button 
+                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                            className="flex items-center gap-3 pl-2 group focus:outline-none"
+                        >
+                           <div className="w-10 h-10 rounded-full border-2 border-mamacare-teal/20 overflow-hidden flex items-center justify-center text-mamacare-teal group-hover:bg-mamacare-teal/5 transition-all">
+                              <User size={20} />
+                           </div>
+                        </button>
+                        {isDropdownOpen && (
+                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 overflow-hidden z-[60]">
+                                <button
+                                    onClick={handleLogout}
+                                    className="w-full px-4 py-3 text-left text-sm font-bold text-red-500 hover:bg-red-50 flex items-center gap-2 transition-colors"
+                                >
+                                    <LogOut size={16} />
+                                    Sign Out
+                                </button>
+                            </div>
+                        )}
+                    </div>
                  </div>
               </div>
            </div>
