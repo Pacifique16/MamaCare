@@ -44,7 +44,7 @@ const VitalsClinical = () => {
                             </div>
                         </div>
                         <div className="flex items-center gap-3">
-                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Not Available</span>
+                            <span className="text-[10px] font-bold text-gray-700 uppercase tracking-widest">Not Available</span>
                             <button 
                                 onClick={() => setIsAvailable(prev => ({ ...prev, bp: !prev.bp }))}
                                 className={`w-14 h-8 rounded-full p-1 transition-all duration-300 ${isAvailable.bp ? 'bg-mamacare-teal' : 'bg-gray-200'}`}
@@ -56,7 +56,7 @@ const VitalsClinical = () => {
 
                     <div className={`grid grid-cols-2 gap-8 transition-opacity duration-300 ${isAvailable.bp ? 'opacity-100' : 'opacity-40 pointer-events-none'}`}>
                         <div className="space-y-3">
-                            <label className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400">SYSTOLIC (TOP)</label>
+                            <label className="text-[10px] font-extrabold uppercase tracking-widest text-gray-700">SYSTOLIC (TOP)</label>
                             <div className="relative">
                                 <input 
                                     type="text" 
@@ -68,7 +68,7 @@ const VitalsClinical = () => {
                             </div>
                         </div>
                         <div className="space-y-3">
-                            <label className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400">DIASTOLIC (BOTTOM)</label>
+                            <label className="text-[10px] font-extrabold uppercase tracking-widest text-gray-700">DIASTOLIC (BOTTOM)</label>
                             <div className="relative">
                                 <input 
                                     type="text" 
@@ -106,7 +106,7 @@ const VitalsClinical = () => {
                     </div>
 
                     <div className={`space-y-4 transition-opacity duration-300 ${isAvailable.temp ? 'opacity-100' : 'opacity-40 pointer-events-none'}`}>
-                        <label className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400">CURRENT TEMP</label>
+                        <label className="text-[10px] font-extrabold uppercase tracking-widest text-gray-700">CURRENT TEMP</label>
                         <div className="flex items-center gap-4">
                             <div className="flex-1">
                                 <input 
@@ -158,7 +158,7 @@ const VitalsClinical = () => {
                     </div>
 
                     <div className={`space-y-4 transition-opacity duration-300 ${isAvailable.weight ? 'opacity-100' : 'opacity-40 pointer-events-none'}`}>
-                        <label className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400">WEIGHT</label>
+                        <label className="text-[10px] font-extrabold uppercase tracking-widest text-gray-700">WEIGHT</label>
                         <div className="relative">
                             <input 
                                 type="text" 
@@ -226,7 +226,7 @@ const VitalsClinical = () => {
                 </section>
 
                 <div className="bg-white rounded-[2.5rem] p-10 space-y-8 border border-gray-100 shadow-sm">
-                    <p className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400">MEDICAL SUPPORT</p>
+                    <p className="text-[10px] font-extrabold uppercase tracking-widest text-gray-700">MEDICAL SUPPORT</p>
                     
                     <div className="space-y-6">
                         <div className="flex items-start gap-4">

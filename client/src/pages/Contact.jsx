@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import Footer from '../components/layout/Footer';
 import ContactForm from '../components/contact/ContactForm';
 import FAQCard from '../components/contact/FAQCard';
 import QuickContact from '../components/contact/QuickContact';
@@ -15,7 +16,7 @@ const Contact = () => {
   ];
 
   return (
-    <div className="antialiased min-h-screen bg-[#FDFDFD] font-outfit selection:bg-primary-lp/30">
+    <div className="antialiased min-h-screen bg-[#FDFDFD] font-poppins selection:bg-primary-lp/30">
       {/* TopNavBar — same as LandingPage */}
       <nav className="fixed top-0 w-full z-50 bg-stone-50/70 backdrop-blur-md">
         <div className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
@@ -134,19 +135,7 @@ const Contact = () => {
       </section>
 
       {/* Footer — same as LandingPage */}
-      <footer className="bg-background-lp w-full py-12 px-8 border-t border-gray-200">
-        <div className="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto gap-4">
-          <div className="space-y-1 text-center md:text-left">
-            <span className="font-headline font-semibold text-lg text-mamacare-teal">MamaCare</span>
-            <p className="text-sm text-on-surface-variant-lp"> © 2026 MamaCare Digital Sanctuary. All rights reserved.</p>
-          </div>
-          <div className="flex gap-8">
-            <a className="text-sm text-on-surface-variant-lp hover:text-primary-lp transition-colors" href="#">Privacy Policy</a>
-            <a className="text-sm text-on-surface-variant-lp hover:text-primary-lp transition-colors" href="#">Terms of Service</a>
-            <Link to="/contact" className="text-gray-500 hover:text-mamacare-teal text-sm transition-colors">Contact Support</Link>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { Baby } from 'lucide-react';
 
 const CenteredLayout = ({ children, hideHeader = false, hideFooter = false }) => {
   return (
-    <div className="relative min-h-screen w-full flex flex-col items-center justify-center bg-gray-50/50 overflow-hidden font-outfit">
+    <div className="relative min-h-screen w-full flex flex-col items-center justify-center bg-gray-50/50 overflow-hidden font-poppins">
       
       {/* Ripple Background Effect */}
       <div className="absolute inset-0 z-0 flex items-center justify-center opacity-40">

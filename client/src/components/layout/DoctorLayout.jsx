@@ -15,7 +15,7 @@ const DoctorLayout = ({ children, title, subtitle, activeActionButton }) => {
         navigate('/login');
     };
     return (
-        <div className="flex min-h-screen bg-[#F5F7F8] font-outfit">
+        <div className="flex min-h-screen bg-[#F5F7F8] font-poppins">
             <DoctorSidebar />
             
             <div className="flex-1 flex flex-col min-w-0">
@@ -89,10 +89,10 @@ const DoctorLayout = ({ children, title, subtitle, activeActionButton }) => {
                     {children}
                 </main>
 
-                <footer className="py-8 px-10 border-t border-gray-50 bg-white">
+                <footer className="py-4 px-10 border-t border-gray-50 bg-white">
                     <div className="flex justify-between items-center text-[10px] font-bold text-gray-300 uppercase tracking-widest">
                         <span>MamaCare Provider Portal • HIPAA Compliant Environment</span>
-                        <span>© 2024 MamaCare Maternal Health</span>
+                        <span className="text-[10px] font-bold text-[#005c5c]/60 uppercase tracking-widest">© 2026 MamaCare Maternal Health Platform.</span>
                     </div>
                 </footer>
             </div>

@@ -4,7 +4,7 @@ import Footer from '../layout/Footer';
 
 const AuthLayout = ({ children, leftContent, compact = false }) => {
   return (
-    <div className="min-h-screen flex flex-col font-outfit bg-gray-50/50">
+    <div className="min-h-screen flex flex-col font-poppins bg-gray-50/50">
       <main className={`flex-grow flex items-center justify-center ${compact ? 'py-4' : 'py-12'} px-4 sm:px-6 lg:px-8`}>
         <div className={`max-w-7xl w-full mx-auto grid md:grid-cols-2 bg-white rounded-[2.5rem] overflow-hidden shadow-2xl border border-gray-100 ${compact ? 'min-h-[60vh]' : 'min-h-[85vh]'}`}>
           {/* Left Section - Teal Accent */}

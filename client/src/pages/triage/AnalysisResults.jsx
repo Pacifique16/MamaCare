@@ -8,7 +8,7 @@ const AnalysisResults = () => {
 
     return (
         <TriageLayout step={4} totalSteps={4} stepTitle="Analysis Complete">
-            <div className="max-w-7xl mx-auto space-y-12 pb-20">
+            <div className="max-w-7xl mx-auto space-y-12 pb-8">
                 {/* Status Header */}
                 <div className="space-y-4">
                     <div className="flex items-center gap-2">
@@ -49,7 +49,7 @@ const AnalysisResults = () => {
                                 </svg>
                                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                                     <span className="text-4xl font-bold text-[#CB8F00] tracking-tight">Moderate</span>
-                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Risk Level</span>
+                                    <span className="text-[10px] font-bold text-gray-700 uppercase tracking-widest mt-1">Risk Level</span>
                                 </div>
                             </div>
 

@@ -1,4 +1,4 @@
-import { User, ChevronDown, Globe, Bell, LayoutDashboard, Stethoscope, BookOpen, Calendar as CalendarIcon, Heart, Activity, LogOut } from 'lucide-react';
+import { User, ChevronDown, Globe, Bell, LayoutDashboard, Stethoscope, BookOpen, Calendar as CalendarIcon, Heart, Activity, LogOut, Baby } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
@@ -16,7 +16,7 @@ const Navbar = () => {
 
   const links = [
     { name: 'Home', path: '/dashboard', icon: LayoutDashboard },
-    { name: 'Triage', path: '/triage/symptom-profile', icon: Stethoscope },
+    { name: 'Triage', path: '/triage', icon: Stethoscope },
     { name: 'Library', path: '/library', icon: BookOpen },
     { name: 'Appointments', path: '/appointments', icon: CalendarIcon },
   ];
@@ -25,7 +25,8 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 px-8 py-4">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2 group">
+          <Baby className="text-mamacare-teal transition-transform group-hover:rotate-12" size={24} />
           <span className="text-xl font-bold text-mamacare-teal tracking-tighter">MamaCare</span>
         </Link>
 
@@ -35,9 +36,9 @@ const Navbar = () => {
             <Link
               key={link.name}
               to={link.path}
-              className={`text-sm font-bold transition-colors relative py-2 ${location.pathname.startsWith(link.path)
-                ? 'text-mamacare-teal after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-mamacare-teal'
-                : 'text-gray-400 hover:text-mamacare-teal'
+              className={`text-sm transition-colors relative py-2 ${location.pathname.startsWith(link.path)
+                ? 'text-mamacare-teal font-bold after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-mamacare-teal'
+                : 'text-gray-800 font-medium hover:text-mamacare-teal'
                 }`}
             >
               {link.name}
@@ -49,7 +50,7 @@ const Navbar = () => {
           <button className="p-2 text-mamacare-teal bg-[#E6F3F3] rounded-full">
             <Activity size={18} />
           </button>
-          <button className="p-2 text-gray-400">
+          <button className="p-2 text-gray-700 hover:text-mamacare-teal transition-colors">
             <Bell size={20} />
           </button>
           <div className="relative">

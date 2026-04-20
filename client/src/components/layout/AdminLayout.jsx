@@ -16,7 +16,7 @@ const AdminLayout = ({ children }) => {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#F5F7F8] font-outfit">
+    <div className="flex min-h-screen bg-[#F5F7F8] font-poppins">
       {/* Sidebar Navigation */}
       <AdminSidebar />
 
