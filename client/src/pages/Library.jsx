@@ -70,7 +70,7 @@ const Library = () => {
         {/* Hero & Controls Section */}
         <header className="flex flex-col gap-12 mb-20 text-center items-center">
           <div className="max-w-2xl mx-auto">
-            <h1 className="text-5xl md:text-6xl font-black tracking-tight text-[#003e3d] mb-4">Health Library</h1>
+            <h1 className="text-5xl md:text-6xl font-black tracking-tight text-[#005C5C] mb-4">Health Library</h1>
             <p className="text-gray-500 text-lg leading-relaxed italic font-medium">
               Your sanctuary for clinical guidance, nurturing, and maternal support.
             </p>
@@ -94,7 +94,7 @@ const Library = () => {
                 <button 
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`whitespace-nowrap px-8 py-3 rounded-full font-semibold font-poppins text-sm transition-all active:scale-95 ${activeCategory === cat.id ? 'bg-[#003e3d] text-white' : 'bg-white text-gray-700 border border-gray-100 hover:text-mamacare-teal'}`}
+                  className={`whitespace-nowrap px-8 py-3 rounded-full font-semibold font-poppins text-sm transition-all active:scale-95 ${activeCategory === cat.id ? 'bg-[#005C5C] text-white' : 'bg-white text-gray-700 border border-gray-100 hover:text-mamacare-teal'}`}
                 >
                   {cat.label}
                 </button>
@@ -171,7 +171,7 @@ const Library = () => {
         </section>
 
         {/* Signature "Peace of Mind" Featurette */}
-        <section className="mt-32 p-16 bg-[#003e3d] rounded-[3rem] relative overflow-hidden shadow-2xl">
+        <section className="mt-32 p-16 bg-[#005C5C] rounded-[3rem] relative overflow-hidden shadow-2xl">
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#4cafad]/10 rounded-full blur-[100px] -mr-64 -mt-64 pointer-events-none" />
           
           <div className="relative z-10 grid md:grid-cols-2 gap-16 items-center">
