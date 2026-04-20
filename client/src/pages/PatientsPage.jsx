@@ -4,6 +4,7 @@ import AdminLayout from '../components/layout/AdminLayout'
 import PatientCard from '../components/PatientCard'
 import PatientForm from '../components/PatientForm'
 import { getAllPatients, deletePatient } from '../api/patientsApi'
+import { mothersApi } from '../api/services'
 
 const TRIMESTER_TABS = ['All', 'First (1-13w)', 'Second (14-27w)', 'Third (28w+)']
 const SORT_OPTIONS = [
@@ -32,8 +33,14 @@ function PatientsPage() {
     setLoading(true)
     setError('')
     try {
-      const res = await getAllPatients()
-      setPatients(res.data)
+      // Use mothersApi.getAll() for a more stable, cycle-free data fetch
+      const res = await mothersApi.getAll()
+      // Map gestationalWeek to weeksPregnant to satisfy existing UI components
+      const mappedData = res.data.map(m => ({
+        ...m,
+        weeksPregnant: m.gestationalWeek
+      }))
+      setPatients(mappedData)
     } catch {
       setError('Failed to load patients. Please check your connection and try again.')
     } finally {

@@ -33,7 +33,7 @@ const SymptomProfile = () => {
         <div className="space-y-4">
             <div className="flex items-center gap-3">
                 <span className="px-3 py-1 bg-red-50 text-red-500 text-[10px] font-bold uppercase tracking-widest rounded-full">EMERGENCY CHECK</span>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">• AI-Powered Assistant</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-700">• AI-Powered Assistant</span>
             </div>
             <h1 className="text-5xl font-bold text-gray-900 tracking-tight">
                 Smart Symptom <span className="italic font-serif text-mamacare-teal">Triage</span>

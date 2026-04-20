@@ -6,7 +6,8 @@ import 'react-datepicker/dist/react-datepicker.css'
 import AdminLayout from '../components/layout/AdminLayout'
 import PatientAppointmentCard from '../components/PatientAppointmentCard'
 import PatientAppointmentForm from '../components/PatientAppointmentForm'
-import { getAllAppointments, deleteAppointment } from '../api/patientAppointmentsApi'
+import { deleteAppointment } from '../api/patientAppointmentsApi'
+import { appointmentsApi } from '../api/services'
 
 const TABS = ['All', 'Upcoming', 'Past']
 const SORT_OPTIONS = [
@@ -44,8 +45,18 @@ function PatientAppointmentsPage() {
     setLoading(true)
     setError('')
     try {
-      const res = await getAllAppointments()
-      setAppointments(res.data)
+      // Use the Mothers-linked appointments endpoint for stability and seeded data
+      const res = await appointmentsApi.getAll()
+      
+      // Map Mother-based fields to the UI-expected field names
+      const mapped = res.data.map(a => ({
+        ...a,
+        patientId: a.motherId,
+        patientName: a.motherName,
+        appointmentDate: a.scheduledAt
+      }))
+      
+      setAppointments(mapped)
     } catch {
       setError('Failed to load appointments. Please check your connection and try again.')
     } finally {
@@ -63,7 +74,8 @@ function PatientAppointmentsPage() {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this appointment? This cannot be undone.')) return
     try {
-      await deleteAppointment(id)
+      // Use appointmentsApi.delete to target System A (Mothers)
+      await appointmentsApi.delete(id)
       setAppointments((prev) => prev.filter((a) => a.id !== id))
     } catch {
       alert('Failed to delete appointment. Please try again.')
