@@ -194,7 +194,7 @@ function PatientAppointmentsPage() {
               <div key={s.label} className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm transition-all duration-300 hover:shadow-md">
                 <div className="space-y-4">
                   <div className="flex justify-between items-start">
-                    <span className="text-[12px] font-bold text-gray-700">{s.label}</span>
+                    <span className="text-[13px] font-medium text-gray-700">{s.label}</span>
                     <div className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-gray-50 ${s.color}`}>
                       {s.trend}
                     </div>

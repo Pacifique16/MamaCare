@@ -80,7 +80,7 @@ const AdminDashboard = () => {
               >
                 <div className="space-y-4">
                   <div className="flex justify-between items-start">
-                    <span className="text-[12px] font-bold text-gray-700 ">
+                    <span className="text-[13px] font-medium text-gray-700 ">
                       {s.label}
                     </span>
                     <div className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-gray-50 ${s.color}`}>

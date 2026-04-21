@@ -102,7 +102,7 @@ const DoctorDashboard = () => {
             {statCards.map((stat, idx) => (
               <div key={idx} className="bg-white rounded-[2.5rem] p-8 border border-white shadow-card flex items-center justify-between group hover:shadow-2xl transition-all duration-300">
                 <div className="space-y-3">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{stat.title}</p>
+                  <p className="text-[13px] font-medium text-gray-400">{stat.title}</p>
                   <h3 className="text-4xl font-extrabold text-gray-900 tracking-tighter">{stat.value}</h3>
                   <p className={`text-[10px] font-bold ${stat.color} bg-white px-2 py-1 rounded-full w-fit shadow-sm`}>{stat.change}</p>
                 </div>

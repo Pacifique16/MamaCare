@@ -128,7 +128,7 @@ const DoctorManagement = () => {
             <div key={s.label} className={`${s.bg} rounded-3xl p-8 border border-gray-100/50 shadow-sm transition-all duration-300 hover:shadow-md`}>
               <div className="space-y-4">
                 <div className="flex justify-between items-start">
-                  <span className="text-[13px] font-semibold text-gray-700 ">{s.label}</span>
+                  <span className="text-[13px] font-medium text-gray-700 ">{s.label}</span>
                   <div className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-white/60 ${s.color}`}>
                     {s.trend}
                   </div>
