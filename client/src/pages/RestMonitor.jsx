@@ -1,23 +1,29 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
-import { mothersApi } from '../api/services';
+import { mothersApi, vitalsApi } from '../api/services';
 import { 
   AlertCircle, Phone, MessageSquare, BookOpen, Clock, Activity, 
   Scale, ShieldAlert, Utensils, Bell, Users, ChevronRight, 
-  BarChart3, Heart, Sparkles, Zap, ShieldCheck
+  BarChart3, Heart, Sparkles, Zap, ShieldCheck, CheckCircle2
 } from 'lucide-react';
-
 import { useAuth } from '../context/AuthContext';
 
 const RestMonitor = () => {
     const { user } = useAuth();
+    const navigate = useNavigate();
     const motherId = user?.motherId || 1;
     const [mother, setMother] = React.useState(null);
+    const [latestVital, setLatestVital] = React.useState(null);
 
     React.useEffect(() => {
         mothersApi.getById(motherId).then(r => setMother(r.data)).catch(() => {});
+        vitalsApi.getAll({ motherId }).then(r => {
+            const sorted = r.data.sort((a, b) => new Date(b.recordedAt) - new Date(a.recordedAt));
+            setLatestVital(sorted[0] || null);
+        }).catch(() => {});
     }, [motherId]);
 
     // Stagger container for entrance animations
@@ -136,7 +142,7 @@ const RestMonitor = () => {
                                 Expert-reviewed guidance on managing preeclampsia symptoms and maintaining low-stress environments.
                             </p>
                         </div>
-                        <button className="w-full bg-white text-[#003e3d] py-7 rounded-[2.5rem] font-bold text-xl hover:bg-gray-50 shadow-xl transition-all active:scale-[0.98] relative z-10 border border-gray-100 flex items-center justify-center gap-3">
+                        <button onClick={() => navigate('/library')} className="w-full bg-white text-[#003e3d] py-7 rounded-[2.5rem] font-bold text-xl hover:bg-gray-50 shadow-xl transition-all active:scale-[0.98] relative z-10 border border-gray-100 flex items-center justify-center gap-3">
                             Explore Library <ChevronRight size={24} />
                         </button>
                     </motion.div>
@@ -156,7 +162,7 @@ const RestMonitor = () => {
                     </div>
 
                     <div className="grid lg:grid-cols-3 gap-10">
-                        {/* Blood Pressure - Premium Focus */}
+                        {/* Blood Pressure */}
                         <motion.div variants={itemVariants} className="bg-white rounded-[3rem] p-10 border-2 border-gray-50 shadow-card relative overflow-hidden group">
                             <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#BA1A1A]/5 rounded-full group-hover:scale-110 transition-transform duration-1000"></div>
                             <div className="space-y-6 relative z-10">
@@ -168,14 +174,18 @@ const RestMonitor = () => {
                                 </div>
                                 <div className="space-y-0">
                                     <div className="flex items-baseline gap-3">
-                                        <span className="text-5xl font-black text-[#003e3d] tracking-tighter">140/90</span>
+                                        <span className="text-5xl font-black text-[#003e3d] tracking-tighter">
+                                            {latestVital ? `${latestVital.bloodPressureSystolic}/${latestVital.bloodPressureDiastolic}` : '—'}
+                                        </span>
                                         <span className="text-base font-bold text-gray-300 uppercase">mmHg</span>
                                     </div>
-                                    <div className="flex items-center gap-2 mt-4">
-                                        <div className="px-5 py-2 bg-[#FBE9E7] text-[#BA1A1A] rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse border border-[#BA1A1A]/10">
-                                            Stage 1 Hypertension
+                                    {latestVital && latestVital.bloodPressureSystolic >= 130 && (
+                                        <div className="flex items-center gap-2 mt-4">
+                                            <div className="px-5 py-2 bg-[#FBE9E7] text-[#BA1A1A] rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse border border-[#BA1A1A]/10">
+                                                Elevated
+                                            </div>
                                         </div>
-                                    </div>
+                                    )}
                                 </div>
                                 <div className="pt-6 border-t border-gray-50 flex items-center justify-between">
                                     <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Target: Below 130/80</p>
@@ -184,7 +194,7 @@ const RestMonitor = () => {
                             </div>
                         </motion.div>
 
-                        {/* Weight Stability */}
+                        {/* Weight */}
                         <motion.div variants={itemVariants} className="bg-[#005C5C] rounded-[3rem] p-10 shadow-card text-white relative overflow-hidden group">
                              <div className="absolute top-0 right-0 p-10 opacity-10">
                                 <Scale size={120} />
@@ -197,7 +207,9 @@ const RestMonitor = () => {
                                     <p className="text-xs font-bold text-white/50 uppercase tracking-widest">Gestational Weight</p>
                                 </div>
                                 <div className="flex items-baseline gap-3">
-                                    <span className="text-5xl font-black text-white tracking-tighter">68.4</span>
+                                    <span className="text-5xl font-black text-white tracking-tighter">
+                                        {latestVital?.weightKg ?? mother?.weightKg ?? '—'}
+                                    </span>
                                     <span className="text-base font-bold text-white/30 uppercase">kg</span>
                                 </div>
                                 <div className="pt-6 border-t border-white/10 flex items-center justify-between">
@@ -205,33 +217,26 @@ const RestMonitor = () => {
                                         <div className="w-10 h-10 bg-mamacare-teal rounded-xl flex items-center justify-center">
                                             <Activity size={18} />
                                         </div>
-                                        <p className="text-xs font-bold leading-tight">+0.5kg <br/><span className="text-white/40 uppercase text-[8px] tracking-widest">Weekly Change</span></p>
+                                        <p className="text-xs font-bold leading-tight">Latest reading<br/><span className="text-white/40 uppercase text-[8px] tracking-widest">{latestVital ? new Date(latestVital.recordedAt).toLocaleDateString() : 'No data'}</span></p>
                                     </div>
                                     <CheckCircle2 size={24} className="text-mamacare-teal" />
                                 </div>
                              </div>
                         </motion.div>
 
-                        {/* Health Stability Bar Chart */}
+                        {/* Fetal Heart Rate */}
                         <motion.div variants={itemVariants} className="bg-[#E6F3F3] rounded-[3rem] p-10 shadow-card border border-[#DCECEC] flex flex-col justify-between group">
                             <div className="flex justify-between items-center mb-8">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-[#003e3d]">Daily Stability Flow</span>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-[#003e3d]">Fetal Heart Rate</span>
                                 <BarChart3 size={20} className="text-mamacare-teal" />
                             </div>
-                            <div className="flex items-end justify-between h-32 gap-3">
-                                {[40, 60, 90, 70, 85, 95].map((h, i) => (
-                                    <div key={i} className="flex-1 relative group/bar">
-                                        <motion.div
-                                            initial={{ height: 0 }}
-                                            animate={{ height: `${h}%` }}
-                                            transition={{ delay: i * 0.1, duration: 1 }}
-                                            className={`w-full rounded-t-2xl transition-all duration-300 ${i === 5 ? 'bg-mamacare-teal shadow-[0_0_20px_rgba(0,127,128,0.3)]' : 'bg-mamacare-teal/20 group-hover/bar:bg-mamacare-teal/40'}`}
-                                        ></motion.div>
-                                        {i === 5 && <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rounded-full border-2 border-mamacare-teal animate-ping"></div>}
-                                    </div>
-                                ))}
+                            <div className="flex items-baseline gap-3">
+                                <span className="text-5xl font-black text-[#003e3d] tracking-tighter">
+                                    {latestVital?.fetalHeartRate ?? '—'}
+                                </span>
+                                <span className="text-base font-bold text-[#003e3d]/30 uppercase">bpm</span>
                             </div>
-                            <p className="mt-6 text-[10px] font-bold text-[#003e3d]/40 uppercase tracking-widest text-center">Stability: High (95%)</p>
+                            <p className="mt-6 text-[10px] font-bold text-[#003e3d]/40 uppercase tracking-widest">Normal: 110–160 bpm</p>
                         </motion.div>
                     </div>
                 </motion.section>
@@ -273,12 +278,5 @@ const RestMonitor = () => {
         </div>
     );
 };
-
-// Internal CheckCircle2 Mock for safety
-const CheckCircle2 = ({ className, size }) => (
-    <div className={className}>
-        <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
-    </div>
-);
 
 export default RestMonitor;

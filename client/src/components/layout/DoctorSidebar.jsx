@@ -11,6 +11,11 @@ import {
 } from 'lucide-react';
 
 const DoctorSidebar = () => {
+    const handleLogout = () => {
+        localStorage.removeItem('mamacare_user');
+        window.location.href = '/';
+    };
+
     const navItems = [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/doctor/dashboard' },
         { icon: Users, label: 'Patients', path: '/doctor/patients' },
@@ -27,7 +32,7 @@ const DoctorSidebar = () => {
                         <span className="font-black text-xl">M</span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-xl font-bold text-gray-900 tracking-tight leading-none">MataCare</span>
+                        <span className="text-xl font-bold text-gray-900 tracking-tight leading-none">MamaCare</span>
                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Provider Portal</span>
                     </div>
                 </NavLink>
@@ -54,7 +59,7 @@ const DoctorSidebar = () => {
 
             <div className="p-4 border-t border-gray-50 space-y-2">
                 <NavLink
-                    to="/doctor/settings"
+                    to="/settings"
                     className={({ isActive }) => `
                         flex items-center gap-4 px-4 py-4 rounded-2xl font-bold text-sm transition-all
                         ${isActive ? 'bg-gray-100 text-gray-900' : 'text-gray-400 hover:bg-gray-50 hover:text-gray-600'}
@@ -63,7 +68,7 @@ const DoctorSidebar = () => {
                     <Settings size={20} />
                     Settings
                 </NavLink>
-                <button className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl font-bold text-sm text-red-400 hover:bg-red-50 transition-all">
+                <button onClick={handleLogout} className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl font-bold text-sm text-red-400 hover:bg-red-50 transition-all">
                     <LogOut size={20} />
                     Logout
                 </button>

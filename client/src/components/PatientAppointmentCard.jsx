@@ -33,15 +33,13 @@ function getProximityBadge(dateStr) {
 function PatientAppointmentCard({ appointment, onEdit, onDelete }) {
   const formattedDate = appointment.appointmentDate
     ? new Date(appointment.appointmentDate).toLocaleDateString('en-US', {
-        weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
-        timeZone: 'UTC'
+        weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
       })
     : '—'
 
   const formattedTime = appointment.appointmentDate
     ? new Date(appointment.appointmentDate).toLocaleTimeString('en-US', {
-        hour: '2-digit', minute: '2-digit',
-        timeZone: 'UTC'
+        hour: '2-digit', minute: '2-digit'
       })
     : ''
 

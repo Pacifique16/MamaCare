@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AdminLayout from '../../components/layout/AdminLayout';
 import AdminFooter from '../../components/layout/AdminFooter';
 import { BarChart3, Heart, Plus, Edit2, Trash2, Calendar, TrendingUp } from 'lucide-react';
@@ -10,6 +10,8 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [queue, setQueue] = useState([]);
   const [articles, setArticles] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     adminApi.getStats().then(r => setStats(r.data)).catch(() => {});
@@ -257,14 +259,13 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          {/* High-Fidelity Library Header */}
           <div className="space-y-6">
             <div className="flex justify-between items-end border-b border-gray-50 pb-6">
               <div className="space-y-1">
                 <span className="text-[9px] font-black text-mamacare-teal uppercase tracking-[0.2em]">CONTENT MANAGEMENT</span>
                 <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Library CMS</h2>
               </div>
-              <button className="text-mamacare-teal font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 hover:opacity-70 transition-opacity bg-teal-50 px-4 py-2 rounded-lg">
+              <button onClick={() => navigate('/admin/library')} className="text-mamacare-teal font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 hover:opacity-70 transition-opacity bg-teal-50 px-4 py-2 rounded-lg">
                 <Plus size={16} /> New Article
               </button>
             </div>
@@ -295,8 +296,8 @@ const AdminDashboard = () => {
                       </td>
                       <td className="p-6">
                         <div className="flex items-center gap-2">
-                          <button className="text-mamacare-teal hover:scale-110 transition-all"><Edit2 size={14} /></button>
-                          <button className="text-red-500 hover:scale-110 transition-all"><Trash2 size={14} /></button>
+                          <button onClick={() => navigate('/admin/library')} className="text-mamacare-teal hover:scale-110 transition-all"><Edit2 size={14} /></button>
+                          <button onClick={() => navigate('/admin/library')} className="text-red-500 hover:scale-110 transition-all"><Trash2 size={14} /></button>
                         </div>
                       </td>
                     </tr>

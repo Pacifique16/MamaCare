@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { X } from 'lucide-react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
-import { createPatient, updatePatient } from '../api/patientsApi'
+import { mothersApi } from '../api/services'
 
 const BLOOD_TYPES = [
   { value: 'Unknown', label: 'Unknown' },
@@ -99,9 +99,21 @@ function PatientForm({ patient, onSuccess, onCancel }) {
 
     try {
       if (isEdit) {
-        await updatePatient(patient.id, payload)
+        await mothersApi.update(patient.id, {
+          gestationalWeek: parseInt(form.weeksPregnant, 10),
+          location: form.address || null,
+          riskLevel: form.riskLevel,
+          bloodType: form.bloodType,
+          emergencyContactName: form.emergencyContactName || null,
+          emergencyContactPhone: form.emergencyContactPhone || null,
+          medicalNotes: form.medicalNotes || null,
+          address: form.address || null,
+        })
       } else {
-        await createPatient(payload)
+        // Creating a new mother requires email/password — show a note
+        alert('To add a new patient, please use the Sign Up flow or contact admin.')
+        setSubmitting(false)
+        return
       }
       onSuccess()
     } catch (err) {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import AuthLayout from '../components/auth/AuthLayout';
-import { Eye, EyeOff, ArrowRight, Mail, Lock } from 'lucide-react';
+import { Eye, EyeOff, ArrowRight, Mail, Lock, ChevronLeft } from 'lucide-react';
 import signinCharacter from '../assets/signin-character.png';
 import { useAuth } from '../context/AuthContext';
 
@@ -46,6 +46,9 @@ const SignIn = () => {
     <AuthLayout leftContent={leftContent} compact={true}>
       <div className="space-y-4">
         <div className="space-y-1">
+          <Link to="/" className="inline-flex items-center gap-1.5 text-sm font-bold text-gray-400 hover:text-mamacare-teal transition-colors mb-2">
+            <ChevronLeft size={16} /> Back to Home
+          </Link>
           <h2 className="text-5xl font-bold text-gray-900 tracking-tight">Sign In</h2>
           <p className="text-lg text-gray-500 font-medium">Continue your wellness journey</p>
         </div>

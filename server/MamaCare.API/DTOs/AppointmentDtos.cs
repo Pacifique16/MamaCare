@@ -11,14 +11,15 @@ public record AppointmentDto(
     DateTime ScheduledAt,
     AppointmentType Type,
     AppointmentStatus Status,
-    string? Notes
+    string? Notes,
+    string? CancellationReason = null
 );
 
 public record CreateAppointmentDto(
     int MotherId,
     int DoctorId,
     DateTime ScheduledAt,
-    AppointmentType Type,
+    string Type,
     string? Notes
 );
 
@@ -26,5 +27,6 @@ public record UpdateAppointmentDto(
     DateTime? ScheduledAt,
     AppointmentType? Type,
     AppointmentStatus? Status,
-    string? Notes
+    string? Notes,
+    string? CancellationReason
 );

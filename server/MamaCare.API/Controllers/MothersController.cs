@@ -39,7 +39,9 @@ public class MothersController : ControllerBase
             m.User.ProfileImageUrl, m.DateOfBirth, m.Location,
             m.ExpectedDueDate, m.GestationalWeek, m.CurrentTrimester,
             m.WeightKg, m.RiskLevel, m.HasGestationalDiabetes,
-            m.HasHypertension, m.Allergies, m.OnboardingComplete));
+            m.HasHypertension, m.Allergies, m.OnboardingComplete,
+            m.BloodType, m.EmergencyContactName, m.EmergencyContactPhone,
+            m.MedicalNotes, m.Address));
     }
 
     [HttpGet("{id}/vitals")]
@@ -66,7 +68,7 @@ public class MothersController : ControllerBase
             .OrderBy(a => a.ScheduledAt)
             .Select(a => new AppointmentDto(
                 a.Id, a.MotherId, "", a.DoctorId,
-                a.Doctor.User.FullName, a.ScheduledAt, a.Type, a.Status, a.Notes))
+                a.Doctor.User.FullName, a.ScheduledAt, a.Type, a.Status, a.Notes, a.CancellationReason))
             .ToListAsync();
         return Ok(appts);
     }
@@ -101,14 +103,20 @@ public class MothersController : ControllerBase
 
         var mother = new Mother
         {
-            UserId = user.Id, DateOfBirth = DateTime.SpecifyKind(dto.DateOfBirth, DateTimeKind.Utc),
-            Location = dto.Location, ExpectedDueDate = DateTime.SpecifyKind(dto.ExpectedDueDate, DateTimeKind.Utc),
-            GestationalWeek = dto.GestationalWeek, CurrentTrimester = dto.CurrentTrimester,
-            WeightKg = dto.WeightKg, HasGestationalDiabetes = dto.HasGestationalDiabetes,
-            HasHypertension = dto.HasHypertension, Allergies = dto.Allergies
+            UserId = user.Id,
+            DateOfBirth = DateTime.SpecifyKind(dto.DateOfBirth, DateTimeKind.Utc),
+            Location = dto.Location,
+            ExpectedDueDate = DateTime.SpecifyKind(dto.ExpectedDueDate, DateTimeKind.Utc),
+            GestationalWeek = dto.GestationalWeek,
+            CurrentTrimester = dto.CurrentTrimester,
+            WeightKg = dto.WeightKg,
+            HasGestationalDiabetes = dto.HasGestationalDiabetes,
+            HasHypertension = dto.HasHypertension,
+            Allergies = dto.Allergies
         };
         _db.Mothers.Add(mother);
         await _db.SaveChangesAsync();
+
         return CreatedAtAction(nameof(GetById), new { id = mother.Id }, new { mother.Id, mother.UserId });
     }
 
@@ -116,7 +124,7 @@ public class MothersController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Update(int id, UpdateMotherDto dto)
     {
-        var mother = await _db.Mothers.FindAsync(id);
+        var mother = await _db.Mothers.Include(m => m.User).FirstOrDefaultAsync(m => m.Id == id);
         if (mother is null) return NotFound();
 
         if (dto.Location is not null) mother.Location = dto.Location;
@@ -129,9 +137,14 @@ public class MothersController : ControllerBase
         if (dto.HasHypertension.HasValue) mother.HasHypertension = dto.HasHypertension.Value;
         if (dto.Allergies is not null) mother.Allergies = dto.Allergies;
         if (dto.OnboardingComplete.HasValue) mother.OnboardingComplete = dto.OnboardingComplete.Value;
+        if (dto.MedicalNotes is not null) mother.MedicalNotes = dto.MedicalNotes;
+        if (dto.BloodType.HasValue) mother.BloodType = dto.BloodType.Value;
+        if (dto.EmergencyContactName is not null) mother.EmergencyContactName = dto.EmergencyContactName;
+        if (dto.EmergencyContactPhone is not null) mother.EmergencyContactPhone = dto.EmergencyContactPhone;
+        if (dto.Address is not null) mother.Address = dto.Address;
 
         await _db.SaveChangesAsync();
-        return Ok(mother);
+        return Ok(new { mother.Id, mother.OnboardingComplete });
     }
 
     [HttpDelete("{id}")]

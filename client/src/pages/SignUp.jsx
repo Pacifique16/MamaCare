@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import AuthLayout from '../components/auth/AuthLayout';
-import { Eye, EyeOff, ArrowRight, ShieldCheck, Heart, Stethoscope, Baby } from 'lucide-react';
+import { Eye, EyeOff, ArrowRight, ShieldCheck, Heart, Baby, ChevronLeft } from 'lucide-react';
 import signupBg from '../assets/signup-bg.png';
 import { mothersApi } from '../api/services';
 import { useAuth } from '../context/AuthContext';
@@ -11,7 +11,6 @@ const SignUp = () => {
   const { login } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [userRole, setUserRole] = useState('mother');
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -26,12 +25,6 @@ const SignUp = () => {
     if (!fullName.trim()) return setError('Full name is required.');
     if (!email.trim()) return setError('Email is required.');
     if (password.length < 6) return setError('Password must be at least 6 characters.');
-
-    // Only mothers go through signup → onboarding for now
-    if (userRole !== 'mother') {
-      setError('Doctor and Admin accounts are created by the system administrator.');
-      return;
-    }
 
     setLoading(true);
     try {
@@ -94,6 +87,9 @@ const SignUp = () => {
     <AuthLayout leftContent={leftContent}>
       <div className="space-y-6">
         <div className="space-y-2">
+          <Link to="/" className="inline-flex items-center gap-1.5 text-sm font-bold text-gray-400 hover:text-mamacare-teal transition-colors mb-2">
+            <ChevronLeft size={16} /> Back to Home
+          </Link>
           <h2 className="text-5xl font-bold text-gray-900 tracking-tight">Start Your Journey</h2>
           <p className="text-lg text-gray-500 font-medium">Join thousands of mothers receiving expert support.</p>
         </div>
@@ -147,33 +143,6 @@ const SignUp = () => {
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="form-label text-base">I am signing up as:</label>
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                { role: 'mother', label: 'Mother', Icon: Baby },
-                { role: 'doctor', label: 'Doctor', Icon: Stethoscope },
-                { role: 'admin',  label: 'Admin',  Icon: ShieldCheck },
-              ].map(({ role, label, Icon }) => (
-                <button
-                  key={role}
-                  type="button"
-                  onClick={() => setUserRole(role)}
-                  className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all duration-300 ${
-                    userRole === role
-                      ? 'border-mamacare-teal bg-mamacare-teal/5 text-mamacare-teal ring-4 ring-mamacare-teal/5'
-                      : 'border-gray-100/50 bg-gray-50 text-gray-400 hover:border-gray-300'
-                  }`}
-                >
-                  <div className={`p-2 rounded-xl mb-2 ${userRole === role ? 'bg-mamacare-teal text-white' : 'bg-white text-gray-400 shadow-sm'}`}>
-                    <Icon size={24} />
-                  </div>
-                  <span className="font-bold text-xs">{label}</span>
-                </button>
-              ))}
             </div>
           </div>
 

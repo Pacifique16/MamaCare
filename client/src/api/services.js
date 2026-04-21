@@ -37,6 +37,17 @@ export const appointmentsApi = {
   delete: (id) => api.delete(`/appointments/${id}`),
 }
 
+export const patientAppointmentsApi = {
+  getAll: (params) => api.get('/patient-appointments', { params }),
+  getById: (id) => api.get(`/patient-appointments/${id}`),
+  getByPatientId: (patientId) => api.get(`/patient-appointments/patient/${patientId}`),
+  getDoctors: () => api.get('/patient-appointments/doctors'),
+  getSlots: (doctorId, date, exclude) => api.get(`/patient-appointments/doctors/${doctorId}/slots`, { params: { date, exclude } }),
+  create: (data) => api.post('/patient-appointments', data),
+  update: (id, data) => api.put(`/patient-appointments/${id}`, data),
+  delete: (id) => api.delete(`/patient-appointments/${id}`),
+}
+
 export const triageApi = {
   getAll: (params) => api.get('/triage', { params }),
   getById: (id) => api.get(`/triage/${id}`),
@@ -52,6 +63,8 @@ export const vitalsApi = {
 export const messagesApi = {
   getConversation: (motherId, doctorId) =>
     api.get('/messages', { params: { motherId, doctorId } }),
+  getConversations: (doctorId) => api.get(`/messages/conversations/${doctorId}`),
+  getMotherConversation: (motherId) => api.get(`/messages/mother/${motherId}`),
   send: (data) => api.post('/messages', data),
   markRead: (id) => api.patch(`/messages/${id}/read`),
 }
@@ -62,6 +75,23 @@ export const libraryApi = {
   create: (data) => api.post('/library', data),
   update: (id, data) => api.put(`/library/${id}`, data),
   delete: (id) => api.delete(`/library/${id}`),
+}
+
+export const settingsApi = {
+  getProfile: () => api.get('/settings/profile'),
+  updateProfile: (data) => api.put('/settings/profile', data),
+  changePassword: (data) => api.put('/settings/password', data),
+}
+
+export const articleRequestsApi = {
+  getAll: () => api.get('/article-requests'),
+  create: (data) => api.post('/article-requests', data),
+  updateStatus: (id, status) => api.patch(`/article-requests/${id}/status`, JSON.stringify(status), { headers: { 'Content-Type': 'application/json' } }),
+}
+
+export const contactMessagesApi = {
+  getAll: () => api.get('/contact-messages'),
+  markRead: (id) => api.patch(`/contact-messages/${id}/read`),
 }
 
 export const authApi = {

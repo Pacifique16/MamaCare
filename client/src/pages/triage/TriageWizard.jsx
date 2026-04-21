@@ -10,6 +10,8 @@ import {
   Heart, Smile, Meh, Frown, Clock, Info, ShieldCheck, 
   Phone, Sparkles, Brain, Scale, CheckCircle2
 } from 'lucide-react';
+import { triageApi } from '../../api/services';
+import { useAuth } from '../../context/AuthContext';
 
 const SYMPTOMS_DB = {
   redFlags: [
@@ -26,8 +28,11 @@ const SYMPTOMS_DB = {
 
 const TriageWizard = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const motherId = user?.motherId || 1;
   const [step, setStep] = useState(1);
-  const [direction, setDirection] = useState(0); // 1 for right, -1 for left
+  const [direction, setDirection] = useState(0);
+  const [savedTriageId, setSavedTriageId] = useState(null);
   
   // Assessment State
   const [assessment, setAssessment] = useState({
@@ -128,7 +133,23 @@ const TriageWizard = () => {
                 <VitalsStep 
                   assessment={assessment} 
                   setAssessment={setAssessment} 
-                  onNext={nextStep} 
+                  onNext={async () => {
+                    nextStep();
+                    try {
+                      const res = await triageApi.create({
+                        motherId,
+                        symptoms: assessment.symptoms,
+                        severityScore: Object.values(assessment.severities).filter(v => v === 'Severe').length * 3 +
+                          Object.values(assessment.severities).filter(v => v === 'Moderate').length * 2 +
+                          Object.values(assessment.severities).filter(v => v === 'Mild').length,
+                        durationDescription: assessment.duration,
+                        bloodPressureSystolic: parseInt(assessment.vitals.systolic) || null,
+                        bloodPressureDiastolic: parseInt(assessment.vitals.diastolic) || null,
+                        temperature: parseFloat(assessment.vitals.temp) || null,
+                      });
+                      setSavedTriageId(res?.data?.id || null);
+                    } catch {}
+                  }}
                   onBack={prevStep} 
                 />
               )}

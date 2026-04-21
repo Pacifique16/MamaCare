@@ -9,15 +9,27 @@ import {
   LogOut,
   ChevronRight,
   Baby,
-  CalendarDays
+  CalendarDays,
+  Settings,
+  MessageSquarePlus,
+  BookOpen,
+  Inbox
 } from 'lucide-react';
 
 const AdminSidebar = () => {
+  const handleLogout = () => {
+    localStorage.removeItem('mamacare_user');
+    window.location.href = '/';
+  };
+
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
     { name: 'Staff Directory', icon: Users, path: '/admin/doctors' },
     { name: 'Patients', icon: Baby, path: '/patients' },
     { name: 'Appointments', icon: CalendarDays, path: '/patient-appointments' },
+    { name: 'Article Requests', icon: MessageSquarePlus, path: '/admin/article-requests' },
+    { name: 'Health Library', icon: BookOpen, path: '/admin/library' },
+    { name: 'Contact Messages', icon: Inbox, path: '/admin/contact-messages' },
   ];
 
   return (
@@ -77,14 +89,18 @@ const AdminSidebar = () => {
         </NavLink>
 
         <div className="space-y-1">
+          <NavLink to="/settings" className={({ isActive }) => `w-full flex items-center gap-4 px-6 py-3 rounded-xl font-bold text-xs transition-all ${isActive ? 'bg-mamacare-teal/5 text-mamacare-teal' : 'text-gray-400 hover:bg-gray-50'}`}>
+            <Settings size={16} />
+            Settings
+          </NavLink>
           <button className="w-full flex items-center gap-4 px-6 py-3 rounded-xl font-bold text-xs text-gray-400 hover:bg-gray-50 transition-all">
             <HelpCircle size={16} />
             Support
           </button>
-          <NavLink to="/login" className="w-full flex items-center gap-4 px-6 py-3 rounded-xl font-bold text-xs text-red-400 hover:bg-red-50 transition-all mt-4 border border-red-50">
+          <button onClick={handleLogout} className="w-full flex items-center gap-4 px-6 py-3 rounded-xl font-bold text-xs text-red-400 hover:bg-red-50 transition-all mt-4 border border-red-50">
             <LogOut size={16} />
             Sign Out
-          </NavLink>
+          </button>
         </div>
       </div>
     </aside>
