@@ -163,53 +163,53 @@ function PatientAppointmentsPage() {
     <AdminLayout>
       <div className="max-w-7xl mx-auto p-8 space-y-10 animate-in fade-in duration-700">
 
-        {/* Page Header */}
-        <div className="flex justify-between items-end gap-4">
-          <div className="space-y-2">
-            <span className="text-[10px] font-bold text-mamacare-teal uppercase tracking-[0.25em]">
-              Appointment Management
-            </span>
+        {/* High-Fidelity Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-gray-100 pb-10 font-poppins">
+          <div className="space-y-1">
+            <span className="text-[10px] font-bold text-mamacare-teal uppercase tracking-[0.25em]">APPOINTMENT MANAGEMENT</span>
             <h1 className="text-6xl font-bold text-gray-900 tracking-tighter">Appointments</h1>
           </div>
-          <button
-            onClick={() => { setEditingAppointment(null); setShowForm(true) }}
-            className="bg-mamacare-teal text-white px-10 py-5 rounded-2xl font-bold text-sm shadow-xl shadow-mamacare-teal/20 transition-all hover:bg-mamacare-teal-dark active:scale-[0.98] flex items-center gap-3"
-          >
-            <Plus size={18} />
-            Book Appointment
-          </button>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handleExport}
+              className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-100 rounded-xl text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-mamacare-teal hover:border-mamacare-teal/30 transition-all font-poppins shadow-sm"
+            >
+              <Download size={14} />
+              Export
+            </button>
+            <button
+              onClick={() => { setEditingAppointment(null); setShowForm(true) }}
+              className="bg-mamacare-teal text-white px-8 py-3 rounded-xl font-bold text-xs shadow-lg shadow-mamacare-teal/10 transition-all hover:bg-mamacare-teal-dark active:scale-[0.98] flex items-center gap-2 font-poppins"
+            >
+              <Plus size={18} />
+              Book Appointment
+            </button>
+          </div>
         </div>
 
-        {/* Stats Bar */}
+        {/* Professional SaaS Stats Row */}
         {!loading && !error && (
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-[2.5rem] p-8 border border-white shadow-card flex items-center justify-between">
-              <div className="space-y-2">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Scheduled</p>
-                <h3 className="text-5xl font-extrabold text-gray-900 tracking-tighter">{scheduled}</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 font-poppins">
+            {[
+              { label: 'Scheduled', value: scheduled, trend: 'upcoming', progress: `${(scheduled/appointments.length)*100}%`, color: 'text-mamacare-teal' },
+              { label: 'Completed', value: completed, trend: 'success', progress: `${(completed/appointments.length)*100}%`, color: 'text-green-500' },
+              { label: 'Cancelled', value: cancelled, trend: 'attention', progress: `${(cancelled/appointments.length)*100}%`, color: 'text-red-500' },
+            ].map((s) => (
+              <div key={s.label} className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm transition-all duration-300">
+                <div className="space-y-4">
+                  <div className="flex justify-between items-start">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{s.label}</span>
+                    <div className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-gray-50 ${s.color}`}>
+                      {s.trend}
+                    </div>
+                  </div>
+                  <h3 className="text-3xl font-bold text-gray-900 tracking-tight">{s.value}</h3>
+                  <div className="h-1 w-full bg-gray-50 rounded-full overflow-hidden">
+                    <div className="h-full bg-mamacare-teal rounded-full" style={{ width: s.progress }} />
+                  </div>
+                </div>
               </div>
-              <div className="w-14 h-14 bg-teal-50 text-mamacare-teal rounded-2xl flex items-center justify-center">
-                <CalendarDays size={24} />
-              </div>
-            </div>
-            <div className="bg-white rounded-[2.5rem] p-8 border border-white shadow-card flex items-center justify-between">
-              <div className="space-y-2">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Completed</p>
-                <h3 className="text-5xl font-extrabold text-gray-900 tracking-tighter">{completed}</h3>
-              </div>
-              <div className="w-14 h-14 bg-green-50 text-green-500 rounded-2xl flex items-center justify-center">
-                <CheckCircle size={24} />
-              </div>
-            </div>
-            <div className="bg-white rounded-[2.5rem] p-8 border border-white shadow-card flex items-center justify-between">
-              <div className="space-y-2">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Cancelled</p>
-                <h3 className="text-5xl font-extrabold text-gray-900 tracking-tighter">{cancelled}</h3>
-              </div>
-              <div className="w-14 h-14 bg-red-50 text-red-400 rounded-2xl flex items-center justify-center">
-                <XCircle size={24} />
-              </div>
-            </div>
+            ))}
           </div>
         )}
 

@@ -108,13 +108,20 @@ const AddDoctor = () => {
         <AdminLayout>
             <div className="max-w-7xl mx-auto p-10 space-y-12 animate-in fade-in duration-700">
                 
-                <div className="max-w-4xl mx-auto space-y-16 py-10">
+                <div className="max-w-4xl mx-auto space-y-16 py-10 font-poppins">
                    
+                   {/* High-Fidelity Form Header */}
+                   <div className="space-y-1 border-b border-gray-100 pb-10">
+                      <span className="text-[10px] font-bold text-mamacare-teal uppercase tracking-[0.25em]">STAFF ONBOARDING</span>
+                      <h1 className="text-6xl font-bold text-gray-900 tracking-tighter">Add Practitioner</h1>
+                   </div>
+
                    {/* Section 1: Personal Information */}
                    <div className="space-y-10 animate-in-up duration-500">
-                      <div className="space-y-2">
+                      <div className="space-y-1">
+                        <span className="text-[9px] font-black text-mamacare-teal uppercase tracking-[0.2em]">CORE IDENTITY</span>
                         <h2 className="text-4xl font-bold text-gray-900 tracking-tight">Personal Information</h2>
-                        <p className="text-gray-400 font-medium">Provide the essential identification details for the new medical professional.</p>
+                         <p className="text-gray-400 font-medium">Essential identification details for the new medical professional.</p>
                       </div>
 
                       <div className="bg-white rounded-[3.5rem] p-12 md:p-16 border border-white shadow-card space-y-12">
@@ -209,9 +216,10 @@ const AddDoctor = () => {
 
                    {/* Section 2: Credentials & Verification */}
                    <div className="space-y-10 animate-in-up duration-700">
-                      <div className="space-y-2">
-                        <h2 className="text-4xl font-bold text-gray-900 tracking-tight font-poppins">Credentials & Verification</h2>
-                        <p className="text-gray-400 font-medium">Verification documents are required to grant system-wide prescription and surgery access.</p>
+                      <div className="space-y-1">
+                        <span className="text-[9px] font-black text-mamacare-teal uppercase tracking-[0.2em]">PROFESSIONAL RECORD</span>
+                        <h2 className="text-4xl font-bold text-gray-900 tracking-tight">Credentials & Verification</h2>
+                        <p className="text-gray-400 font-medium">Medical credentials required for system-wide prescription and surgery access.</p>
                       </div>
 
                       <div className="bg-white rounded-[3.5rem] p-12 md:p-16 border border-white shadow-card space-y-12">

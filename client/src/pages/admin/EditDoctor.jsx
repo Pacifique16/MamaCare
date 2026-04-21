@@ -199,34 +199,41 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
                 {/* Internal Page Content */}
                 <div className="flex-1 flex flex-col min-w-0 bg-[#F8F9FA] overflow-y-auto">
                     
-                    {/* Header: Navigation & Context (Matches Image 3) */}
-                    <div className="bg-white px-8 py-4 border-b border-gray-100 sticky top-0 z-30 flex items-center justify-between">
-                        <div className="flex items-center gap-6">
-                           <button 
-                             onClick={() => navigate('/admin/doctors')}
-                             className="p-2.5 text-gray-400 hover:text-mamacare-teal bg-gray-50 rounded-xl transition-all"
-                           >
-                              <ChevronLeft size={20} />
-                           </button>
-                           <div className="flex items-center gap-4">
-                              <h2 className="text-xl font-bold text-gray-900">Edit Profile: {doctor?.fullName || '...'}</h2>
-                              <span className="px-4 py-1.5 bg-orange-50 text-orange-400 text-[10px] font-extrabold uppercase tracking-widest rounded-full">
-                                 {status === 'Pending' ? 'PENDING VERIFICATION' : status.toUpperCase()}
-                              </span>
-                           </div>
+                    {/* High-Fidelity Header */}
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-gray-100 pb-10 mb-10 font-poppins px-10 pt-10">
+                        <div className="space-y-1">
+                            <div className="flex items-center gap-4 mb-2">
+                                <button 
+                                    onClick={() => navigate('/admin/doctors')}
+                                    className="p-2 text-gray-400 hover:text-mamacare-teal bg-gray-50 rounded-lg transition-all"
+                                >
+                                    <ChevronLeft size={16} />
+                                </button>
+                                <span className="text-[10px] font-bold text-mamacare-teal uppercase tracking-[0.25em]">STAFF MODIFICATION</span>
+                            </div>
+                            <h1 className="text-6xl font-bold text-gray-900 tracking-tighter">Edit Profile</h1>
+                            <div className="flex items-center gap-3 mt-4">
+                                <span className="px-4 py-1.5 bg-orange-50 text-orange-500 text-[10px] font-black uppercase tracking-widest rounded-full border border-orange-100">
+                                    {status === 'Pending' ? 'PENDING VERIFICATION' : status.toUpperCase()}
+                                 </span>
+                                 <span className="text-xs font-bold text-gray-300">ID: {doctor?.licenseNumber}</span>
+                            </div>
                         </div>
-
                         <div className="flex items-center gap-4">
-                           <div className="relative group">
-                              <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                              <input 
-                                 type="text" 
-                                 placeholder="Search resources..." 
-                                 className="bg-gray-50 border border-gray-100 rounded-2xl py-3 pl-12 pr-6 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-mamacare-teal/5 transition-all w-64"
-                              />
-                           </div>
-                           <button className="p-2.5 text-gray-400 hover:text-mamacare-teal transition-all"><Bell size={18} /></button>
-                           <button className="p-2.5 text-gray-400 hover:text-mamacare-teal transition-all"><HelpCircle size={18} /></button>
+                            <button
+                                onClick={handleDiscard}
+                                className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-100 rounded-xl text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-red-400 transition-all shadow-sm"
+                            >
+                                Discard Changes
+                            </button>
+                            <button
+                                onClick={handleSave}
+                                disabled={submitting}
+                                className="bg-mamacare-teal text-white px-8 py-3 rounded-xl font-bold text-xs shadow-lg shadow-mamacare-teal/10 transition-all hover:bg-mamacare-teal-dark active:scale-[0.98] flex items-center gap-2"
+                            >
+                                <Save size={16} />
+                                {submitting ? 'Saving...' : 'Save Changes'}
+                            </button>
                         </div>
                     </div>
 
@@ -359,9 +366,8 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
                                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Work Email</label>
                                       <div className="relative">
                                          <input type="email" value={doctor?.email || ''} disabled 
-                                            className="w-full bg-gray-100 border border-transparent rounded-2xl p-6 pl-16 font-bold text-gray-900 shadow-sm opacity-60 cursor-not-allowed"
-                                            disabled
-                                         />
+                                             className="w-full bg-gray-100 border border-transparent rounded-2xl p-6 pl-16 font-bold text-gray-900 shadow-sm opacity-60 cursor-not-allowed"
+                                          />
                                          <Users size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400" />
                                       </div>
                                    </div>
