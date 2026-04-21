@@ -309,8 +309,6 @@ const AdminDashboard = () => {
             </div>
           </div>
         </div>
-
-        <AdminFooter />
       </div>
     </AdminLayout>
   );

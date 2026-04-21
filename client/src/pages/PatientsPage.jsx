@@ -10,9 +10,9 @@ const TRIMESTER_TABS = ['All', 'First (1-13w)', 'Second (14-27w)', 'Third (28w+)
 const SORT_OPTIONS = [
   { label: 'Name A-Z', value: 'name_asc' },
   { label: 'Name Z-A', value: 'name_desc' },
-  { label: 'Weeks ↑', value: 'weeks_asc' },
-  { label: 'Weeks ↓', value: 'weeks_desc' },
-  { label: 'Newest', value: 'newest' },
+  // { label: 'Weeks ↑', value: 'weeks_asc' },
+  // { label: 'Weeks ↓', value: 'weeks_desc' },
+  // { label: 'Newest', value: 'newest' },
 ]
 const PAGE_SIZE = 9
 
@@ -170,7 +170,7 @@ function PatientsPage() {
               <div key={s.label} className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm transition-all duration-300 hover:shadow-md">
                 <div className="space-y-4">
                   <div className="flex justify-between items-start">
-                    <span className="text-[12px] font-bold text-gray-700">{s.label}</span>
+                    <span className="text-[13px] font-medium text-gray-700">{s.label}</span>
                     <div className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-gray-50 ${s.color}`}>
                       {s.trend}
                     </div>
@@ -207,7 +207,7 @@ function PatientsPage() {
               >
                 {TRIMESTER_TABS.map((tab) => (
                   <option key={tab} value={tab}>
-                    {tab === 'All' ? 'TRIMESTER: ALL' : tab.toUpperCase()}
+                    {tab === 'All' ? 'ALL TRIMESTER' : tab.toUpperCase()}
                   </option>
                 ))}
               </select>
@@ -220,10 +220,10 @@ function PatientsPage() {
                 onChange={(e) => setRiskFilter(e.target.value)}
                 className="w-full px-6 py-3 bg-white border border-mamacare-teal/30 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-600 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 font-poppins appearance-none cursor-pointer hover:border-mamacare-teal transition-all pr-12"
               >
-                <option value="All">RISK LEVEL: ALL</option>
-                <option value="Low">RISK: LOW</option>
-                <option value="Medium">RISK: MEDIUM</option>
-                <option value="High">RISK: HIGH</option>
+                <option value="All">ALL RISK LEVELS</option>
+                <option value="Low">LOW RISK LEVEL</option>
+                <option value="Medium">MEDIUM RISK LEVEL</option>
+                <option value="High">HIGH RISK LEVEL</option>
               </select>
               <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-mamacare-teal pointer-events-none" />
             </div>
@@ -288,40 +288,141 @@ function PatientsPage() {
           </div>
         )}
 
-        {/* Grid */}
-        {!loading && !error && paginated.length > 0 && (
-          <>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {paginated.map((p) => (
-                <PatientCard key={p.id} patient={p} onEdit={handleEdit} onDelete={handleDelete} />
-              ))}
-            </div>
+        {/* Table */}
+        {!loading && !error && paginated.length > 0 && (() => {
+          const BLOOD_TYPE_LABELS = {
+            APositive: 'A+', ANegative: 'A-',
+            BPositive: 'B+', BNegative: 'B-',
+            OPositive: 'O+', ONegative: 'O-',
+            ABPositive: 'AB+', ABNegative: 'AB-',
+            Unknown: 'None',
+          }
+          const RISK_STYLES = {
+            Low: 'bg-green-50 text-green-600',
+            Medium: 'bg-orange-50 text-orange-500',
+            High: 'bg-red-50 text-red-500',
+          }
+          const getAge = (dob) => {
+            if (!dob) return null
+            const d = new Date(dob), t = new Date()
+            let age = t.getFullYear() - d.getFullYear()
+            if (t.getMonth() - d.getMonth() < 0 || (t.getMonth() === d.getMonth() && t.getDate() < d.getDate())) age--
+            return age
+          }
 
-            {totalPages > 1 && (
-              <div className="flex items-center justify-between pt-4">
-                <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
-                  Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length}
-                </p>
-                <div className="flex gap-2">
-                  <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}
-                    className="px-4 py-2 bg-white border border-gray-100 rounded-xl text-[11px] font-bold text-gray-400 hover:text-mamacare-teal disabled:opacity-40 transition-all">
-                    Previous
-                  </button>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                    <button key={p} onClick={() => setPage(p)}
-                      className={`w-9 h-9 rounded-xl text-[11px] font-bold transition-all ${page === p ? 'bg-mamacare-teal text-white' : 'bg-white border border-gray-100 text-gray-400 hover:text-mamacare-teal'}`}>
-                      {p}
-                    </button>
-                  ))}
-                  <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                    className="px-4 py-2 bg-white border border-gray-100 rounded-xl text-[11px] font-bold text-gray-400 hover:text-mamacare-teal disabled:opacity-40 transition-all">
-                    Next
-                  </button>
-                </div>
+          return (
+            <>
+              <div className="bg-white rounded-[3rem] overflow-hidden border border-gray-100 shadow-sm">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-gray-50/50 border-b border-gray-100">
+                      <th className="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Patient</th>
+                      <th className="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Contact</th>
+                      <th className="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Blood</th>
+                      <th className="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Gestation</th>
+                      <th className="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Risk</th>
+                      <th className="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginated.map((patient) => {
+                      const age = getAge(patient.dateOfBirth)
+                      const bloodType = BLOOD_TYPE_LABELS[patient.bloodType] || 'None'
+                      const riskStyle = RISK_STYLES[patient.riskLevel] || RISK_STYLES.Low
+                      return (
+                        <tr key={patient.id} className="group border-b border-gray-50 last:border-0 hover:bg-gray-50/30 transition-all">
+                          {/* Patient */}
+                          <td className="p-6">
+                            <div className="flex items-center gap-4">
+                              <div className="w-10 h-10 rounded-2xl bg-mamacare-teal/5 border border-mamacare-teal/10 flex items-center justify-center text-mamacare-teal font-extrabold text-base shrink-0">
+                                {patient.fullName?.charAt(0).toUpperCase()}
+                              </div>
+                              <div>
+                                <p className="font-bold text-gray-900 group-hover:text-mamacare-teal transition-colors leading-tight">{patient.fullName}</p>
+                                {age !== null && (
+                                  <p className="text-[10px] font-bold text-gray-400 mt-0.5">{age} yrs old</p>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                          {/* Contact */}
+                          <td className="p-6">
+                            <p className="text-sm font-medium text-gray-700">{patient.phoneNumber || 'None'}</p>
+                            {patient.address && (
+                              <p className="text-[10px] text-gray-400 mt-0.5 line-clamp-1">{patient.address}</p>
+                            )}
+                          </td>
+                          {/* Blood Type */}
+                          <td className="p-6">
+                            <span className="px-3 py-1 bg-red-50 text-red-500 rounded-full text-[10px] font-extrabold tracking-widest">
+                              {bloodType}
+                            </span>
+                          </td>
+                          {/* Gestation */}
+                          <td className="p-6">
+                            <span className="px-3 py-1 bg-mamacare-teal/5 text-mamacare-teal rounded-full text-[10px] font-extrabold tracking-widest">
+                              {patient.weeksPregnant}w
+                            </span>
+                          </td>
+                          {/* Risk */}
+                          <td className="p-6">
+                            <span className={`px-3 py-1 rounded-full text-[10px] font-extrabold tracking-widest ${riskStyle}`}>
+                              {patient.riskLevel || 'None'}
+                            </span>
+                          </td>
+                          {/* Actions */}
+                          <td className="p-6">
+                            <div className="flex items-center gap-2">
+
+                              <button
+                                onClick={() => handleEdit(patient)}
+                                className="p-2.5 bg-gray-50 hover:bg-gray-100 text-gray-500 rounded-xl transition-all"
+                                title="Edit"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                              </button>
+                              <button
+                                onClick={() => handleDelete(patient.id)}
+                                className="p-2.5 bg-red-50 hover:bg-red-100 text-red-400 rounded-xl transition-all"
+                                title="Delete"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+
+                {totalPages > 1 && (
+                  <div className="p-6 bg-gray-50/50 flex items-center justify-between border-t border-gray-50">
+                    <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
+                      Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length}
+                    </p>
+                    <div className="flex gap-2 items-center">
+                      <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}
+                        className="px-4 py-2 bg-white border border-gray-100 rounded-xl text-[11px] font-bold text-gray-400 hover:text-mamacare-teal disabled:opacity-40 transition-all">
+                        Previous
+                      </button>
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                        <button key={p} onClick={() => setPage(p)}
+                          className={`w-9 h-9 rounded-xl text-[11px] font-bold transition-all ${page === p ? 'bg-mamacare-teal text-white' : 'bg-white border border-gray-100 text-gray-400 hover:text-mamacare-teal'}`}>
+                          {p}
+                        </button>
+                      ))}
+                      <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+                        className="px-4 py-2 bg-white border border-gray-100 rounded-xl text-[11px] font-bold text-gray-400 hover:text-mamacare-teal disabled:opacity-40 transition-all">
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
-          </>
-        )}
+            </>
+          )
+        })()}
       </div>
 
       {showForm && (
