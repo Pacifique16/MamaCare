@@ -41,6 +41,8 @@ import ContactMessagesPage from './pages/admin/ContactMessagesPage';
 
 import MotherMessaging from './pages/MotherMessaging';
 
+import Prescriptions from './pages/Prescriptions';
+
 function App() {
   return (
     <Router>
@@ -75,6 +77,7 @@ function App() {
           <Route path="/appointments" element={<Appointments />} />
           <Route path="/rest-monitor" element={<RestMonitor />} />
           <Route path="/messaging" element={<MotherMessaging />} />
+          <Route path="/prescriptions" element={<Prescriptions />} />
         </Route>
 
         {/* Admin Protected Portal */}

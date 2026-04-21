@@ -195,12 +195,9 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
 
     return (
         <AdminLayout>
-            <div className="flex h-screen overflow-hidden">
-                {/* Internal Page Content */}
-                <div className="flex-1 flex flex-col min-w-0 bg-[#F8F9FA] overflow-y-auto">
-                    
+            <div className="w-full animate-in fade-in duration-700 pb-12">
                     {/* High-Fidelity Header */}
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-gray-100 pb-10 mb-10 font-poppins px-10 pt-10">
+                    <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-gray-100 pb-6 mb-4 font-poppins px-10 pt-10">
                         <div className="space-y-1">
                             <div className="flex items-center gap-4 mb-2">
                                 <button 
@@ -213,10 +210,10 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
                             </div>
                             <h1 className="text-6xl font-bold text-gray-900 tracking-tighter">Edit Profile</h1>
                             <div className="flex items-center gap-3 mt-4">
-                                <span className="px-4 py-1.5 bg-orange-50 text-orange-500 text-[10px] font-black uppercase tracking-widest rounded-full border border-orange-100">
+                                <span className="px-4 py-1.5 bg-orange-50 text-orange-500 text-[10px] font-bold uppercase tracking-widest rounded-full border border-orange-100">
                                     {status === 'Pending' ? 'PENDING VERIFICATION' : status.toUpperCase()}
                                  </span>
-                                 <span className="text-xs font-bold text-gray-300">ID: {doctor?.licenseNumber}</span>
+                                 <span className="text-xs font-bold text-gray-600">ID: {doctor?.licenseNumber}</span>
                             </div>
                         </div>
                         <div className="flex items-center gap-4">
@@ -237,7 +234,7 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
                         </div>
                     </div>
 
-                    <div className="flex-1 p-10 max-w-7xl mx-auto w-full grid grid-cols-12 gap-10">
+                    <div className="flex-1 px-10 py-4 max-w-7xl mx-auto w-full grid grid-cols-12 gap-10">
                        
                        {/* Left Profile Summary Column (4/12) */}
                        <div className="col-span-12 lg:col-span-4 space-y-8">
@@ -283,7 +280,7 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
                                       className={`w-full flex items-center justify-between p-5 rounded-2xl border-2 transition-all group ${
                                          status === s 
                                          ? 'border-mamacare-teal bg-mamacare-teal/5 text-mamacare-teal ring-4 ring-mamacare-teal/5' 
-                                         : 'border-gray-50 bg-gray-50/50 text-gray-400 hover:border-gray-100'
+                                         : 'border-gray-50 bg-gray-50/50 text-gray-600 hover:border-gray-100'
                                       }`}
                                    >
                                       <div className="flex items-center gap-3">
@@ -308,10 +305,10 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
                                <button 
                                  key={tab}
                                  onClick={() => setActiveTab(tab)}
-                                 className={`text-sm font-bold transition-all relative pb-2 ${
+                                 className={`text-sm font-medium transition-all relative pb-2 ${
                                     activeTab === tab 
-                                    ? 'text-mamacare-teal after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-mamacare-teal' 
-                                    : 'text-gray-400 hover:text-gray-600'
+                                    ? 'text-mamacare-teal after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-mamacare-teal font-bold' 
+                                    : 'text-gray-600 hover:text-gray-600'
                                  }`}
                                >
                                  {tab}
@@ -324,17 +321,17 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
 
                           {activeTab === 'Basic Info' && <div className="space-y-12">
                              <div className="space-y-8">
-                                <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">PROFESSIONAL IDENTITY</h4>
+                                <h4 className="text-[12px] font-bold text-mamacare-teal uppercase tracking-[0.2em]">PROFESSIONAL IDENTITY</h4>
                                 <div className="grid md:grid-cols-2 gap-8">
                                    <div className="space-y-3">
-                                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Full Name</label>
+                                      <label className="text-[14px] font-regular text-gray-600 pl-1">Full Name</label>
                                       <input type="text" value={form.fullName} onChange={e => set('fullName', e.target.value)} 
-                                         className="w-full bg-gray-50 border border-transparent rounded-2xl p-6 font-bold text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm"
+                                         className="text-[13px] w-full bg-gray-50 border border-transparent rounded-2xl p-6 text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm"
                                       />
                                    </div>
                                    <div className="space-y-3">
-                                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Primary Specialty</label>
-                                      <select value={form.specialty} onChange={e => set('specialty', e.target.value)} className="w-full bg-gray-50 border border-transparent rounded-2xl p-6 font-bold text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm appearance-none">
+                                      <label className="text-[14px] font-regular text-gray-600 pl-1">Primary Specialty</label>
+                                      <select value={form.specialty} onChange={e => set('specialty', e.target.value)} className="text-[13px] w-full bg-gray-50 border border-transparent rounded-2xl p-6 font-regular text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm appearance-none">
                                          <option>Obstetrics & Gynecology</option>
                                          <option>Fetal Medicine Specialist</option>
                                          <option>Neonatologist</option>
@@ -344,15 +341,15 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
                                       </select>
                                    </div>
                                    <div className="space-y-3">
-                                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Medical License Number</label>
+                                      <label className="text-[14px] font-regular text-gray-600 pl-1">Medical License Number</label>
                                       <input type="text" value={form.licenseNumber} onChange={e => set('licenseNumber', e.target.value)} 
-                                         className="w-full bg-gray-50 border border-transparent rounded-2xl p-6 font-bold text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm"
+                                         className="text-[13px] w-full bg-gray-50 border border-transparent rounded-2xl p-6 font-regular text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm"
                                       />
                                    </div>
                                    <div className="space-y-3">
-                                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Years of Experience</label>
+                                      <label className="text-[14px] font-regular text-gray-600 pl-1">Years of Experience</label>
                                       <input type="number" value={form.yearsOfExperience} onChange={e => set('yearsOfExperience', e.target.value)} 
-                                         className="w-full bg-gray-50 border border-transparent rounded-2xl p-6 font-bold text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm"
+                                         className="text-[13px] w-full bg-gray-50 border border-transparent rounded-2xl p-6 font-regular text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm"
                                       />
                                    </div>
                                 </div>
@@ -360,28 +357,28 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
 
                              {/* Section: Contact & Outreach */}
                              <div className="space-y-8">
-                                <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">CONTACT & OUTREACH</h4>
+                                <h4 className="text-[12px] font-bold text-mamacare-teal uppercase tracking-[0.2em]">CONTACT & OUTREACH</h4>
                                 <div className="grid md:grid-cols-2 gap-8">
                                    <div className="space-y-3">
-                                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Work Email</label>
+                                      <label className="text-[14px] font-regular text-gray-600 pl-1">Work Email</label>
                                       <div className="relative">
                                          <input type="email" value={doctor?.email || ''} disabled 
-                                             className="w-full bg-gray-100 border border-transparent rounded-2xl p-6 pl-16 font-bold text-gray-900 shadow-sm opacity-60 cursor-not-allowed"
+                                             className="text-[13px] w-full bg-gray-100 border border-transparent rounded-2xl p-6 pl-16 text-gray-900 shadow-sm opacity-60 cursor-not-allowed"
                                           />
                                          <Users size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400" />
                                       </div>
                                    </div>
                                    <div className="space-y-3">
-                                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Mobile Contact</label>
+                                      <label className="text-[14px] font-regular text-gray-600 pl-1">Mobile Contact</label>
                                       <input type="tel" value={form.phoneNumber} onChange={e => set('phoneNumber', e.target.value)} 
-                                         className="w-full bg-gray-50 border border-transparent rounded-2xl p-6 font-bold text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm"
+                                         className="text-[13px] w-full bg-gray-50 border border-transparent rounded-2xl p-6 font-regular text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm"
                                       />
                                    </div>
                                 </div>
                                 <div className="space-y-3">
-                                   <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Clinical Bio</label>
+                                   <label className="text-[14px] font-regular text-gray-600 pl-1">Doctor's Bio</label>
                                    <textarea value={form.bio} onChange={e => set('bio', e.target.value)}
-                                      className="w-full bg-gray-50 border border-transparent rounded-[2rem] p-8 font-bold text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm h-40 resize-none leading-relaxed"
+                                      className="text-[13px] w-full bg-gray-50 border border-transparent rounded-[2rem] p-8 font-bold text-gray-900 focus:outline-none focus:bg-white focus:border-mamacare-teal/20 transition-all shadow-sm h-40 resize-none leading-relaxed"
                                    />
                                 </div>
                              </div>
@@ -389,7 +386,7 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
                              {/* Certification Upload */}
                              <div className="space-y-4">
                                 <div className="flex items-center justify-between">
-                                   <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">MEDICAL CERTIFICATIONS</h4>
+                                   <h4 className="text-[12px] font-bold text-mamacare-teal uppercase tracking-[0.2em]">MEDICAL CERTIFICATIONS</h4>
                                    <label className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold cursor-pointer transition-all ${
                                       uploadingCert ? 'bg-gray-100 text-gray-400' : 'bg-mamacare-teal/10 text-mamacare-teal hover:bg-mamacare-teal/20'
                                    }`}>
@@ -447,7 +444,7 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
                              {/* Language Proficiency */}
                              <div className="space-y-8 pb-10">
                                 <div className="flex justify-between items-center">
-                                   <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">LANGUAGE PROFICIENCY</h4>
+                                   <h4 className="text-[12px] font-bold text-mamacare-teal uppercase tracking-[0.2em]">LANGUAGE PROFICIENCY</h4>
                                    {languages.length > 1 && <span className="px-3 py-1 bg-[#E1F5FE] text-[#039BE5] text-[10px] font-extrabold uppercase tracking-widest rounded-full">Multilingual</span>}
                                 </div>
                                 <div className="flex flex-wrap gap-4">
@@ -484,26 +481,26 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
                                          </button>
                                       </div>
                                    ) : (
-                                      <button onClick={() => setAddingLang(true)} className="flex items-center justify-center w-16 h-16 border-2 border-dashed border-gray-100 rounded-3xl text-gray-300 hover:border-mamacare-teal hover:text-mamacare-teal transition-all">
+                                      <button onClick={() => setAddingLang(true)} className="flex items-center justify-center w-16 h-16 border-2 border-dashed border-gray-500 rounded-3xl text-gray-500 hover:border-mamacare-teal hover:text-mamacare-teal transition-all">
                                          <Plus size={24} />
                                       </button>
                                    )}
                                 </div>
-                                {languages.length === 0 && !addingLang && <p className="text-sm text-gray-400">No languages added yet. Click + to add one.</p>}
+                                {languages.length === 0 && !addingLang && <p className="text-sm text-gray-500">No languages added yet. Click + to add one.</p>}
                              </div>
                           </div>}
 
                           {activeTab === 'Credentials' && <div className="space-y-8 pb-10">
-                             <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">PROFESSIONAL CREDENTIALS</h4>
+                             <h4 className="text-[12px] font-bold text-mamacare-teal uppercase tracking-[0.2em]">PROFESSIONAL CREDENTIALS</h4>
                              <div className="grid md:grid-cols-2 gap-6">
                                 {[{label:'License Number', value: form.licenseNumber}, {label:'Specialty', value: form.specialty}, {label:'Institution', value: form.institution || '—'}, {label:'Years of Experience', value: `${form.yearsOfExperience} years`}].map(item => (
                                    <div key={item.label} className="bg-gray-50 rounded-2xl p-6 space-y-2">
-                                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{item.label}</p>
-                                      <p className="font-bold text-gray-900">{item.value}</p>
+                                      <p className="text-[14px] font-regular text-gray-600">{item.label}</p>
+                                      <p className="text-gray-900">{item.value}</p>
                                    </div>
                                 ))}
                              </div>
-                             <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] pt-4">UPLOADED CERTIFICATIONS</h4>
+                             <h4 className="text-[12px] font-bold text-mamacare-teal uppercase tracking-[0.2em] pt-4">UPLOADED CERTIFICATIONS</h4>
                              {certs.length === 0 ? (
                                 <div className="bg-gray-50 rounded-2xl p-8 text-center text-gray-400 text-sm">No certifications uploaded yet.</div>
                              ) : (
@@ -525,9 +522,9 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
                           </div>}
 
                           {activeTab === 'Schedule' && <div className="space-y-6 pb-10">
-                             <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">APPOINTMENT SCHEDULE</h4>
+                             <h4 className="text-[12px] font-bold text-mamacare-teal uppercase tracking-[0.2em]">APPOINTMENT SCHEDULE</h4>
                              {schedule.length === 0 ? (
-                                <div className="bg-gray-50 rounded-2xl p-12 text-center text-gray-400 text-sm">No appointments scheduled.</div>
+                                <div className="bg-gray-50 rounded-2xl p-12 text-center text-gray-600 text-sm">No appointments scheduled.</div>
                              ) : (
                                 <div className="space-y-3">
                                    {schedule.map(appt => {
@@ -557,9 +554,9 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
                           </div>}
 
                           {activeTab === 'Activity Log' && <div className="space-y-6 pb-10">
-                             <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">RECENT ACTIVITY</h4>
+                             <h4 className="text-[12px] font-bold text-mamacare-teal uppercase tracking-[0.2em]">RECENT ACTIVITY</h4>
                              {activity.length === 0 ? (
-                                <div className="bg-gray-50 rounded-2xl p-12 text-center text-gray-400 text-sm">No activity recorded yet.</div>
+                                <div className="bg-gray-50 rounded-2xl p-12 text-center text-gray-600 text-sm">No activity recorded yet.</div>
                              ) : (
                                 <div className="relative">
                                    <div className="absolute left-5 top-0 bottom-0 w-px bg-gray-100"></div>
@@ -594,7 +591,7 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
                           <div className="p-8 border-t border-gray-50 flex items-center justify-between gap-6 bg-white shrink-0">
                              <div className="flex items-center gap-3">
                                 <div className="w-2 h-2 bg-mamacare-teal rounded-full animate-pulse"></div>
-                                <p className="text-xs text-gray-400 font-medium">Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })} | By: {JSON.parse(localStorage.getItem('user') || '{}')?.name || 'Admin'}</p>
+                                <p className="text-xs text-gray-500 font-medium">Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })} | By: {JSON.parse(localStorage.getItem('user') || '{}')?.name || 'Admin'}</p>
                              </div>
                              <div className="flex items-center gap-6">
                                 <button onClick={handleDiscard} className="text-gray-400 font-extrabold text-xs uppercase tracking-widest hover:text-gray-600 transition-all">Discard Changes</button>
@@ -606,7 +603,6 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
                           </div>
                        </div>
                     </div>
-                </div>
             </div>
         {showResetModal && (
             <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-6">
@@ -620,7 +616,7 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
                   <p className="text-sm text-gray-400">Set a new password for <span className="font-bold text-gray-700">{doctor?.fullName}</span>.</p>
                   <div className="space-y-4">
                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">New Password</label>
+                        <label className="text-[14px] font-regular text-gray-600">New Password</label>
                         <input
                            type="password"
                            value={newPassword}
@@ -630,7 +626,7 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
                         />
                      </div>
                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Confirm Password</label>
+                        <label className="text-[14px] font-regular text-gray-600">Confirm Password</label>
                         <input
                            type="password"
                            value={confirmPassword}

@@ -27,6 +27,16 @@ const DoctorDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [filterOpen, setFilterOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState('All');
+  const [dismissedAlerts, setDismissedAlerts] = useState(
+    () => JSON.parse(sessionStorage.getItem('dismissed_alerts') || '[]')
+  );
+
+  const dismissAlert = (id) => {
+    const updated = [...dismissedAlerts, id];
+    setDismissedAlerts(updated);
+    sessionStorage.setItem('dismissed_alerts', JSON.stringify(updated));
+  };
+
   const navigate = useNavigate();
 
   // Focused patient is always the first high-risk one
@@ -79,7 +89,7 @@ const DoctorDashboard = () => {
       <div className="space-y-8 animate-in fade-in duration-500">
 
         {/* Emergency Alert — shown if any high-risk patient exists */}
-        {focusedPatient && focusedPatient.riskLevel === 'High' && (
+        {focusedPatient && focusedPatient.riskLevel === 'High' && !dismissedAlerts.includes(focusedPatient.id) && (
           <div className="bg-[#FFEBEB] border-l-[6px] border-red-500 rounded-2xl p-6 flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-5">
               <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-red-500 shadow-sm animate-pulse">
@@ -93,8 +103,8 @@ const DoctorDashboard = () => {
               </div>
             </div>
             <div className="flex gap-4">
-              <button className="bg-[#C62828] text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-[#B71C1C] transition-all shadow-lg active:scale-95">Review Case</button>
-              <button className="bg-white/50 text-red-700 px-6 py-3 rounded-xl font-bold text-sm hover:bg-white transition-all active:scale-95">Dismiss</button>
+              <button onClick={() => navigate(`/doctor/patients/${focusedPatient.id}`)} className="bg-[#C62828] text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-[#B71C1C] transition-all shadow-lg active:scale-95">Review Case</button>
+              <button onClick={() => dismissAlert(focusedPatient.id)} className="bg-white/50 text-red-700 px-6 py-3 rounded-xl font-bold text-sm hover:bg-white transition-all active:scale-95">Dismiss</button>
             </div>
           </div>
         )}
@@ -111,7 +121,7 @@ const DoctorDashboard = () => {
             {statCards.map((stat, idx) => (
               <div key={idx} className="bg-white rounded-[2.5rem] p-8 border border-white shadow-card flex items-center justify-between group hover:shadow-2xl transition-all duration-300">
                 <div className="space-y-3">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{stat.title}</p>
+                  <p className="text-[13px] font-medium text-gray-400">{stat.title}</p>
                   <h3 className="text-4xl font-extrabold text-gray-900 tracking-tighter">{stat.value}</h3>
                   <p className={`text-[10px] font-bold ${stat.color} bg-white px-2 py-1 rounded-full w-fit shadow-sm`}>{stat.change}</p>
                 </div>
@@ -200,7 +210,7 @@ const DoctorDashboard = () => {
                           </p>
                         </td>
                         <td className="p-8 text-right">
-                          <button className="text-[#005C5C] font-extrabold text-sm hover:underline tracking-tight">Manage</button>
+                          <button onClick={() => navigate(`/doctor/patients/${patient.id}`)} className="text-[#005C5C] font-extrabold text-sm hover:underline tracking-tight">Manage</button>
                         </td>
                       </tr>
                     ))}

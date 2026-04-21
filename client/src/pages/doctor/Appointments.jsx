@@ -2,9 +2,10 @@ import React, { useEffect, useState, useMemo } from 'react';
 import DoctorLayout from '../../components/layout/DoctorLayout';
 import {
   Search, CalendarDays, CheckCircle, XCircle, Clock,
-  ArrowUpDown, Download, Plus, User, Tag, FileText, Stethoscope
+  ArrowUpDown, Download, Plus, User, Tag, FileText, Stethoscope,
+  CheckCircle2, Calendar, Bell
 } from 'lucide-react';
-import { patientAppointmentsApi, appointmentsApi } from '../../api/services';
+import { patientAppointmentsApi, appointmentsApi, messagesApi } from '../../api/services';
 import { useAuth } from '../../context/AuthContext';
 
 const STATUS_STYLES = {
@@ -79,6 +80,29 @@ const DoctorAppointments = () => {
     try {
       if (appt._source === 'mother') {
         await appointmentsApi.update(appt._rawId, { status: 'Confirmed' });
+        setAppointments(prev => prev.map(a => a.id === appt.id ? { ...a, status: 'Confirmed' } : a));
+      } else {
+        await patientAppointmentsApi.update(appt.id, {
+          patientId: appt.patientId, doctorId: appt.doctorId,
+          appointmentDate: appt.appointmentDate, type: appt.type,
+          notes: appt.notes, status: 'Completed', cancellationReason: null,
+        });
+        setAppointments(prev => prev.map(a => a.id === appt.id ? { ...a, status: 'Completed' } : a));
+      }
+    } catch { alert('Failed to update appointment.'); }
+  };
+
+  const handleComplete = async (appt) => {
+    try {
+      if (appt._source === 'mother') {
+        await appointmentsApi.update(appt._rawId, { status: 'Completed' });
+        // Notify mother via message
+        await messagesApi.send({
+          motherId: appt.patientId,
+          doctorId,
+          content: `Your ${TYPE_LABELS[appt.type] || appt.type} appointment on ${new Date(appt.appointmentDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} has been marked as completed. Thank you for your visit.`,
+          sentByDoctor: true,
+        });
       } else {
         await patientAppointmentsApi.update(appt.id, {
           patientId: appt.patientId, doctorId: appt.doctorId,
@@ -86,8 +110,8 @@ const DoctorAppointments = () => {
           notes: appt.notes, status: 'Completed', cancellationReason: null,
         });
       }
-      setAppointments(prev => prev.map(a => a.id === appt.id ? { ...a, status: 'Confirmed' } : a));
-    } catch { alert('Failed to approve appointment.'); }
+      setAppointments(prev => prev.map(a => a.id === appt.id ? { ...a, status: 'Completed' } : a));
+    } catch { alert('Failed to mark as completed.'); }
   };
 
   const handleRejectConfirm = async () => {
@@ -132,6 +156,13 @@ const DoctorAppointments = () => {
     a.href = url; a.download = `my-appointments-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
     URL.revokeObjectURL(url);
   };
+
+  const typeBadge = (type) => TYPE_LABELS[type] ? 'bg-teal-50 text-teal-700' : 'bg-gray-100 text-gray-500';
+  const typeLabel = (type) => TYPE_LABELS[type] || type || 'Unknown';
+  const statusDot = (status) => ({
+    Scheduled: 'bg-teal-500', Confirmed: 'bg-blue-500',
+    Completed: 'bg-green-500', Cancelled: 'bg-red-400', Waiting: 'bg-orange-400'
+  }[status] || 'bg-gray-400');
 
   const now = new Date();
 
@@ -188,17 +219,107 @@ const DoctorAppointments = () => {
           </div>
         )}
 
-        {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-4 items-start md:items-center flex-wrap">
-          <div className="relative flex-1 min-w-[200px]">
-            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text" value={search} onChange={e => setSearch(e.target.value)}
-              placeholder="Search by patient or type..."
-              className="w-full pl-10 pr-4 py-3 bg-white border border-gray-100 rounded-2xl text-sm font-medium text-gray-700 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20"
-            />
+      {/* Today's Schedule */}
+      <div className="mb-14">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Today's Schedule</h2>
+          <p className="text-sm font-bold text-gray-500">
+            {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+          </p>
+        </div>
+
+        <div className="bg-white rounded-[2.5rem] border border-gray-100 overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] pb-4">
+          {loading ? (
+            <div className="p-10 space-y-4">
+              {[...Array(3)].map((_, i) => <div key={i} className="h-16 bg-gray-50 rounded-2xl animate-pulse" />)}
+            </div>
+          ) : filtered.length === 0 ? (
+            <p className="p-10 text-gray-400 font-medium text-sm text-center">No appointments scheduled for today.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-gray-50/50">
+                    <th className="px-8 py-6 text-[10px] font-extrabold text-gray-400 uppercase tracking-[0.15em]">PATIENT</th>
+                    <th className="px-8 py-6 text-[10px] font-extrabold text-gray-400 uppercase tracking-[0.15em]">TIME</th>
+                    <th className="px-8 py-6 text-[10px] font-extrabold text-gray-400 uppercase tracking-[0.15em]">VISIT TYPE</th>
+                    <th className="px-8 py-6 text-[10px] font-extrabold text-gray-400 uppercase tracking-[0.15em]">STATUS</th>
+                    <th className="px-8 py-6 text-[10px] font-extrabold text-gray-400 uppercase tracking-[0.15em] text-right">ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {filtered.map(appt => {
+                    const isUrgent = appt.type === 'UrgentFollowUp';
+                    const name = appt.patientName || appt.motherName || 'Unknown';
+                    return (
+                      <tr key={appt.id} className={`hover:bg-gray-50/50 transition-colors ${isUrgent ? 'bg-red-50/30' : ''}`}>
+                        <td className="px-8 py-6">
+                          <div className="flex items-center gap-4">
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${isUrgent ? 'bg-red-100 text-[#C62828] border-2 border-red-200' : 'bg-teal-50 text-teal-600'}`}>
+                              {name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                            </div>
+                            <div>
+                              <p className={`font-bold ${isUrgent ? 'text-[#C62828]' : 'text-gray-900'}`}>{name}</p>
+                              <p className="text-[12px] font-bold text-gray-600 mt-0.5">ID: #{appt.patientId || appt.motherId}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-8 py-6">
+                          <div className={`flex items-center gap-2 text-sm font-bold ${isUrgent ? 'text-[#C62828]' : 'text-gray-900'}`}>
+                            <Clock size={16} className={isUrgent ? 'text-[#C62828]' : 'text-[#005C5C]'} />
+                            {new Date(appt.appointmentDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                          </div>
+                        </td>
+                        <td className="px-8 py-6">
+                          <span className={`px-4 py-1.5 font-bold text-[10px] uppercase tracking-widest rounded-full ${typeBadge(appt.type)}`}>
+                            {typeLabel(appt.type)}
+                          </span>
+                        </td>
+                        <td className="px-8 py-6">
+                          <div className="flex items-center gap-2">
+                            <div className={`w-2 h-2 rounded-full ${statusDot(appt.status)} ${isUrgent ? 'animate-pulse' : ''}`}></div>
+                            <span className={`text-sm font-bold ${isUrgent ? 'text-[#C62828]' : 'text-gray-900'}`}>
+                              {isUrgent ? 'URGENT' : appt.status}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-8 py-6">
+                          <div className="flex items-center justify-end gap-4 text-gray-400">
+                            <button
+                              onClick={() => handleComplete(appt)}
+                              title="Mark as completed"
+                              className="hover:scale-110 transition-transform cursor-pointer text-[#005C5C] hover:text-green-600">
+                              <CheckCircle2 size={16} />
+                            </button>
+                            <Calendar size={16} className="hover:text-gray-900 hover:scale-110 transition-transform cursor-pointer" />
+                            <Bell size={16} className="hover:text-gray-900 hover:scale-110 transition-transform cursor-pointer" />
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <div className="px-8 pt-6 border-t border-gray-50 flex items-center justify-between text-sm text-gray-500 font-medium">
+            <p>Showing {filtered.length} appointment{filtered.length !== 1 ? 's' : ''} for today</p>
           </div>
-          <div className="flex gap-1 bg-gray-100 p-1 rounded-2xl">
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center flex-wrap">
+        <div className="relative flex-1 min-w-[200px]">
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text" value={search} onChange={e => setSearch(e.target.value)}
+            placeholder="Search by patient or type..."
+            className="w-full pl-10 pr-4 py-3 bg-white border border-gray-100 rounded-2xl text-sm font-medium text-gray-700 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20"
+          />
+        </div>
+        <div className="flex gap-1 bg-gray-100 p-1 rounded-2xl">
             {TABS.map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
                 className={`px-4 py-2 rounded-xl text-[11px] font-bold uppercase tracking-widest transition-all ${activeTab === tab ? 'bg-white text-mamacare-teal shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}>

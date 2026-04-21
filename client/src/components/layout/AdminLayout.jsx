@@ -27,7 +27,7 @@ const AdminLayout = ({ children }) => {
         <header className="h-20 bg-white border-b border-gray-100 px-8 sticky top-0 z-40">
            <div className="max-w-7xl mx-auto h-full flex justify-between items-center">
               <div className="flex items-center gap-2">
-                 <span className="text-[10px] font-bold text-slate-500 tracking-widest uppercase">System Administration</span>
+                 <span className="text-[12px] font-bold text-slate-700 tracking-widest uppercase">System Administration</span>
               </div>
 
               <div className="flex items-center gap-6">
@@ -36,14 +36,14 @@ const AdminLayout = ({ children }) => {
                     <input 
                       type="text" 
                       placeholder="Search systems..." 
-                      className="bg-gray-50/50 border border-gray-200 rounded-xl py-2 pl-10 pr-4 text-sm font-bold placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 transition-all w-64 text-gray-900"
+                      className="bg-white border border-gray-300 rounded-xl py-2 pl-10 pr-4 text-sm  placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 transition-all w-64 text-gray-900"
                     />
                  </div>
                  
                  <div className="flex items-center gap-4">
                     <button className="p-2 text-slate-500 hover:text-mamacare-teal bg-gray-50 rounded-xl transition-all relative">
-                       <Bell size={18} />
-                       <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white"></span>
+                       <Bell size={20} />
+                       {/* <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span> */}
                     </button>
                     <div className="h-8 w-[1px] bg-gray-200 mx-1"></div>
                     <div className="relative">
@@ -76,7 +76,7 @@ const AdminLayout = ({ children }) => {
                                     className="w-full px-4 py-3 text-left text-sm font-bold text-red-500 hover:bg-red-50 flex items-center gap-2 transition-colors"
                                 >
                                     <LogOut size={16} />
-                                    Sign Out
+                                    Logout
                                 </button>
                             </div>
                         )}
@@ -89,6 +89,7 @@ const AdminLayout = ({ children }) => {
         {/* Scrollable Content Area */}
         <main className="flex-1">
           {children}
+          
         </main>
       </div>
     </div>

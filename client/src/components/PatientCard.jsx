@@ -51,7 +51,7 @@ function PatientCard({ patient, onEdit, onDelete }) {
           <div>
             <h3 className="font-bold text-gray-900 text-lg tracking-tight leading-tight">{patient.fullName}</h3>
             {age !== null && (
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">{age} Years Old</p>
+              <p className="text-[10px] font-bold text-gray-400 mt-1">{age} Years Old</p>
             )}
           </div>
         </div>
@@ -60,7 +60,7 @@ function PatientCard({ patient, onEdit, onDelete }) {
             {patient.weeksPregnant}w Gestation
           </span>
           {patient.riskLevel && patient.riskLevel !== 'Low' && (
-            <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ${riskStyle}`}>
+            <span className={`px-2 py-0.5 rounded text-[9px]  ${riskStyle}`}>
               {patient.riskLevel} Risk
             </span>
           )}
@@ -72,7 +72,7 @@ function PatientCard({ patient, onEdit, onDelete }) {
         {patient.phoneNumber && (
           <div className="flex items-center gap-4 text-xs font-medium text-gray-500">
             <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400">
-              <Phone size={14} />
+              <Phone size={14} className="text-mamacare-teal" />
             </div>
             <span>{patient.phoneNumber}</span>
           </div>
@@ -80,7 +80,7 @@ function PatientCard({ patient, onEdit, onDelete }) {
         {patient.address && (
           <div className="flex items-center gap-4 text-xs font-medium text-gray-500">
             <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400">
-              <MapPin size={14} />
+              <MapPin size={14} className="text-blue-500" />
             </div>
             <span className="line-clamp-1">{patient.address}</span>
           </div>
@@ -88,7 +88,7 @@ function PatientCard({ patient, onEdit, onDelete }) {
         {bloodType !== '—' && (
           <div className="flex items-center gap-4 text-xs font-medium text-gray-500">
             <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400">
-              <Droplets size={14} />
+              <Droplets size={14} className="text-red-500" />
             </div>
             <span>Blood Type: {bloodType}</span>
           </div>
@@ -99,13 +99,13 @@ function PatientCard({ patient, onEdit, onDelete }) {
       <div className="flex flex-wrap gap-2 mb-8">
         {dueBadge && (
           <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold ${dueBadge.style}`}>
-            <CalendarDays size={12} />
+            <CalendarDays size={12} className="text-blue-500" />
             {dueBadge.label}
           </div>
         )}
         {patient.emergencyContactName && (
           <div className="flex items-center gap-2 px-3 py-1 bg-gray-50 text-gray-500 rounded-full text-[10px] font-bold">
-            <UserCheck size={12} />
+            <UserCheck size={12} className="text-purple-500" />
             EC: {patient.emergencyContactName}
           </div>
         )}

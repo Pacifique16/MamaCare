@@ -41,7 +41,7 @@ const AdminSidebar = () => {
           </div>
           <div>
             <h2 className="text-lg font-bold text-gray-900 tracking-tight">MamaCare</h2>
-            <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Admin Central</p>
+            <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Admin Central</p>
           </div>
         </div>
       </div>
@@ -55,10 +55,9 @@ const AdminSidebar = () => {
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center justify-between px-6 py-4 rounded-xl font-bold text-xs transition-all group relative ${
-                  (isActive || isStaffSection)
+                `flex items-center justify-between px-6 py-4 rounded-xl font-bold text-[13px] transition-all group relative ${(isActive || isStaffSection)
                   ? 'bg-gray-50 text-mamacare-teal'
-                  : 'text-gray-400 hover:bg-gray-50/50 hover:text-gray-600'
+                  : 'text-gray-600 hover:bg-gray-50/50 hover:text-gray-600'
                 }`
               }
             >
@@ -66,12 +65,11 @@ const AdminSidebar = () => {
                 <item.icon size={18} className="transition-transform group-hover:scale-110" />
                 <span className="tracking-tight">{item.name}</span>
               </div>
-              
+
               {/* Active Marker */}
-              <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1/2 bg-mamacare-teal rounded-r-full transition-all duration-300 ${
-                window.location.pathname === item.path ? 'opacity-100' : 'opacity-0'
-              }`} />
-              
+              <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1/2 bg-mamacare-teal rounded-r-full transition-all duration-300 ${window.location.pathname === item.path ? 'opacity-100' : 'opacity-0'
+                }`} />
+
               <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0" />
             </NavLink>
           );
@@ -85,22 +83,14 @@ const AdminSidebar = () => {
           className="w-full bg-mamacare-teal text-white py-4 rounded-xl font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl shadow-mamacare-teal/10 hover:bg-mamacare-teal-dark transition-all"
         >
           <PlusCircle size={16} />
-          Register Clinician
+          Register Doctor
         </NavLink>
 
         <div className="space-y-1">
-          <NavLink to="/settings" className={({ isActive }) => `w-full flex items-center gap-4 px-6 py-3 rounded-xl font-bold text-xs transition-all ${isActive ? 'bg-mamacare-teal/5 text-mamacare-teal' : 'text-gray-400 hover:bg-gray-50'}`}>
-            <Settings size={16} />
-            Settings
-          </NavLink>
-          <button className="w-full flex items-center gap-4 px-6 py-3 rounded-xl font-bold text-xs text-gray-400 hover:bg-gray-50 transition-all">
-            <HelpCircle size={16} />
-            Support
-          </button>
-          <button onClick={handleLogout} className="w-full flex items-center gap-4 px-6 py-3 rounded-xl font-bold text-xs text-red-400 hover:bg-red-50 transition-all mt-4 border border-red-50">
+          <NavLink to="/login" className="w-full flex items-center gap-4 px-6 py-3 rounded-xl font-bold text-xs text-red-400 hover:bg-red-50 transition-all mt-4 border border-red-50">
             <LogOut size={16} />
-            Sign Out
-          </button>
+            Logout
+          </NavLink>
         </div>
       </div>
     </aside>

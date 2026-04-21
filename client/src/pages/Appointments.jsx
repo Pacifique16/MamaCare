@@ -34,7 +34,9 @@ const Appointments = () => {
 
     // Data State
     const [upcoming, setUpcoming] = useState([]);
+    const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [historyTab, setHistoryTab] = useState('Completed');
 
     const times = ['9:00 AM', '10:30 AM', '11:45 AM', '1:15 PM', '2:45 PM', '4:00 PM'];
 
@@ -57,7 +59,9 @@ const Appointments = () => {
         appointmentsApi.getAll({ motherId })
             .then(r => {
                 const active = r.data.filter(a => a.status !== 'Completed' && a.status !== 'Cancelled');
+                const past = r.data.filter(a => a.status === 'Completed' || a.status === 'Cancelled');
                 setUpcoming(active);
+                setHistory(past);
             })
             .catch(() => {})
             .finally(() => setLoading(false));
@@ -249,6 +253,65 @@ const Appointments = () => {
                         </AnimatePresence>
                     </div>
                 </section>
+                {/* History Section */}
+                {history.length > 0 && (
+                  <section className="space-y-6 pb-10">
+                    <div className="text-center md:text-left space-y-2">
+                      <h2 className="text-3xl font-bold text-gray-700 tracking-tight">Appointment History</h2>
+                      <div className="w-16 h-1.5 bg-gray-300 rounded-full mx-auto md:mx-0" />
+                    </div>
+
+                    {/* Tabs */}
+                    <div className="flex gap-2">
+                      {['Completed', 'Cancelled'].map(tab => (
+                        <button key={tab} onClick={() => setHistoryTab(tab)}
+                          className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all ${
+                            historyTab === tab
+                              ? tab === 'Completed' ? 'bg-green-600 text-white' : 'bg-red-500 text-white'
+                              : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                          }`}>
+                          {tab} ({history.filter(a => a.status === tab).length})
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                      {history.filter(a => a.status === historyTab).length === 0 ? (
+                        <div className="col-span-full py-10 text-center bg-white rounded-[2.5rem] border border-dashed border-gray-200">
+                          <p className="text-gray-400 font-medium text-sm">No {historyTab.toLowerCase()} appointments.</p>
+                        </div>
+                      ) : history.filter(a => a.status === historyTab).map(item => (
+                        <div key={item.id}
+                          className={`bg-white rounded-[2rem] p-8 border-l-[6px] ${
+                            item.status === 'Completed' ? 'border-green-400' : 'border-red-300'
+                          } shadow-sm opacity-80`}>
+                          <div className="flex items-start justify-between mb-4">
+                            <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full ${
+                              item.status === 'Completed' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'
+                            }`}>
+                              {item.status}
+                            </span>
+                            <CalendarIcon size={16} className="text-gray-300" />
+                          </div>
+                          <h3 className="text-lg font-bold text-gray-700 mb-2">{typeLabel(item.type)}</h3>
+                          <div className="flex flex-wrap gap-3 text-gray-400 text-xs font-semibold mb-3">
+                            <div className="flex items-center gap-1"><CalendarIcon size={12} />{new Date(item.scheduledAt).toLocaleDateString()}</div>
+                            <div className="flex items-center gap-1"><Clock size={12} />{new Date(item.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                          </div>
+                          {item.cancellationReason && (
+                            <p className="text-xs text-red-400 font-medium mt-2">Reason: {item.cancellationReason}</p>
+                          )}
+                          <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-50">
+                            <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center text-gray-500 font-bold text-sm">
+                              {item.doctorName?.[0] || 'D'}
+                            </div>
+                            <p className="text-sm font-bold text-gray-500">{item.doctorName}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
             </main>
             <Footer />
         </div>

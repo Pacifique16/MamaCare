@@ -78,23 +78,23 @@ const AdminDashboard = () => {
               <Link 
                 key={i} 
                 to={s.path} 
-                className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300"
+                className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300"
               >
                 <div className="space-y-4">
                   <div className="flex justify-between items-start">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                    <span className="text-[13px] font-medium text-gray-700 ">
                       {s.label}
                     </span>
-                    <div className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-gray-50 ${s.color}`}>
+                    <div className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-gray-50 ${s.color}`}>
                       {s.trend}
                     </div>
                   </div>
                   
-                  <h3 className="text-3xl font-bold text-gray-900 tracking-tight">
+                  <h3 className="text-4xl font-bold text-gray-900 tracking-tight">
                     {s.value}
                   </h3>
 
-                  <div className="h-1 w-full bg-gray-50 rounded-full overflow-hidden">
+                  <div className="h-1.5 w-full bg-black/5 rounded-full overflow-hidden">
                     <div 
                       className="h-full bg-mamacare-teal rounded-full"
                       style={{ width: s.progress }}
@@ -209,7 +209,7 @@ const AdminDashboard = () => {
                     </div>
                     <span className={`text-[10px] font-black ${item.text}`}>{item.value}</span>
                   </div>
-                  <div className="h-1 w-full bg-gray-50 rounded-full overflow-hidden">
+                  <div className="h-1.5 w-full bg-black/5 rounded-full overflow-hidden">
                     <div className={`h-full ${item.color}`} style={{ width: item.value }} />
                   </div>
                 </div>
@@ -236,21 +236,21 @@ const AdminDashboard = () => {
                 </div>
               )}
               {queue.map(doc => (
-                <div key={doc.id} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex items-center justify-between hover:border-mamacare-teal/20 transition-all">
+                <div key={doc.id} className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex items-center justify-between hover:border-mamacare-teal/20 transition-all group">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center border border-gray-100 overflow-hidden">
+                    <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center border border-gray-100 overflow-hidden ring-2 ring-gray-50 group-hover:ring-mamacare-teal/10 transition-all">
                       <img src={doc.profileImageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(doc.fullName)}&background=005C5C&color=fff`} alt={doc.fullName} className="w-full h-full object-cover" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-900 text-sm">{doc.fullName}</h4>
+                      <h4 className="font-bold text-gray-900 text-sm group-hover:text-mamacare-teal transition-colors">{doc.fullName}</h4>
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{doc.specialty}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => handleVerify(doc.id)} className="bg-mamacare-teal text-white px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-mamacare-teal-dark transition-all">
+                    <button onClick={() => handleVerify(doc.id)} className="bg-mamacare-teal text-white px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-mamacare-teal-dark shadow-lg shadow-mamacare-teal/10 transition-all">
                       Approve
                     </button>
-                    <button className="bg-white border border-gray-100 text-gray-400 px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 transition-all">
+                    <button className="bg-white border border-gray-100 text-gray-400 px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 transition-all">
                       Review
                     </button>
                   </div>
@@ -273,16 +273,16 @@ const AdminDashboard = () => {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-gray-50/50">
-                    <th className="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Title</th>
-                    <th className="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
-                    <th className="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Actions</th>
+                    <th className="p-6 text-[10px] font-bold text-gray-600 uppercase tracking-widest">Title</th>
+                    <th className="p-6 text-[10px] font-bold text-gray-600 uppercase tracking-widest">Status</th>
+                    <th className="p-6 text-[10px] font-bold text-gray-600 uppercase tracking-widest">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
                   {articles.slice(0, 4).map((item, i) => (
                     <tr key={i} className="hover:bg-gray-50/30 transition-all">
                       <td className="p-6">
-                        <p className="font-bold text-gray-900 text-sm leading-snug">{item.title}</p>
+                        <p className="font-medium text-gray-900 text-sm leading-snug">{item.title}</p>
                         <div className="mt-2">
                           <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${CATEGORY_THEMES[item.category]?.bg || CATEGORY_THEMES.Default.bg} ${CATEGORY_THEMES[item.category]?.text || CATEGORY_THEMES.Default.text}`}>
                             {CATEGORY_THEMES[item.category]?.label || item.category}
@@ -310,8 +310,6 @@ const AdminDashboard = () => {
             </div>
           </div>
         </div>
-
-        <AdminFooter />
       </div>
     </AdminLayout>
   );

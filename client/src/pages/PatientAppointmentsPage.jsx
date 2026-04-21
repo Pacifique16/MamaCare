@@ -1,8 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Plus, CalendarDays, RefreshCw, CheckCircle, XCircle, Search, ArrowUpDown, Download } from 'lucide-react'
+import { Plus, CalendarDays, RefreshCw, CheckCircle, XCircle, Search, ArrowUpDown, Download, ChevronDown } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
-import DatePicker from 'react-datepicker'
-import 'react-datepicker/dist/react-datepicker.css'
 import AdminLayout from '../components/layout/AdminLayout'
 import PatientAppointmentCard from '../components/PatientAppointmentCard'
 import PatientAppointmentForm from '../components/PatientAppointmentForm'
@@ -12,8 +10,8 @@ const TABS = ['All', 'Upcoming', 'Past']
 const SORT_OPTIONS = [
   { label: 'Date ↑', value: 'date_asc' },
   { label: 'Date ↓', value: 'date_desc' },
-  { label: 'Status', value: 'status' },
-  { label: 'Patient', value: 'patient' },
+  // { label: 'Status', value: 'status' },
+  // { label: 'Patient', value: 'patient' },
 ]
 const PAGE_SIZE = 9
 
@@ -30,8 +28,6 @@ function PatientAppointmentsPage() {
   const [statusFilter, setStatusFilter] = useState('All')
   const [sort, setSort] = useState('date_asc')
   const [page, setPage] = useState(1)
-  const [dateFrom, setDateFrom] = useState('')
-  const [dateTo, setDateTo] = useState('')
 
   // Pre-filter by patient if navigated from PatientCard
   const [searchParams] = useSearchParams()
@@ -98,9 +94,7 @@ function PatientAppointmentsPage() {
     // Status filter
     if (statusFilter !== 'All') list = list.filter((a) => a.status === statusFilter)
 
-    // Date range filter
-    if (dateFrom) list = list.filter((a) => new Date(a.appointmentDate) >= new Date(dateFrom))
-    if (dateTo) list = list.filter((a) => new Date(a.appointmentDate) <= new Date(dateTo + 'T23:59:59Z'))
+
 
     // Search
     if (search.trim()) {
@@ -122,14 +116,14 @@ function PatientAppointmentsPage() {
     })
 
     return list
-  }, [appointments, activeTab, statusFilter, search, sort, dateFrom, dateTo])
+  }, [appointments, activeTab, statusFilter, search, sort])
 
   // Pagination
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   // Reset page when filters change
-  useEffect(() => { setPage(1) }, [search, activeTab, statusFilter, sort, dateFrom, dateTo])
+  useEffect(() => { setPage(1) }, [search, activeTab, statusFilter, sort])
 
   // CSV Export
   const handleExport = () => {
@@ -195,16 +189,16 @@ function PatientAppointmentsPage() {
               { label: 'Completed', value: completed, trend: 'success', progress: `${(completed/appointments.length)*100}%`, color: 'text-green-500' },
               { label: 'Cancelled', value: cancelled, trend: 'attention', progress: `${(cancelled/appointments.length)*100}%`, color: 'text-red-500' },
             ].map((s) => (
-              <div key={s.label} className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm transition-all duration-300">
+              <div key={s.label} className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm transition-all duration-300 hover:shadow-md">
                 <div className="space-y-4">
                   <div className="flex justify-between items-start">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{s.label}</span>
-                    <div className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-gray-50 ${s.color}`}>
+                    <span className="text-[13px] font-medium text-gray-700">{s.label}</span>
+                    <div className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-gray-50 ${s.color}`}>
                       {s.trend}
                     </div>
                   </div>
-                  <h3 className="text-3xl font-bold text-gray-900 tracking-tight">{s.value}</h3>
-                  <div className="h-1 w-full bg-gray-50 rounded-full overflow-hidden">
+                  <h3 className="text-4xl font-bold text-gray-900 tracking-tight">{s.value}</h3>
+                  <div className="h-1.5 w-full bg-black/5 rounded-full overflow-hidden">
                     <div className="h-full bg-mamacare-teal rounded-full" style={{ width: s.progress }} />
                   </div>
                 </div>
@@ -224,97 +218,59 @@ function PatientAppointmentsPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search by patient, doctor or specialty…"
-                className="w-full pl-10 pr-4 py-3 bg-white border border-gray-100 rounded-2xl text-sm font-medium text-gray-700 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20"
+                className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-2xl text-sm font-medium text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20"
               />
             </div>
 
-            {/* Tabs */}
-            <div className="flex gap-1 bg-gray-100 p-1 rounded-2xl">
-              {TABS.map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-4 py-2 rounded-xl text-[11px] font-bold uppercase tracking-widest transition-all ${
-                    activeTab === tab ? 'bg-white text-mamacare-teal shadow-sm' : 'text-gray-400 hover:text-gray-600'
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
+            {/* Tabs (Converted to Dropdown) */}
+            <div className="relative">
+              <select
+                value={activeTab}
+                onChange={(e) => setActiveTab(e.target.value)}
+                className="w-full px-6 py-3 bg-white border border-mamacare-teal/30 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-600 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 font-poppins appearance-none cursor-pointer hover:border-mamacare-teal transition-all pr-12"
+              >
+                {TABS.map((tab) => (
+                  <option key={tab} value={tab}>
+                    {tab === 'All' ? 'ALL PERIOD' : tab.toUpperCase()}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-mamacare-teal pointer-events-none" />
             </div>
 
-            {/* Status filter */}
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20"
-            >
-              <option value="All">All Statuses</option>
-              <option value="Scheduled">Scheduled</option>
-              <option value="Completed">Completed</option>
-              <option value="Cancelled">Cancelled</option>
-            </select>
+            <div className="relative">
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="w-full px-6 py-3 bg-white border border-mamacare-teal/30 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-600 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 appearance-none cursor-pointer hover:border-mamacare-teal transition-all pr-12"
+              >
+                <option value="All">ALL STATUSES</option>
+                <option value="Scheduled">SCHEDULED</option>
+                <option value="Confirmed">CONFIRMED</option>
+                <option value="Waiting">WAITING</option>
+                <option value="Completed">COMPLETED</option>
+                <option value="Cancelled">CANCELLED</option>
+              </select>
+              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-mamacare-teal pointer-events-none" />
+            </div>
 
             {/* Sort */}
-            <div className="flex items-center gap-2">
-              <ArrowUpDown size={14} className="text-gray-400" />
+            <div className="relative">
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value)}
-                className="px-4 py-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20"
+                className="w-full px-6 py-3 bg-white border border-mamacare-teal/30 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-600 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 appearance-none cursor-pointer hover:border-mamacare-teal transition-all pr-12"
               >
                 {SORT_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>{o.label}</option>
                 ))}
               </select>
+              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-mamacare-teal pointer-events-none" />
             </div>
 
-            {/* Date Range */}
-            <div className="flex items-center gap-2">
-              <DatePicker
-                selected={dateFrom ? new Date(dateFrom) : null}
-                onChange={(date) => {
-                  const val = date
-                    ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-                    : ''
-                  setDateFrom(val)
-                }}
-                selectsStart
-                startDate={dateFrom ? new Date(dateFrom) : null}
-                endDate={dateTo ? new Date(dateTo) : null}
-                dateFormat="yyyy-MM-dd"
-                placeholderText="From date"
-                isClearable
-                className="px-3 py-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-bold text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 w-32"
-              />
-              <span className="text-gray-300 text-xs font-bold">to</span>
-              <DatePicker
-                selected={dateTo ? new Date(dateTo) : null}
-                onChange={(date) => {
-                  const val = date
-                    ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-                    : ''
-                  setDateTo(val)
-                }}
-                selectsEnd
-                startDate={dateFrom ? new Date(dateFrom) : null}
-                endDate={dateTo ? new Date(dateTo) : null}
-                minDate={dateFrom ? new Date(dateFrom) : null}
-                dateFormat="yyyy-MM-dd"
-                placeholderText="To date"
-                isClearable
-                className="px-3 py-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-bold text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 w-32"
-              />
-            </div>
 
-            {/* Export */}
-            <button
-              onClick={handleExport}
-              className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-500 hover:text-mamacare-teal hover:border-mamacare-teal/30 transition-all"
-            >
-              <Download size={14} />
-              Export CSV
-            </button>
+
+
           </div>
         )}
 
@@ -351,13 +307,13 @@ function PatientAppointmentsPage() {
             </div>
             <div className="text-center space-y-2">
               <h3 className="font-bold text-gray-900 text-lg">
-                {search || statusFilter !== 'All' || activeTab !== 'All' || dateFrom || dateTo ? 'No appointments match your filters' : 'No appointments yet'}
+                {search || statusFilter !== 'All' || activeTab !== 'All' ? 'No appointments match your filters' : 'No appointments yet'}
               </h3>
               <p className="text-sm text-gray-400 font-medium">
-                {search || statusFilter !== 'All' || activeTab !== 'All' || dateFrom || dateTo ? 'Try adjusting your search or filters.' : 'Click "Book Appointment" to schedule the first one.'}
+                {search || statusFilter !== 'All' || activeTab !== 'All' ? 'Try adjusting your search or filters.' : 'Click "Book Appointment" to schedule the first one.'}
               </p>
             </div>
-            {!search && statusFilter === 'All' && activeTab === 'All' && !dateFrom && !dateTo && (
+            {!search && statusFilter === 'All' && activeTab === 'All' && (
               <button onClick={() => setShowForm(true)} className="btn-primary">
                 <Plus size={16} />
                 Book Appointment
