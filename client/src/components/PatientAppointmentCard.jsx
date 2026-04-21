@@ -76,34 +76,34 @@ function PatientAppointmentCard({ appointment, onEdit, onDelete }) {
       {/* Details */}
       <div className="space-y-3 mb-8">
         <div className="flex items-center gap-3 text-sm text-gray-500">
-          <User size={14} className="text-gray-300 shrink-0" />
+          <User size={14} className="text-mamacare-teal shrink-0" />
           <span className="font-medium">{appointment.patientName}</span>
         </div>
         <div className="flex items-center gap-3 text-sm text-gray-500">
-          <Calendar size={14} className="text-gray-300 shrink-0" />
+          <Calendar size={14} className="text-blue-500 shrink-0" />
           <span className="font-medium">{formattedDate}</span>
         </div>
         {formattedTime && (
           <div className="flex items-center gap-3 text-sm text-gray-500">
-            <Clock size={14} className="text-gray-300 shrink-0" />
+            <Clock size={14} className="text-purple-500 shrink-0" />
             <span className="font-medium">{formattedTime}</span>
           </div>
         )}
         {appointment.type && (
           <div className="flex items-center gap-3 text-sm text-gray-500">
-            <Tag size={14} className="text-gray-300 shrink-0" />
+            <Tag size={14} className="text-orange-500 shrink-0" />
             <span className="font-medium">{TYPE_LABELS[appointment.type] || appointment.type}</span>
           </div>
         )}
         {appointment.notes && (
           <div className="flex items-start gap-3 text-sm text-gray-500">
-            <FileText size={14} className="text-gray-300 shrink-0 mt-0.5" />
+            <FileText size={14} className="text-green-600 shrink-0 mt-0.5" />
             <span className="font-medium">{appointment.notes}</span>
           </div>
         )}
         {appointment.status === 'Cancelled' && appointment.cancellationReason && (
           <div className="flex items-start gap-3 text-sm text-red-400">
-            <XCircle size={14} className="shrink-0 mt-0.5" />
+            <XCircle size={14} className="text-red-500 shrink-0 mt-0.5" />
             <span className="font-medium">{appointment.cancellationReason}</span>
           </div>
         )}
