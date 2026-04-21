@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import { mothersApi, vitalsApi } from '../api/services';
@@ -12,6 +13,7 @@ import { useAuth } from '../context/AuthContext';
 
 const RestMonitor = () => {
     const { user } = useAuth();
+    const navigate = useNavigate();
     const motherId = user?.motherId || 1;
     const [mother, setMother] = React.useState(null);
     const [latestVital, setLatestVital] = React.useState(null);
@@ -140,7 +142,7 @@ const RestMonitor = () => {
                                 Expert-reviewed guidance on managing preeclampsia symptoms and maintaining low-stress environments.
                             </p>
                         </div>
-                        <button className="w-full bg-white text-[#003e3d] py-7 rounded-[2.5rem] font-bold text-xl hover:bg-gray-50 shadow-xl transition-all active:scale-[0.98] relative z-10 border border-gray-100 flex items-center justify-center gap-3">
+                        <button onClick={() => navigate('/library')} className="w-full bg-white text-[#003e3d] py-7 rounded-[2.5rem] font-bold text-xl hover:bg-gray-50 shadow-xl transition-all active:scale-[0.98] relative z-10 border border-gray-100 flex items-center justify-center gap-3">
                             Explore Library <ChevronRight size={24} />
                         </button>
                     </motion.div>

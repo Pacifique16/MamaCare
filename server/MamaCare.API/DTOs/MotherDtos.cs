@@ -11,7 +11,8 @@ public record MotherSummaryDto(
     RiskLevel RiskLevel,
     DateTime ExpectedDueDate,
     double WeightKg,
-    string? Location
+    string? Location,
+    string? PhoneNumber = null
 );
 
 public record MotherDetailDto(
@@ -30,7 +31,12 @@ public record MotherDetailDto(
     bool HasGestationalDiabetes,
     bool HasHypertension,
     string? Allergies,
-    bool OnboardingComplete
+    bool OnboardingComplete,
+    BloodType BloodType,
+    string? EmergencyContactName,
+    string? EmergencyContactPhone,
+    string? MedicalNotes,
+    string? Address
 );
 
 public record CreateMotherDto(
@@ -59,5 +65,9 @@ public record UpdateMotherDto(
     bool? HasHypertension,
     string? Allergies,
     bool? OnboardingComplete,
-    string? MedicalNotes
+    string? MedicalNotes,
+    BloodType? BloodType,
+    string? EmergencyContactName,
+    string? EmergencyContactPhone,
+    string? Address
 );

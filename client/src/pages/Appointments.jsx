@@ -49,8 +49,8 @@ const Appointments = () => {
     const reasons = [
         { id: 'RoutineCheckup', label: 'Routine Check-up', icon: Star, color: 'text-amber-500', desc: 'Standard monthly prenatal visit' },
         { id: 'UltrasoundScan', label: 'Ultrasound Scan', icon: Activity, color: 'text-mamacare-teal', desc: 'Growth and development imaging' },
-        { id: 'Consultation', label: 'Clinical Consultation', icon: Stethoscope, color: 'text-blue-500', desc: 'Speak with a specialist about concerns' },
-        { id: 'EmergencyFollowUp', label: 'Urgent Follow-up', icon: ShieldAlert, color: 'text-red-500', desc: 'Priority review of acute symptoms' }
+        { id: 'BirthPlanReview', label: 'Clinical Consultation', icon: Stethoscope, color: 'text-blue-500', desc: 'Speak with a specialist about concerns' },
+        { id: 'UrgentFollowUp', label: 'Urgent Follow-up', icon: ShieldAlert, color: 'text-red-500', desc: 'Priority review of acute symptoms' }
     ];
 
     useEffect(() => {
@@ -69,6 +69,7 @@ const Appointments = () => {
     }, [motherId]);
 
     const handleConfirm = async () => {
+        if (!selectedDoctorId) { alert('Please select a doctor.'); return; }
         setConfirming(true);
         try {
             const { h, m } = timeToHour(selectedTime);
@@ -79,11 +80,11 @@ const Appointments = () => {
                 doctorId: selectedDoctorId,
                 scheduledAt: scheduledAt.toISOString(),
                 type: selectedReason,
-                status: 'Scheduled',
             });
             navigate('/rest-monitor');
-        } catch {
-            navigate('/rest-monitor');
+        } catch (err) {
+            const msg = err?.response?.data?.message || err?.response?.data?.title || 'Failed to book appointment. Please try again.';
+            alert(msg);
         }
         setConfirming(false);
     };

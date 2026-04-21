@@ -39,7 +39,9 @@ public class MothersController : ControllerBase
             m.User.ProfileImageUrl, m.DateOfBirth, m.Location,
             m.ExpectedDueDate, m.GestationalWeek, m.CurrentTrimester,
             m.WeightKg, m.RiskLevel, m.HasGestationalDiabetes,
-            m.HasHypertension, m.Allergies, m.OnboardingComplete));
+            m.HasHypertension, m.Allergies, m.OnboardingComplete,
+            m.BloodType, m.EmergencyContactName, m.EmergencyContactPhone,
+            m.MedicalNotes, m.Address));
     }
 
     [HttpGet("{id}/vitals")]
@@ -66,7 +68,7 @@ public class MothersController : ControllerBase
             .OrderBy(a => a.ScheduledAt)
             .Select(a => new AppointmentDto(
                 a.Id, a.MotherId, "", a.DoctorId,
-                a.Doctor.User.FullName, a.ScheduledAt, a.Type, a.Status, a.Notes))
+                a.Doctor.User.FullName, a.ScheduledAt, a.Type, a.Status, a.Notes, a.CancellationReason))
             .ToListAsync();
         return Ok(appts);
     }
@@ -101,25 +103,18 @@ public class MothersController : ControllerBase
 
         var mother = new Mother
         {
-            UserId = user.Id, DateOfBirth = DateTime.SpecifyKind(dto.DateOfBirth, DateTimeKind.Utc),
-            Location = dto.Location, ExpectedDueDate = DateTime.SpecifyKind(dto.ExpectedDueDate, DateTimeKind.Utc),
-            GestationalWeek = dto.GestationalWeek, CurrentTrimester = dto.CurrentTrimester,
-            WeightKg = dto.WeightKg, HasGestationalDiabetes = dto.HasGestationalDiabetes,
-            HasHypertension = dto.HasHypertension, Allergies = dto.Allergies
+            UserId = user.Id,
+            DateOfBirth = DateTime.SpecifyKind(dto.DateOfBirth, DateTimeKind.Utc),
+            Location = dto.Location,
+            ExpectedDueDate = DateTime.SpecifyKind(dto.ExpectedDueDate, DateTimeKind.Utc),
+            GestationalWeek = dto.GestationalWeek,
+            CurrentTrimester = dto.CurrentTrimester,
+            WeightKg = dto.WeightKg,
+            HasGestationalDiabetes = dto.HasGestationalDiabetes,
+            HasHypertension = dto.HasHypertension,
+            Allergies = dto.Allergies
         };
         _db.Mothers.Add(mother);
-        await _db.SaveChangesAsync();
-
-        // Also create a Patient record so the admin Patients page shows this mother
-        var patient = new Patient
-        {
-            FullName = dto.FullName,
-            DateOfBirth = DateTime.SpecifyKind(dto.DateOfBirth, DateTimeKind.Utc),
-            WeeksPregnant = dto.GestationalWeek,
-            RiskLevel = PatientRiskLevel.Low,
-            BloodType = PatientBloodType.Unknown,
-        };
-        _db.Patients.Add(patient);
         await _db.SaveChangesAsync();
 
         return CreatedAtAction(nameof(GetById), new { id = mother.Id }, new { mother.Id, mother.UserId });
@@ -142,20 +137,11 @@ public class MothersController : ControllerBase
         if (dto.HasHypertension.HasValue) mother.HasHypertension = dto.HasHypertension.Value;
         if (dto.Allergies is not null) mother.Allergies = dto.Allergies;
         if (dto.OnboardingComplete.HasValue) mother.OnboardingComplete = dto.OnboardingComplete.Value;
-
-        // Sync Patient record when onboarding completes
-        if (dto.OnboardingComplete == true)
-        {
-            var patient = await _db.Patients.FirstOrDefaultAsync(p => p.FullName == mother.User.FullName);
-            if (patient != null)
-            {
-                if (dto.GestationalWeek.HasValue) patient.WeeksPregnant = dto.GestationalWeek.Value;
-                if (dto.Location is not null) patient.Address = dto.Location;
-                if (mother.User.PhoneNumber is not null) patient.PhoneNumber = mother.User.PhoneNumber;
-                patient.RiskLevel = mother.HasHypertension || mother.HasGestationalDiabetes
-                    ? PatientRiskLevel.High : PatientRiskLevel.Low;
-            }
-        }
+        if (dto.MedicalNotes is not null) mother.MedicalNotes = dto.MedicalNotes;
+        if (dto.BloodType.HasValue) mother.BloodType = dto.BloodType.Value;
+        if (dto.EmergencyContactName is not null) mother.EmergencyContactName = dto.EmergencyContactName;
+        if (dto.EmergencyContactPhone is not null) mother.EmergencyContactPhone = dto.EmergencyContactPhone;
+        if (dto.Address is not null) mother.Address = dto.Address;
 
         await _db.SaveChangesAsync();
         return Ok(new { mother.Id, mother.OnboardingComplete });

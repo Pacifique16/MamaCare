@@ -20,14 +20,16 @@ public class PatientAppointmentsService : IPatientAppointmentsService
 
     // ── Queries ──────────────────────────────────────────────────────────────
 
-    public async Task<List<PatientAppointmentDto>> GetAllAsync()
+    public async Task<List<PatientAppointmentDto>> GetAllAsync(int? doctorId = null)
     {
-        var appointments = await _db.PatientAppointments
+        var query = _db.PatientAppointments
             .Include(a => a.Patient)
             .Include(a => a.Doctor).ThenInclude(d => d.User)
-            .OrderBy(a => a.AppointmentDate)
-            .ToListAsync();
+            .AsQueryable();
 
+        if (doctorId.HasValue) query = query.Where(a => a.DoctorId == doctorId.Value);
+
+        var appointments = await query.OrderBy(a => a.AppointmentDate).ToListAsync();
         return appointments.Select(MapToDto).ToList();
     }
 

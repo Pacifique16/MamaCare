@@ -9,7 +9,11 @@ import {
   LogOut,
   ChevronRight,
   Baby,
-  CalendarDays
+  CalendarDays,
+  Settings,
+  MessageSquarePlus,
+  BookOpen,
+  Inbox
 } from 'lucide-react';
 
 const AdminSidebar = () => {
@@ -23,6 +27,9 @@ const AdminSidebar = () => {
     { name: 'Staff Directory', icon: Users, path: '/admin/doctors' },
     { name: 'Patients', icon: Baby, path: '/patients' },
     { name: 'Appointments', icon: CalendarDays, path: '/patient-appointments' },
+    { name: 'Article Requests', icon: MessageSquarePlus, path: '/admin/article-requests' },
+    { name: 'Health Library', icon: BookOpen, path: '/admin/library' },
+    { name: 'Contact Messages', icon: Inbox, path: '/admin/contact-messages' },
   ];
 
   return (
@@ -75,6 +82,10 @@ const AdminSidebar = () => {
         </NavLink>
 
         <div className="space-y-1">
+          <NavLink to="/settings" className={({ isActive }) => `w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold text-sm transition-all ${isActive ? 'bg-mamacare-teal/5 text-mamacare-teal' : 'text-gray-400 hover:bg-gray-50'}`}>
+            <Settings size={18} />
+            Settings
+          </NavLink>
           <button className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold text-sm text-gray-400 hover:bg-gray-50 transition-all">
             <HelpCircle size={18} />
             Support

@@ -4,7 +4,7 @@ namespace MamaCare.API.Services;
 
 public interface IPatientAppointmentsService
 {
-    Task<List<PatientAppointmentDto>> GetAllAsync();
+    Task<List<PatientAppointmentDto>> GetAllAsync(int? doctorId = null);
     Task<PatientAppointmentDto?> GetByIdAsync(int id);
     Task<List<PatientAppointmentDto>> GetByPatientIdAsync(int patientId);
     Task<(PatientAppointmentDto? Result, string? Error)> CreateAsync(PatientAppointmentRequest request);

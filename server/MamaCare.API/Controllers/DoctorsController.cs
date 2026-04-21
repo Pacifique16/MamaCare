@@ -92,13 +92,34 @@ public class DoctorsController : ControllerBase
                 a.Id,
                 PatientName = a.Patient.FullName,
                 PatientImage = (string?)null,
-                a.AppointmentDate,
+                AppointmentDate = a.AppointmentDate,
                 Type = a.Type.ToString(),
                 Status = a.Status.ToString(),
                 a.Notes
             })
             .ToListAsync();
-        return Ok(appointments);
+
+        // Also include from Appointments (Mother-linked)
+        var motherAppts = await _db.Appointments
+            .Where(a => a.DoctorId == id)
+            .Include(a => a.Mother).ThenInclude(m => m.User)
+            .OrderBy(a => a.ScheduledAt)
+            .Select(a => new {
+                a.Id,
+                PatientName = a.Mother.User.FullName,
+                PatientImage = a.Mother.User.ProfileImageUrl,
+                AppointmentDate = a.ScheduledAt,
+                Type = a.Type.ToString(),
+                Status = a.Status.ToString(),
+                a.Notes
+            })
+            .ToListAsync();
+
+        var combined = appointments.Cast<object>().Concat(motherAppts.Cast<object>())
+            .OrderBy(a => ((dynamic)a).AppointmentDate)
+            .ToList();
+
+        return Ok(combined);
     }
 
     [HttpGet("{id}/activity")]
@@ -132,7 +153,7 @@ public class DoctorsController : ControllerBase
             .Select(m => new MotherSummaryDto(
                 m.Id, m.User.FullName, m.User.ProfileImageUrl,
                 m.GestationalWeek, m.CurrentTrimester, m.RiskLevel,
-                m.ExpectedDueDate, m.WeightKg, m.Location))
+                m.ExpectedDueDate, m.WeightKg, m.Location, m.User.PhoneNumber))
             .ToListAsync();
         return Ok(patients);
     }
@@ -148,7 +169,7 @@ public class DoctorsController : ControllerBase
             .Select(m => new MotherSummaryDto(
                 m.Id, m.User.FullName, m.User.ProfileImageUrl,
                 m.GestationalWeek, m.CurrentTrimester, m.RiskLevel,
-                m.ExpectedDueDate, m.WeightKg, m.Location))
+                m.ExpectedDueDate, m.WeightKg, m.Location, m.User.PhoneNumber))
             .ToListAsync();
 
         // Sort: High → Medium → Low, then by gestational week descending

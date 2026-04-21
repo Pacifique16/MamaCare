@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AdminLayout from '../../components/layout/AdminLayout';
 import AdminFooter from '../../components/layout/AdminFooter';
 import { BarChart3, Heart, Plus, Edit2, Trash2 } from 'lucide-react';
@@ -9,6 +9,8 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [queue, setQueue] = useState([]);
   const [articles, setArticles] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     adminApi.getStats().then(r => setStats(r.data)).catch(() => {});
@@ -126,7 +128,7 @@ const AdminDashboard = () => {
           <div className="space-y-8">
             <div className="flex justify-between items-center">
               <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Health Library CMS</h2>
-              <button className="flex items-center gap-2 text-mamacare-teal font-bold text-[10px] uppercase tracking-widest border-b border-mamacare-teal/20 pb-0.5">
+              <button onClick={() => navigate('/admin/library')} className="flex items-center gap-2 text-mamacare-teal font-bold text-[10px] uppercase tracking-widest border-b border-mamacare-teal/20 pb-0.5">
                 <Plus size={16} />New Article
               </button>
             </div>
@@ -157,8 +159,8 @@ const AdminDashboard = () => {
                       </td>
                       <td className="p-8">
                         <div className="flex items-center gap-4">
-                          <button className="p-2 text-gray-300 hover:text-mamacare-teal transition-all"><Edit2 size={16} /></button>
-                          <button className="p-2 text-gray-300 hover:text-red-400 transition-all"><Trash2 size={16} /></button>
+                          <button onClick={() => navigate('/admin/library')} className="p-2 text-gray-300 hover:text-mamacare-teal transition-all"><Edit2 size={16} /></button>
+                          <button onClick={() => navigate('/admin/library')} className="p-2 text-gray-300 hover:text-red-400 transition-all"><Trash2 size={16} /></button>
                         </div>
                       </td>
                     </tr>
