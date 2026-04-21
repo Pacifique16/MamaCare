@@ -108,13 +108,13 @@ const AddDoctor = () => {
       <AdminLayout>
          <div className="max-w-7xl mx-auto p-10 space-y-12 animate-in fade-in duration-700">
 
-            <div className="max-w-4xl mx-auto space-y-8 py-10 font-poppins">
+            {/* High-Fidelity Form Header */}
+            <div className="space-y-1 border-b border-gray-100 pb-6 font-poppins">
+               <span className="text-[10px] font-bold text-mamacare-teal uppercase tracking-[0.25em]">STAFF ONBOARDING</span>
+               <h1 className="text-6xl font-bold text-gray-900 tracking-tighter">Add Practitioner</h1>
+            </div>
 
-               {/* High-Fidelity Form Header */}
-               <div className="space-y-1 border-b border-gray-100 pb-6">
-                  <span className="text-[10px] font-bold text-mamacare-teal uppercase tracking-[0.25em]">STAFF ONBOARDING</span>
-                  <h1 className="text-6xl font-bold text-gray-900 tracking-tighter">Add Practitioner</h1>
-               </div>
+            <div className="max-w-4xl mx-auto space-y-10 font-poppins">
 
                {/* Section 1: Personal Information */}
                <div className="space-y-10 animate-in-up duration-500">
