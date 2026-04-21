@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AdminLayout from '../../components/layout/AdminLayout';
 import { articleRequestsApi } from '../../api/services';
-import { MessageSquarePlus, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { MessageSquarePlus, Clock, CheckCircle, XCircle, ChevronDown } from 'lucide-react';
 
 const STATUS_STYLES = {
   Pending:   { bg: 'bg-yellow-50', text: 'text-yellow-700', icon: <Clock size={14} /> },
@@ -58,14 +58,23 @@ const ArticleRequestsPage = () => {
           </div>
         </div>
 
-        {/* Filter tabs */}
-        <div className="flex gap-2">
-          {['All', 'Pending', 'Reviewed', 'Dismissed'].map(f => (
-            <button key={f} onClick={() => setFilter(f)}
-              className={`px-6 py-2 rounded-xl text-[11px] font-bold uppercase tracking-widest transition-all ${filter === f ? 'bg-mamacare-teal text-white shadow-sm' : 'bg-white text-gray-400 hover:text-gray-600 border border-gray-100'}`}>
-              {f}
-            </button>
-          ))}
+        {/* Filter Dropdown */}
+        <div className="flex justify-start">
+          <div className="relative w-48">
+            <select
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              className="w-full pl-6 pr-10 py-2.5 bg-white border border-mamacare-teal/20 rounded-full text-[11px] font-bold uppercase tracking-widest text-gray-700 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 appearance-none shadow-sm cursor-pointer hover:border-mamacare-teal transition-all"
+            >
+              <option value="All">All Requests</option>
+              <option value="Pending">Pending</option>
+              <option value="Reviewed">Reviewed</option>
+              <option value="Dismissed">Dismissed</option>
+            </select>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-mamacare-teal">
+              <ChevronDown size={14} />
+            </div>
+          </div>
         </div>
 
         {loading ? (
