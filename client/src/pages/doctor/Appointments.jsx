@@ -2,7 +2,8 @@ import React, { useEffect, useState, useMemo } from 'react';
 import DoctorLayout from '../../components/layout/DoctorLayout';
 import {
   Search, CalendarDays, CheckCircle, XCircle, Clock,
-  ArrowUpDown, Download, Plus, User, Tag, FileText, Stethoscope
+  ArrowUpDown, Download, Plus, User, Tag, FileText, Stethoscope,
+  CheckCircle2, Calendar, Bell
 } from 'lucide-react';
 import { patientAppointmentsApi, appointmentsApi } from '../../api/services';
 import { useAuth } from '../../context/AuthContext';
@@ -133,6 +134,13 @@ const DoctorAppointments = () => {
     URL.revokeObjectURL(url);
   };
 
+  const typeBadge = (type) => TYPE_LABELS[type] ? 'bg-teal-50 text-teal-700' : 'bg-gray-100 text-gray-500';
+  const typeLabel = (type) => TYPE_LABELS[type] || type || 'Unknown';
+  const statusDot = (status) => ({
+    Scheduled: 'bg-teal-500', Confirmed: 'bg-blue-500',
+    Completed: 'bg-green-500', Cancelled: 'bg-red-400', Waiting: 'bg-orange-400'
+  }[status] || 'bg-gray-400');
+
   const now = new Date();
 
   const filtered = useMemo(() => {
@@ -219,23 +227,24 @@ const DoctorAppointments = () => {
                 <tbody className="divide-y divide-gray-50">
                   {filtered.map(appt => {
                     const isUrgent = appt.type === 'UrgentFollowUp';
+                    const name = appt.patientName || appt.motherName || 'Unknown';
                     return (
                       <tr key={appt.id} className={`hover:bg-gray-50/50 transition-colors ${isUrgent ? 'bg-red-50/30' : ''}`}>
                         <td className="px-8 py-6">
                           <div className="flex items-center gap-4">
                             <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${isUrgent ? 'bg-red-100 text-[#C62828] border-2 border-red-200' : 'bg-teal-50 text-teal-600'}`}>
-                              {appt.motherName.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                              {name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                             </div>
                             <div>
-                              <p className={`font-bold ${isUrgent ? 'text-[#C62828]' : 'text-gray-900'}`}>{appt.motherName}</p>
-                              <p className="text-[12px] font-bold text-gray-600 mt-0.5">ID: #{appt.motherId}</p>
+                              <p className={`font-bold ${isUrgent ? 'text-[#C62828]' : 'text-gray-900'}`}>{name}</p>
+                              <p className="text-[12px] font-bold text-gray-600 mt-0.5">ID: #{appt.patientId || appt.motherId}</p>
                             </div>
                           </div>
                         </td>
                         <td className="px-8 py-6">
                           <div className={`flex items-center gap-2 text-sm font-bold ${isUrgent ? 'text-[#C62828]' : 'text-gray-900'}`}>
                             <Clock size={16} className={isUrgent ? 'text-[#C62828]' : 'text-[#005C5C]'} />
-                            {new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                            {new Date(appt.appointmentDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                           </div>
                         </td>
                         <td className="px-8 py-6">
