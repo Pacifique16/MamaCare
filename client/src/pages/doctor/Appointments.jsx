@@ -5,7 +5,7 @@ import {
   ArrowUpDown, Download, Plus, User, Tag, FileText, Stethoscope,
   CheckCircle2, Calendar, Bell
 } from 'lucide-react';
-import { patientAppointmentsApi, appointmentsApi } from '../../api/services';
+import { patientAppointmentsApi, appointmentsApi, messagesApi } from '../../api/services';
 import { useAuth } from '../../context/AuthContext';
 
 const STATUS_STYLES = {
@@ -80,6 +80,29 @@ const DoctorAppointments = () => {
     try {
       if (appt._source === 'mother') {
         await appointmentsApi.update(appt._rawId, { status: 'Confirmed' });
+        setAppointments(prev => prev.map(a => a.id === appt.id ? { ...a, status: 'Confirmed' } : a));
+      } else {
+        await patientAppointmentsApi.update(appt.id, {
+          patientId: appt.patientId, doctorId: appt.doctorId,
+          appointmentDate: appt.appointmentDate, type: appt.type,
+          notes: appt.notes, status: 'Completed', cancellationReason: null,
+        });
+        setAppointments(prev => prev.map(a => a.id === appt.id ? { ...a, status: 'Completed' } : a));
+      }
+    } catch { alert('Failed to update appointment.'); }
+  };
+
+  const handleComplete = async (appt) => {
+    try {
+      if (appt._source === 'mother') {
+        await appointmentsApi.update(appt._rawId, { status: 'Completed' });
+        // Notify mother via message
+        await messagesApi.send({
+          motherId: appt.patientId,
+          doctorId,
+          content: `Your ${TYPE_LABELS[appt.type] || appt.type} appointment on ${new Date(appt.appointmentDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} has been marked as completed. Thank you for your visit.`,
+          sentByDoctor: true,
+        });
       } else {
         await patientAppointmentsApi.update(appt.id, {
           patientId: appt.patientId, doctorId: appt.doctorId,
@@ -87,8 +110,8 @@ const DoctorAppointments = () => {
           notes: appt.notes, status: 'Completed', cancellationReason: null,
         });
       }
-      setAppointments(prev => prev.map(a => a.id === appt.id ? { ...a, status: 'Confirmed' } : a));
-    } catch { alert('Failed to approve appointment.'); }
+      setAppointments(prev => prev.map(a => a.id === appt.id ? { ...a, status: 'Completed' } : a));
+    } catch { alert('Failed to mark as completed.'); }
   };
 
   const handleRejectConfirm = async () => {
@@ -262,7 +285,12 @@ const DoctorAppointments = () => {
                         </td>
                         <td className="px-8 py-6">
                           <div className="flex items-center justify-end gap-4 text-gray-400">
-                            <CheckCircle2 size={16} className="text-[#005C5C] hover:scale-110 transition-transform cursor-pointer" />
+                            <button
+                              onClick={() => handleComplete(appt)}
+                              title="Mark as completed"
+                              className="hover:scale-110 transition-transform cursor-pointer text-[#005C5C] hover:text-green-600">
+                              <CheckCircle2 size={16} />
+                            </button>
                             <Calendar size={16} className="hover:text-gray-900 hover:scale-110 transition-transform cursor-pointer" />
                             <Bell size={16} className="hover:text-gray-900 hover:scale-110 transition-transform cursor-pointer" />
                           </div>

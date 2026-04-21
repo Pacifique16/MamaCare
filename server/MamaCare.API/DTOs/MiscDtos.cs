@@ -65,6 +65,28 @@ public record CreateArticleRequestDto(
     string? Category
 );
 
+public record PrescriptionDto(
+    int Id,
+    int MotherId,
+    int DoctorId,
+    string DoctorName,
+    string MedicineName,
+    string Dosage,
+    string Frequency,
+    string? Duration,
+    string? Notes,
+    DateTime IssuedAt
+);
+
+public record CreatePrescriptionDto(
+    int MotherId,
+    string MedicineName,
+    string Dosage,
+    string Frequency,
+    string? Duration,
+    string? Notes
+);
+
 public record AdminStatsDto(
     int TotalMothers,
     int TotalDoctors,

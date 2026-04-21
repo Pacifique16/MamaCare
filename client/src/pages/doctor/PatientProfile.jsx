@@ -4,9 +4,9 @@ import DoctorLayout from '../../components/layout/DoctorLayout';
 import {
   ChevronRight, Phone, Mail, AlertTriangle, HeartPulse,
   Scale, Calendar, MessageSquare, TrendingUp, User, MapPin,
-  Droplets, Activity
+  Droplets, Activity, Pill, X, Plus
 } from 'lucide-react';
-import { mothersApi, vitalsApi } from '../../api/services';
+import { mothersApi, vitalsApi, prescriptionsApi } from '../../api/services';
 import { useAuth } from '../../context/AuthContext';
 
 const riskStyle = {
@@ -26,18 +26,37 @@ const PatientProfile = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [prescriptions, setPrescriptions] = useState([]);
+  const [showPrescribeModal, setShowPrescribeModal] = useState(false);
+  const [prescribeForm, setPrescribeForm] = useState({ medicineName: '', dosage: '', frequency: '', duration: '', notes: '' });
+  const [prescribing, setPrescribing] = useState(false);
+
   useEffect(() => {
     Promise.all([
       mothersApi.getById(id),
       mothersApi.getVitals(id),
       mothersApi.getAppointments(id),
-    ]).then(([mRes, vRes, aRes]) => {
+      prescriptionsApi.getAll({ motherId: id }),
+    ]).then(([mRes, vRes, aRes, pRes]) => {
       setMother(mRes.data);
       setVitals(vRes.data || []);
       setAppointments(aRes.data || []);
+      setPrescriptions(pRes.data || []);
     }).catch(() => {})
       .finally(() => setLoading(false));
   }, [id]);
+
+  const handlePrescribe = async (e) => {
+    e.preventDefault();
+    setPrescribing(true);
+    try {
+      const res = await prescriptionsApi.create({ motherId: Number(id), ...prescribeForm });
+      setPrescriptions(prev => [res.data, ...prev]);
+      setShowPrescribeModal(false);
+      setPrescribeForm({ medicineName: '', dosage: '', frequency: '', duration: '', notes: '' });
+    } catch { alert('Failed to save prescription.'); }
+    setPrescribing(false);
+  };
 
   if (loading) return (
     <DoctorLayout>
@@ -225,6 +244,36 @@ const PatientProfile = () => {
               <p className="text-sm text-gray-600 leading-relaxed">{mother.medicalNotes}</p>
             </div>
           )}
+
+          {/* Prescriptions */}
+          <div className="mt-8 pt-6 border-t border-gray-50">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Prescriptions</p>
+              <button onClick={() => setShowPrescribeModal(true)}
+                className="flex items-center gap-1 px-3 py-1.5 bg-[#005C5C] text-white text-xs font-bold rounded-xl hover:bg-[#004848] transition-all">
+                <Plus size={13} /> New
+              </button>
+            </div>
+            {prescriptions.length === 0 ? (
+              <p className="text-sm text-gray-400 text-center py-6">No prescriptions issued yet.</p>
+            ) : (
+              <div className="space-y-3">
+                {prescriptions.map(p => (
+                  <div key={p.id} className="bg-purple-50 rounded-2xl p-4 border border-purple-100">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-2">
+                        <Pill size={14} className="text-purple-600 shrink-0" />
+                        <p className="font-bold text-gray-900 text-sm">{p.medicineName}</p>
+                      </div>
+                      <span className="text-[10px] text-gray-400">{new Date(p.issuedAt).toLocaleDateString()}</span>
+                    </div>
+                    <p className="text-xs text-purple-700 font-semibold mt-1 ml-5">{p.dosage} — {p.frequency}{p.duration ? ` for ${p.duration}` : ''}</p>
+                    {p.notes && <p className="text-xs text-gray-500 mt-1 ml-5">{p.notes}</p>}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Right — vitals */}
@@ -300,9 +349,76 @@ const PatientProfile = () => {
               className="w-full flex items-center gap-3 px-4 py-3 bg-white rounded-2xl text-sm font-bold text-gray-700 hover:bg-[#005C5C] hover:text-white transition-all shadow-sm">
               <Calendar size={16} /> View Appointments
             </button>
+            <button onClick={() => setShowPrescribeModal(true)}
+              className="w-full flex items-center gap-3 px-4 py-3 bg-white rounded-2xl text-sm font-bold text-gray-700 hover:bg-purple-600 hover:text-white transition-all shadow-sm">
+              <Pill size={16} /> Prescribe Meds
+            </button>
           </div>
         </div>
       </div>
+      {showPrescribeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+          <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl">
+            <div className="flex items-center justify-between p-6 border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <Pill size={18} className="text-purple-600" />
+                <h2 className="text-xl font-black text-gray-900">New Prescription</h2>
+              </div>
+              <button onClick={() => setShowPrescribeModal(false)} className="p-2 hover:bg-gray-100 rounded-xl">
+                <X size={18} className="text-gray-400" />
+              </button>
+            </div>
+            <form onSubmit={handlePrescribe} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2">
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Medicine Name *</label>
+                  <input required value={prescribeForm.medicineName}
+                    onChange={e => setPrescribeForm(p => ({ ...p, medicineName: e.target.value }))}
+                    placeholder="e.g. Ferrous Sulfate"
+                    className="mt-1 w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-200 text-sm" />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Dosage *</label>
+                  <input required value={prescribeForm.dosage}
+                    onChange={e => setPrescribeForm(p => ({ ...p, dosage: e.target.value }))}
+                    placeholder="e.g. 200mg"
+                    className="mt-1 w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-200 text-sm" />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Frequency *</label>
+                  <input required value={prescribeForm.frequency}
+                    onChange={e => setPrescribeForm(p => ({ ...p, frequency: e.target.value }))}
+                    placeholder="e.g. Twice daily"
+                    className="mt-1 w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-200 text-sm" />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Duration</label>
+                  <input value={prescribeForm.duration}
+                    onChange={e => setPrescribeForm(p => ({ ...p, duration: e.target.value }))}
+                    placeholder="e.g. 30 days"
+                    className="mt-1 w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-200 text-sm" />
+                </div>
+                <div className="col-span-2">
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Notes</label>
+                  <textarea value={prescribeForm.notes}
+                    onChange={e => setPrescribeForm(p => ({ ...p, notes: e.target.value }))}
+                    placeholder="e.g. Take after meals, avoid dairy..."
+                    rows={2} className="mt-1 w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-200 text-sm resize-none" />
+                </div>
+              </div>
+              <p className="text-xs text-gray-400">💬 The patient will be automatically notified via message.</p>
+              <div className="flex gap-3 pt-2">
+                <button type="button" onClick={() => setShowPrescribeModal(false)}
+                  className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50">Cancel</button>
+                <button type="submit" disabled={prescribing}
+                  className="flex-1 py-3 rounded-xl bg-purple-600 text-white font-bold text-sm hover:bg-purple-700 disabled:opacity-60">
+                  {prescribing ? 'Saving...' : 'Issue Prescription'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </DoctorLayout>
   );
 };
