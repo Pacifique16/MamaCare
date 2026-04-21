@@ -100,6 +100,10 @@ export const contactMessagesApi = {
   markRead: (id) => api.patch(`/contact-messages/${id}/read`),
 }
 
+export const chatApi = {
+  send: (message, history) => api.post('/chat', { message, history }),
+}
+
 export const authApi = {
   login: (data) => api.post('/auth/login', data),
 }

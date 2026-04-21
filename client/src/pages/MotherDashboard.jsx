@@ -10,6 +10,8 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { mothersApi, vitalsApi, appointmentsApi, libraryApi } from '../api/services';
 
+import PregnancyChatbot from '../components/PregnancyChatbot';
+
 const MotherDashboard = () => {
   const { user } = useAuth();
   const motherId = user?.motherId || 1;
@@ -116,6 +118,7 @@ const MotherDashboard = () => {
       </main>
 
       <Footer />
+      <PregnancyChatbot />
     </div>
   );
 };
