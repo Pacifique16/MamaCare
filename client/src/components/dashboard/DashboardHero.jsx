@@ -1,7 +1,7 @@
 import React from 'react';
 import { Heart, Apple, ChevronRight } from 'lucide-react';
 
-const DashboardHero = ({ userName = "Aline", week = 28 }) => {
+const DashboardHero = ({ userName = "", week = 28 }) => {
   const progress = (week / 40) * 100;
 
   return (
@@ -19,7 +19,7 @@ const DashboardHero = ({ userName = "Aline", week = 28 }) => {
         <div className="space-y-4">
           <div className="space-y-2">
             <h1 className="text-5xl md:text-6xl font-bold tracking-tight">
-              Hello, {userName}.
+              {userName ? `Hello, ${userName}.` : <span className="inline-block w-48 h-12 bg-white/20 rounded-2xl animate-pulse" />}
             </h1>
             <h2 className="text-5xl md:text-6xl font-bold tracking-tight opacity-90">
               You're in your {week}th week!

@@ -1,4 +1,4 @@
-import React from 'react';
+import { Link } from 'react-router-dom';
 import { Clock, ChevronRight } from 'lucide-react';
 
 const LibraryResource = ({ title, category, image, index = 0 }) => {
@@ -28,9 +28,9 @@ const LibraryResource = ({ title, category, image, index = 0 }) => {
           </p>
         </div>
 
-        <button className="bg-mamacare-teal text-white px-10 py-4 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-mamacare-teal/20 hover:bg-mamacare-teal-dark active:scale-95 transition-all inline-block">
+        <Link to="/library" className="bg-mamacare-teal text-white px-10 py-4 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-mamacare-teal/20 hover:bg-mamacare-teal-dark active:scale-95 transition-all inline-block">
           Explore
-        </button>
+        </Link>
       </div>
 
       {/* Image Section */}

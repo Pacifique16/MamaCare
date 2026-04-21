@@ -18,9 +18,9 @@ const QuickContact = () => {
             Kigali, Rwanda KN 4 Ave
           </p>
         </div>
-        <button className="flex items-center gap-2 text-mamacare-teal font-bold text-base tracking-tight hover:gap-3 transition-all">
+        <a href="https://www.google.com/maps/search/KN+4+Ave,+Kigali,+Rwanda" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-mamacare-teal font-bold text-base tracking-tight hover:gap-3 transition-all">
           View on Map <ArrowRight size={16} />
-        </button>
+        </a>
       </div>
 
       {/* Quick Contact Card */}

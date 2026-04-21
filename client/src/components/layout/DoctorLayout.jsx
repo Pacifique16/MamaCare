@@ -1,18 +1,29 @@
 import React from 'react';
 import DoctorSidebar from './DoctorSidebar';
 import { Search, Bell, HelpCircle, User, LogOut } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const DoctorLayout = ({ children, title, subtitle, activeActionButton }) => {
     const navigate = useNavigate();
-    const { logout } = useAuth();
+    const { logout, user } = useAuth();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [profileImage, setProfileImage] = useState(null);
+
+    useEffect(() => {
+        if (user?.doctorId) {
+            import('../../api/services').then(({ doctorsApi }) => {
+                doctorsApi.getById(user.doctorId)
+                    .then(r => setProfileImage(r.data.profileImageUrl))
+                    .catch(() => {});
+            });
+        }
+    }, [user?.doctorId]);
 
     const handleLogout = () => {
         logout();
-        navigate('/login');
+        navigate('/');
     };
     return (
         <div className="flex min-h-screen bg-[#F5F7F8] font-poppins">
@@ -46,18 +57,22 @@ const DoctorLayout = ({ children, title, subtitle, activeActionButton }) => {
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="text-right">
-                                <p className="text-sm font-bold text-gray-900 leading-none">Dr. Sarah Mitchell</p>
-                                <p className="text-[9px] font-bold text-mamacare-teal uppercase tracking-widest mt-1">Obstetrician</p>
+                                <p className="text-sm font-bold text-gray-900 leading-none">{user?.name || 'Doctor'}</p>
+                                <p className="text-[9px] font-bold text-mamacare-teal uppercase tracking-widest mt-1">Provider</p>
                             </div>
                                 <button 
                                     onClick={() => setIsDropdownOpen(!isDropdownOpen)} 
                                     className="focus:outline-none relative"
                                 >
-                                    <img 
-                                        src="https://images.unsplash.com/photo-1559839734-2b71f1536785?auto=format&fit=crop&q=80&w=150" 
-                                        alt="Dr. Sarah" 
-                                        className="w-10 h-10 rounded-xl object-cover ring-2 ring-gray-50 hover:ring-mamacare-teal/50 transition-all"
-                                    />
+                                    <div className="w-10 h-10 rounded-xl overflow-hidden ring-2 ring-gray-50 hover:ring-mamacare-teal/50 transition-all">
+                                        {profileImage ? (
+                                            <img src={profileImage} alt={user?.name} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="w-full h-full bg-mamacare-teal flex items-center justify-center text-white font-bold text-sm">
+                                                {user?.name?.split(' ').map(n => n[0]).join('').slice(0, 2) || 'DR'}
+                                            </div>
+                                        )}
+                                    </div>
                                 </button>
                                 {isDropdownOpen && (
                                     <div className="absolute right-0 top-12 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 overflow-hidden z-50">

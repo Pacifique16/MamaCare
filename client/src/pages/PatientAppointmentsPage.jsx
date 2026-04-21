@@ -4,7 +4,6 @@ import { useSearchParams } from 'react-router-dom'
 import AdminLayout from '../components/layout/AdminLayout'
 import PatientAppointmentCard from '../components/PatientAppointmentCard'
 import PatientAppointmentForm from '../components/PatientAppointmentForm'
-import { deleteAppointment } from '../api/patientAppointmentsApi'
 import { appointmentsApi } from '../api/services'
 
 const TABS = ['All', 'Upcoming', 'Past']
@@ -70,7 +69,6 @@ function PatientAppointmentsPage() {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this appointment? This cannot be undone.')) return
     try {
-      // Use appointmentsApi.delete to target System A (Mothers)
       await appointmentsApi.delete(id)
       setAppointments((prev) => prev.filter((a) => a.id !== id))
     } catch {

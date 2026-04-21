@@ -1,19 +1,18 @@
 import React from 'react';
 import AdminSidebar from './AdminSidebar';
-import AdminFooter from './AdminFooter';
-import { Bell, Search, User, LogOut } from 'lucide-react';
+import { Bell, Search, User, LogOut, Settings } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const AdminLayout = ({ children }) => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleLogout = () => {
       logout();
-      navigate('/login');
+      navigate('/');
   };
 
   return (
@@ -52,12 +51,26 @@ const AdminLayout = ({ children }) => {
                             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                             className="flex items-center gap-3 pl-2 group focus:outline-none"
                         >
-                           <div className="w-10 h-10 rounded-full border-2 border-mamacare-teal/20 overflow-hidden flex items-center justify-center text-mamacare-teal group-hover:bg-mamacare-teal/5 transition-all">
-                              <User size={20} />
+                           <div className="text-right hidden md:block">
+                              <p className="text-sm font-bold text-gray-900 leading-none">{user?.name || 'Admin'}</p>
+                              <p className="text-[9px] font-bold text-mamacare-teal uppercase tracking-widest mt-0.5">Administrator</p>
+                           </div>
+                           <div className="w-10 h-10 rounded-xl overflow-hidden border-2 border-mamacare-teal/20">
+                              {user?.profileImageUrl ? (
+                                 <img src={user.profileImageUrl} alt={user.name} className="w-full h-full object-cover" />
+                              ) : (
+                                 <div className="w-full h-full bg-mamacare-teal flex items-center justify-center text-white font-bold text-sm">
+                                    {user?.name?.charAt(0) || 'A'}
+                                 </div>
+                              )}
                            </div>
                         </button>
                         {isDropdownOpen && (
                             <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 overflow-hidden z-[60]">
+                                <a href="/settings" className="w-full px-4 py-3 text-left text-sm font-bold text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-colors block">
+                                    <Settings size={16} />
+                                    Settings
+                                </a>
                                 <button
                                     onClick={handleLogout}
                                     className="w-full px-4 py-3 text-left text-sm font-bold text-red-500 hover:bg-red-50 flex items-center gap-2 transition-colors"
@@ -76,7 +89,7 @@ const AdminLayout = ({ children }) => {
         {/* Scrollable Content Area */}
         <main className="flex-1">
           {children}
-          <AdminFooter />
+          
         </main>
       </div>
     </div>

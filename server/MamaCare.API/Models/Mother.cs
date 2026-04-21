@@ -2,6 +2,7 @@ namespace MamaCare.API.Models;
 
 public enum RiskLevel { Low, Medium, High }
 public enum Trimester { First, Second, Third }
+public enum BloodType { APositive, ANegative, BPositive, BNegative, OPositive, ONegative, ABPositive, ABNegative, Unknown }
 
 public class Mother
 {
@@ -20,6 +21,13 @@ public class Mother
     public bool HasHypertension { get; set; }
     public string? Allergies { get; set; }
     public bool OnboardingComplete { get; set; }
+
+    // Fields merged from Patient
+    public BloodType BloodType { get; set; } = BloodType.Unknown;
+    public string? EmergencyContactName { get; set; }
+    public string? EmergencyContactPhone { get; set; }
+    public string? MedicalNotes { get; set; }
+    public string? Address { get; set; }
 
     public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
     public ICollection<TriageSession> TriageSessions { get; set; } = new List<TriageSession>();

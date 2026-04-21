@@ -27,7 +27,8 @@ public record LibraryArticleDto(
     ArticleStatus Status,
     string? ImageUrl,
     DateTime PublishedAt,
-    DateTime UpdatedAt
+    DateTime UpdatedAt,
+    string? Content = null
 );
 
 public record CreateArticleDto(
@@ -45,6 +46,23 @@ public record UpdateArticleDto(
     ArticleCategory? Category,
     ArticleStatus? Status,
     string? ImageUrl
+);
+
+public record ArticleRequestDto(
+    int Id,
+    string Topic,
+    string? Description,
+    string? Category,
+    string SubmittedByName,
+    string SubmittedByEmail,
+    string Status,
+    DateTime CreatedAt
+);
+
+public record CreateArticleRequestDto(
+    string Topic,
+    string? Description,
+    string? Category
 );
 
 public record AdminStatsDto(

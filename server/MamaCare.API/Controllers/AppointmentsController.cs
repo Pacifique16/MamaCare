@@ -36,7 +36,7 @@ public class AppointmentsController : ControllerBase
             .Select(a => new AppointmentDto(
                 a.Id, a.MotherId, a.Mother.User.FullName,
                 a.DoctorId, a.Doctor.User.FullName,
-                a.ScheduledAt, a.Type, a.Status, a.Notes))
+                a.ScheduledAt, a.Type, a.Status, a.Notes, a.CancellationReason))
             .ToListAsync();
         return Ok(result);
     }
@@ -52,20 +52,23 @@ public class AppointmentsController : ControllerBase
         return Ok(new AppointmentDto(
             a.Id, a.MotherId, a.Mother.User.FullName,
             a.DoctorId, a.Doctor.User.FullName,
-            a.ScheduledAt, a.Type, a.Status, a.Notes));
+            a.ScheduledAt, a.Type, a.Status, a.Notes, a.CancellationReason));
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(CreateAppointmentDto dto)
     {
+        if (!Enum.TryParse<AppointmentType>(dto.Type, out var parsedType))
+            return BadRequest(new { message = $"Invalid appointment type: {dto.Type}" });
         var appt = new Appointment
         {
             MotherId = dto.MotherId, DoctorId = dto.DoctorId,
-            ScheduledAt = DateTime.SpecifyKind(dto.ScheduledAt, DateTimeKind.Utc), Type = dto.Type, Notes = dto.Notes
+            ScheduledAt = DateTime.SpecifyKind(dto.ScheduledAt, DateTimeKind.Utc),
+            Type = parsedType, Notes = dto.Notes
         };
         _db.Appointments.Add(appt);
         await _db.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetById), new { id = appt.Id }, appt);
+        return Ok(new { appt.Id });
     }
 
     [HttpPut("{id}")]
@@ -78,6 +81,7 @@ public class AppointmentsController : ControllerBase
         if (dto.Type.HasValue) appt.Type = dto.Type.Value;
         if (dto.Status.HasValue) appt.Status = dto.Status.Value;
         if (dto.Notes is not null) appt.Notes = dto.Notes;
+        if (dto.CancellationReason is not null) appt.CancellationReason = dto.CancellationReason;
 
         await _db.SaveChangesAsync();
         return Ok(appt);

@@ -26,8 +26,20 @@ import DoctorAppointments from './pages/doctor/Appointments';
 import Messaging from './pages/doctor/Messaging'
 import PatientsPage from './pages/PatientsPage';
 import PatientAppointmentsPage from './pages/PatientAppointmentsPage';
+import SettingsPage from './pages/SettingsPage';
 
 import LandingPage from './pages/LandingPage';
+import EmergencyCall from './pages/EmergencyCall';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import HelpCenter from './pages/HelpCenter';
+import TermsOfService from './pages/TermsOfService';
+import ArticleDetail from './pages/ArticleDetail';
+
+import ArticleRequestsPage from './pages/admin/ArticleRequestsPage';
+import LibraryPage from './pages/admin/LibraryPage';
+import ContactMessagesPage from './pages/admin/ContactMessagesPage';
+
+import MotherMessaging from './pages/MotherMessaging';
 
 function App() {
   return (
@@ -42,6 +54,11 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/reset-success" element={<ResetSuccess />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/emergency" element={<EmergencyCall />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/help" element={<HelpCenter />} />
+        <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/library/:id" element={<ArticleDetail />} />
 
         {/* Mother Protected Routes */}
         <Route element={<ProtectedRoute allowedRoles={['Mother']} />}>
@@ -57,6 +74,7 @@ function App() {
           <Route path="/library" element={<Library />} />
           <Route path="/appointments" element={<Appointments />} />
           <Route path="/rest-monitor" element={<RestMonitor />} />
+          <Route path="/messaging" element={<MotherMessaging />} />
         </Route>
 
         {/* Admin Protected Portal */}
@@ -65,6 +83,9 @@ function App() {
           <Route path="/admin/doctors" element={<DoctorManagement />} />
           <Route path="/admin/edit-doctor/:id" element={<EditDoctor />} />
           <Route path="/admin/add-doctor" element={<AddDoctor />} />
+          <Route path="/admin/article-requests" element={<ArticleRequestsPage />} />
+          <Route path="/admin/library" element={<LibraryPage />} />
+          <Route path="/admin/contact-messages" element={<ContactMessagesPage />} />
         </Route>
 
         {/* Doctor Protected Portal */}
@@ -80,6 +101,11 @@ function App() {
         <Route element={<ProtectedRoute allowedRoles={['Admin', 'Doctor']} />}>
           <Route path="/patients" element={<PatientsPage />} />
           <Route path="/patient-appointments" element={<PatientAppointmentsPage />} />
+        </Route>
+
+        {/* Settings — all authenticated roles */}
+        <Route element={<ProtectedRoute allowedRoles={['Admin', 'Doctor', 'Mother']} />}>
+          <Route path="/settings" element={<SettingsPage />} />
         </Route>
 
         {/* Fallback routing */}

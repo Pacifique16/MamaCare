@@ -9,15 +9,27 @@ import {
   LogOut,
   ChevronRight,
   Baby,
-  CalendarDays
+  CalendarDays,
+  Settings,
+  MessageSquarePlus,
+  BookOpen,
+  Inbox
 } from 'lucide-react';
 
 const AdminSidebar = () => {
+  const handleLogout = () => {
+    localStorage.removeItem('mamacare_user');
+    window.location.href = '/';
+  };
+
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
     { name: 'Staff Directory', icon: Users, path: '/admin/doctors' },
     { name: 'Patients', icon: Baby, path: '/patients' },
     { name: 'Appointments', icon: CalendarDays, path: '/patient-appointments' },
+    { name: 'Article Requests', icon: MessageSquarePlus, path: '/admin/article-requests' },
+    { name: 'Health Library', icon: BookOpen, path: '/admin/library' },
+    { name: 'Contact Messages', icon: Inbox, path: '/admin/contact-messages' },
   ];
 
   return (

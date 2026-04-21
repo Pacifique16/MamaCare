@@ -14,18 +14,37 @@ const MotherDashboard = () => {
   const { user } = useAuth();
   const motherId = user?.motherId || 1;
 
-  const [mother, setMother] = useState(null);
+  const [mother, setMother] = useState(() => {
+    const cached = sessionStorage.getItem(`mother_${user?.motherId || 1}`);
+    return cached ? JSON.parse(cached) : null;
+  });
   const [vitals, setVitals] = useState([]);
   const [nextAppt, setNextAppt] = useState(null);
   const [articles, setArticles] = useState([]);
 
   useEffect(() => {
-    mothersApi.getById(motherId).then(r => setMother(r.data)).catch(() => {});
+    const MOTHER_KEY = `mother_${motherId}`;
+    const cachedMother = sessionStorage.getItem(MOTHER_KEY);
+    if (cachedMother) {
+      setMother(JSON.parse(cachedMother));
+    } else {
+      mothersApi.getById(motherId)
+        .then(r => { setMother(r.data); sessionStorage.setItem(MOTHER_KEY, JSON.stringify(r.data)); })
+        .catch(() => {});
+    }
     appointmentsApi.getAll({ motherId }).then(r => {
       const upcoming = r.data.find(a => a.status !== 'Completed' && a.status !== 'Cancelled');
       setNextAppt(upcoming || null);
     }).catch(() => {});
-    libraryApi.getAll({ status: 'Published' }).then(r => setArticles(r.data.slice(0, 2))).catch(() => {});
+    const CACHE_KEY = 'library_articles';
+    const cachedArticles = sessionStorage.getItem(CACHE_KEY);
+    if (cachedArticles) {
+      setArticles(JSON.parse(cachedArticles).slice(0, 2));
+    } else {
+      libraryApi.getAll({ status: 'Published' })
+        .then(r => { setArticles(r.data.slice(0, 2)); sessionStorage.setItem(CACHE_KEY, JSON.stringify(r.data)); })
+        .catch(() => {});
+    }
   }, [motherId]);
 
   // No metrics display, only keeping minimal data fetching
@@ -34,7 +53,7 @@ const MotherDashboard = () => {
     <div className="min-h-screen bg-[#FAFAFA] font-poppins pb-4">
       <Navbar />
       <main className="pt-32 px-4 md:px-8 max-w-7xl mx-auto space-y-12">
-        <DashboardHero userName={mother?.fullName?.split(' ')[0] || 'Aline'} week={mother?.gestationalWeek || 28} />
+        <DashboardHero userName={mother?.fullName?.split(' ')[0] || ''} week={mother?.gestationalWeek || 28} />
 
         <div className="grid lg:grid-cols-12 gap-8 items-stretch">
           {/* Main Action Center: Triage & Appointment */}

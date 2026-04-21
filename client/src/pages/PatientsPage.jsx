@@ -3,7 +3,6 @@ import { Plus, Users, RefreshCw, Search, ArrowUpDown, Download, ChevronDown, Che
 import AdminLayout from '../components/layout/AdminLayout'
 import PatientCard from '../components/PatientCard'
 import PatientForm from '../components/PatientForm'
-import { getAllPatients, deletePatient } from '../api/patientsApi'
 import { mothersApi } from '../api/services'
 
 const TRIMESTER_TABS = ['All', 'First (1-13w)', 'Second (14-27w)', 'Third (28w+)']
@@ -35,10 +34,11 @@ function PatientsPage() {
     try {
       // Use mothersApi.getAll() for a more stable, cycle-free data fetch
       const res = await mothersApi.getAll()
-      // Map gestationalWeek to weeksPregnant to satisfy existing UI components
       const mappedData = res.data.map(m => ({
         ...m,
-        weeksPregnant: m.gestationalWeek
+        weeksPregnant: m.gestationalWeek,
+        phoneNumber: m.phoneNumber || null,
+        address: m.location || null,
       }))
       setPatients(mappedData)
     } catch {
@@ -55,7 +55,7 @@ function PatientsPage() {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this patient? This cannot be undone.')) return
     try {
-      await deletePatient(id)
+      await mothersApi.delete(id)
       setPatients((prev) => prev.filter((p) => p.id !== id))
     } catch {
       alert('Failed to delete patient. Please try again.')

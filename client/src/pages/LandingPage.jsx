@@ -194,9 +194,9 @@ const LandingPage = () => {
               >
                 Get Started Free
               </button>
-              <button className="border-2 border-white/30 text-white backdrop-blur-md px-10 py-5 rounded-2xl font-bold text-xl hover:bg-white/10 transition-colors">
+              <a href="tel:+250789534491" className="border-2 border-white/30 text-white backdrop-blur-md px-10 py-5 rounded-2xl font-bold text-xl hover:bg-white/10 transition-colors">
                 Talk to an Expert
-              </button>
+              </a>
             </div>
           </div>
         </section>

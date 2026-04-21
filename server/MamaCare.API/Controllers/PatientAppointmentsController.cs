@@ -19,9 +19,9 @@ public class PatientAppointmentsController : ControllerBase
 
     // GET /api/patient-appointments
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] int? doctorId)
     {
-        var appointments = await _service.GetAllAsync();
+        var appointments = await _service.GetAllAsync(doctorId);
         return Ok(appointments);
     }
 
