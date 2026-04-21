@@ -6,7 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css'
 import { getVerifiedDoctors, getAvailableSlots } from '../api/patientAppointmentsApi'
 import { mothersApi, appointmentsApi } from '../api/services'
 
-const STATUSES = ['Scheduled', 'Completed', 'Cancelled']
+const STATUSES = ['Scheduled', 'Confirmed', 'Waiting', 'Completed', 'Cancelled']
 
 const APPOINTMENT_TYPES = [
   { value: 'RoutineCheckup', label: 'Routine Checkup' },

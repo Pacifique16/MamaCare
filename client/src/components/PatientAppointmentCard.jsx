@@ -2,8 +2,10 @@ import { Edit2, Trash2, User, Stethoscope, Calendar, FileText, Clock, Tag, XCirc
 
 const STATUS_STYLES = {
   Scheduled: 'bg-teal-50 text-mamacare-teal',
+  Confirmed: 'bg-blue-50 text-blue-500',
+  Waiting:   'bg-orange-50 text-orange-500',
   Completed: 'bg-green-50 text-green-600',
-  Cancelled: 'bg-red-50 text-red-400',
+  Cancelled: 'bg-red-50 text-red-500',
 }
 
 const TYPE_LABELS = {

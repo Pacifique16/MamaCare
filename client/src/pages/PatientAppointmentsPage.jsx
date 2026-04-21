@@ -195,7 +195,7 @@ function PatientAppointmentsPage() {
                 <div className="space-y-4">
                   <div className="flex justify-between items-start">
                     <span className="text-[12px] font-semibold text-gray-600">{s.label}</span>
-                    <div className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-gray-50 ${s.color}`}>
+                    <div className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-gray-50 ${s.color}`}>
                       {s.trend}
                     </div>
                   </div>
@@ -249,6 +249,8 @@ function PatientAppointmentsPage() {
               >
                 <option value="All">ALL STATUSES</option>
                 <option value="Scheduled">SCHEDULED</option>
+                <option value="Confirmed">CONFIRMED</option>
+                <option value="Waiting">WAITING</option>
                 <option value="Completed">COMPLETED</option>
                 <option value="Cancelled">CANCELLED</option>
               </select>
