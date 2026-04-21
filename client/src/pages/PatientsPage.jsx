@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Plus, Users, RefreshCw, Search, ArrowUpDown, Download } from 'lucide-react'
+import { Plus, Users, RefreshCw, Search, ArrowUpDown, Download, ChevronDown } from 'lucide-react'
 import AdminLayout from '../components/layout/AdminLayout'
 import PatientCard from '../components/PatientCard'
 import PatientForm from '../components/PatientForm'
@@ -170,8 +170,8 @@ function PatientsPage() {
               <div key={s.label} className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm transition-all duration-300">
                 <div className="space-y-4">
                   <div className="flex justify-between items-start">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{s.label}</span>
-                    <div className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-gray-50 ${s.color}`}>
+                    <span className="text-[12px] font-bold text-gray-700">{s.label}</span>
+                    <div className={`px-2 py-0.5 rounded text-[10px] font-black  tracking-widest bg-gray-50 ${s.color}`}>
                       {s.trend}
                     </div>
                   </div>
@@ -195,45 +195,52 @@ function PatientsPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Find patients by name or phone… "
-                className="w-full pl-10 pr-4 py-3 bg-white border border-gray-100 rounded-xl text-xs font-medium text-gray-700 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/10 font-poppins"
+                className="w-full pl-10 pr-4 py-3 bg-white border border-gray-100 rounded-xl text-xs font-medium text-gray-700 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/10 font-poppins"
               />
             </div>
 
-            <div className="flex gap-1 bg-gray-50 border border-gray-100 p-1 rounded-xl font-poppins">
-              {TRIMESTER_TABS.map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setTrimesterTab(tab)}
-                  className={`px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-widest transition-all whitespace-nowrap ${
-                    trimesterTab === tab ? 'bg-white text-mamacare-teal shadow-xs' : 'text-gray-400 hover:text-gray-600'
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-
-            <select
-              value={riskFilter}
-              onChange={(e) => setRiskFilter(e.target.value)}
-              className="px-4 py-3 bg-white border border-gray-100 rounded-xl text-[10px] font-bold uppercase tracking-widest text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/10 font-poppins"
-            >
-              <option value="All">Risk Level: All</option>
-              <option value="Low">Risk: Low</option>
-              <option value="Medium">Risk: Medium</option>
-              <option value="High">Risk: High</option>
-            </select>
-
-            <div className="flex items-center gap-2 font-poppins">
+            <div className="relative">
               <select
-                value={sort}
-                onChange={(e) => setSort(e.target.value)}
-                className="px-4 py-3 bg-white border border-gray-100 rounded-xl text-[10px] font-bold uppercase tracking-widest text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/10"
+                value={trimesterTab}
+                onChange={(e) => setTrimesterTab(e.target.value)}
+                className="w-full px-4 py-3 bg-white border border-gray-100 rounded-xl text-[11px] font-bold uppercase tracking-widest text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/10 font-poppins appearance-none cursor-pointer hover:border-mamacare-teal/20 transition-all pr-10"
               >
-                {SORT_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>{o.label}</option>
+                {TRIMESTER_TABS.map((tab) => (
+                  <option key={tab} value={tab}>
+                    {tab === 'All' ? 'TRIMESTER: ALL' : tab.toUpperCase()}
+                  </option>
                 ))}
               </select>
+              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            </div>
+
+            <div className="relative">
+              <select
+                value={riskFilter}
+                onChange={(e) => setRiskFilter(e.target.value)}
+                className="w-full px-4 py-3 bg-white border border-gray-100 rounded-xl text-[11px] font-bold uppercase tracking-widest text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/10 font-poppins appearance-none cursor-pointer hover:border-mamacare-teal/20 transition-all pr-10"
+              >
+                <option value="All">RISK LEVEL: ALL</option>
+                <option value="Low">RISK: LOW</option>
+                <option value="Medium">RISK: MEDIUM</option>
+                <option value="High">RISK: HIGH</option>
+              </select>
+              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            </div>
+
+            <div className="flex items-center gap-2 font-poppins">
+              <div className="relative flex-1">
+                <select
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value)}
+                  className="w-full px-4 py-3 bg-white border border-gray-100 rounded-xl text-[11px] font-bold uppercase tracking-widest text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/10 appearance-none cursor-pointer hover:border-mamacare-teal/20 transition-all pr-10"
+                >
+                  {SORT_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>{o.label}</option>
+                  ))}
+                </select>
+                <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+              </div>
             </div>
           </div>
         )}

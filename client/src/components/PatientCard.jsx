@@ -51,7 +51,7 @@ function PatientCard({ patient, onEdit, onDelete }) {
           <div>
             <h3 className="font-bold text-gray-900 text-lg tracking-tight leading-tight">{patient.fullName}</h3>
             {age !== null && (
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">{age} Years Old</p>
+              <p className="text-[10px] font-bold text-gray-400 mt-1">{age} Years Old</p>
             )}
           </div>
         </div>
@@ -60,7 +60,7 @@ function PatientCard({ patient, onEdit, onDelete }) {
             {patient.weeksPregnant}w Gestation
           </span>
           {patient.riskLevel && patient.riskLevel !== 'Low' && (
-            <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ${riskStyle}`}>
+            <span className={`px-2 py-0.5 rounded text-[9px]  ${riskStyle}`}>
               {patient.riskLevel} Risk
             </span>
           )}

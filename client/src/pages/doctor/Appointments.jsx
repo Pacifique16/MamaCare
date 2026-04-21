@@ -173,7 +173,7 @@ const DoctorAppointments = () => {
                             </div>
                             <div>
                               <p className={`font-bold ${isUrgent ? 'text-[#C62828]' : 'text-gray-900'}`}>{appt.motherName}</p>
-                              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">ID: #{appt.motherId}</p>
+                              <p className="text-[12px] font-bold text-gray-600 mt-0.5">ID: #{appt.motherId}</p>
                             </div>
                           </div>
                         </td>

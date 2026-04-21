@@ -80,7 +80,7 @@ const AdminDashboard = () => {
               >
                 <div className="space-y-4">
                   <div className="flex justify-between items-start">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                    <span className="text-[12px] font-semibold text-gray-700 ">
                       {s.label}
                     </span>
                     <div className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-gray-50 ${s.color}`}>
@@ -272,16 +272,16 @@ const AdminDashboard = () => {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-gray-50/50">
-                    <th className="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Title</th>
-                    <th className="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
-                    <th className="p-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Actions</th>
+                    <th className="p-6 text-[10px] font-bold text-gray-600 uppercase tracking-widest">Title</th>
+                    <th className="p-6 text-[10px] font-bold text-gray-600 uppercase tracking-widest">Status</th>
+                    <th className="p-6 text-[10px] font-bold text-gray-600 uppercase tracking-widest">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
                   {articles.slice(0, 4).map((item, i) => (
                     <tr key={i} className="hover:bg-gray-50/30 transition-all">
                       <td className="p-6">
-                        <p className="font-bold text-gray-900 text-sm leading-snug">{item.title}</p>
+                        <p className="font-medium text-gray-900 text-sm leading-snug">{item.title}</p>
                         <div className="mt-2">
                           <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${CATEGORY_THEMES[item.category]?.bg || CATEGORY_THEMES.Default.bg} ${CATEGORY_THEMES[item.category]?.text || CATEGORY_THEMES.Default.text}`}>
                             {CATEGORY_THEMES[item.category]?.label || item.category}

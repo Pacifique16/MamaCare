@@ -43,10 +43,9 @@ const AdminSidebar = () => {
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center justify-between px-6 py-4 rounded-xl font-bold text-xs transition-all group relative ${
-                  (isActive || isStaffSection)
+                `flex items-center justify-between px-6 py-4 rounded-xl font-bold text-xs transition-all group relative ${(isActive || isStaffSection)
                   ? 'bg-gray-50 text-mamacare-teal'
-                  : 'text-gray-400 hover:bg-gray-50/50 hover:text-gray-600'
+                  : 'text-gray-600 hover:bg-gray-50/50 hover:text-gray-600'
                 }`
               }
             >
@@ -54,12 +53,11 @@ const AdminSidebar = () => {
                 <item.icon size={18} className="transition-transform group-hover:scale-110" />
                 <span className="tracking-tight">{item.name}</span>
               </div>
-              
+
               {/* Active Marker */}
-              <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1/2 bg-mamacare-teal rounded-r-full transition-all duration-300 ${
-                window.location.pathname === item.path ? 'opacity-100' : 'opacity-0'
-              }`} />
-              
+              <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1/2 bg-mamacare-teal rounded-r-full transition-all duration-300 ${window.location.pathname === item.path ? 'opacity-100' : 'opacity-0'
+                }`} />
+
               <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0" />
             </NavLink>
           );
