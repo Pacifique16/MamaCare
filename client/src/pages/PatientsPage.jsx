@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Plus, Users, RefreshCw, Search, ArrowUpDown, Download, ChevronDown } from 'lucide-react'
+import { Plus, Users, RefreshCw, Search, ArrowUpDown, Download, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
 import AdminLayout from '../components/layout/AdminLayout'
 import PatientCard from '../components/PatientCard'
 import PatientForm from '../components/PatientForm'
@@ -14,7 +14,7 @@ const SORT_OPTIONS = [
   // { label: 'Weeks ↓', value: 'weeks_desc' },
   // { label: 'Newest', value: 'newest' },
 ]
-const PAGE_SIZE = 9
+const PAGE_SIZE = 4
 
 function PatientsPage() {
   const [patients, setPatients] = useState([])
@@ -397,24 +397,21 @@ function PatientsPage() {
                 </table>
 
                 {totalPages > 1 && (
-                  <div className="p-6 bg-gray-50/50 flex items-center justify-between border-t border-gray-50">
-                    <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
-                      Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length}
+                  <div className="p-8 bg-gray-50/50 flex items-center justify-between border-t border-gray-50">
+                    <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">
+                      Showing {filtered.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length}
                     </p>
-                    <div className="flex gap-2 items-center">
-                      <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}
-                        className="px-4 py-2 bg-white border border-gray-100 rounded-xl text-[11px] font-bold text-gray-400 hover:text-mamacare-teal disabled:opacity-40 transition-all">
-                        Previous
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="p-3 text-gray-300 hover:text-mamacare-teal transition-all disabled:opacity-30">
+                        <ChevronLeft size={20} />
                       </button>
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                        <button key={p} onClick={() => setPage(p)}
-                          className={`w-9 h-9 rounded-xl text-[11px] font-bold transition-all ${page === p ? 'bg-mamacare-teal text-white' : 'bg-white border border-gray-100 text-gray-400 hover:text-mamacare-teal'}`}>
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                        <button key={p} onClick={() => setPage(p)} className={`w-10 h-10 rounded-xl font-bold text-sm transition-all ${p === page ? 'bg-mamacare-teal text-white' : 'text-gray-400 hover:bg-gray-100'}`}>
                           {p}
                         </button>
                       ))}
-                      <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                        className="px-4 py-2 bg-white border border-gray-100 rounded-xl text-[11px] font-bold text-gray-400 hover:text-mamacare-teal disabled:opacity-40 transition-all">
-                        Next
+                      <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="p-3 text-gray-400 hover:text-mamacare-teal transition-all disabled:opacity-30">
+                        <ChevronRight size={20} />
                       </button>
                     </div>
                   </div>
