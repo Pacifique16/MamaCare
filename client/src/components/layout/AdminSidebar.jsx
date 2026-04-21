@@ -29,7 +29,7 @@ const AdminSidebar = () => {
           </div>
           <div>
             <h2 className="text-lg font-bold text-gray-900 tracking-tight">MamaCare</h2>
-            <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Admin Central</p>
+            <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Admin Central</p>
           </div>
         </div>
       </div>
@@ -43,7 +43,7 @@ const AdminSidebar = () => {
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center justify-between px-6 py-4 rounded-xl font-bold text-xs transition-all group relative ${(isActive || isStaffSection)
+                `flex items-center justify-between px-6 py-4 rounded-xl font-bold text-[13px] transition-all group relative ${(isActive || isStaffSection)
                   ? 'bg-gray-50 text-mamacare-teal'
                   : 'text-gray-600 hover:bg-gray-50/50 hover:text-gray-600'
                 }`
@@ -71,17 +71,13 @@ const AdminSidebar = () => {
           className="w-full bg-mamacare-teal text-white py-4 rounded-xl font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl shadow-mamacare-teal/10 hover:bg-mamacare-teal-dark transition-all"
         >
           <PlusCircle size={16} />
-          Register Clinician
+          Register Doctor
         </NavLink>
 
         <div className="space-y-1">
-          <button className="w-full flex items-center gap-4 px-6 py-3 rounded-xl font-bold text-xs text-gray-400 hover:bg-gray-50 transition-all">
-            <HelpCircle size={16} />
-            Support
-          </button>
           <NavLink to="/login" className="w-full flex items-center gap-4 px-6 py-3 rounded-xl font-bold text-xs text-red-400 hover:bg-red-50 transition-all mt-4 border border-red-50">
             <LogOut size={16} />
-            Sign Out
+            Logout
           </NavLink>
         </div>
       </div>

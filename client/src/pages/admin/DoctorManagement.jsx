@@ -125,7 +125,7 @@ const DoctorManagement = () => {
             { label: 'Pending Verification', value: pendingDoctors, trend: 'attention', progress: `${(pendingDoctors/totalDoctors)*100}%`, color: 'text-red-500' },
             { label: 'Verified Doctors', value: verifiedDoctors, trend: 'active', progress: `${(verifiedDoctors/totalDoctors)*100}%`, color: 'text-cyan-600' },
           ].map((s) => (
-            <div key={s.label} className={`${s.bg} rounded-3xl p-8 border border-gray-100/50 shadow-sm transition-all duration-300 hover:shadow-md`}>
+            <div key={s.label} className={`bg-white rounded-3xl p-8 border border-gray-100/50 shadow-sm transition-all duration-300 hover:shadow-md`}>
               <div className="space-y-4">
                 <div className="flex justify-between items-start">
                   <span className="text-[13px] font-medium text-gray-700 ">{s.label}</span>

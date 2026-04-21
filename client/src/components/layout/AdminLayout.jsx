@@ -63,7 +63,7 @@ const AdminLayout = ({ children }) => {
                                     className="w-full px-4 py-3 text-left text-sm font-bold text-red-500 hover:bg-red-50 flex items-center gap-2 transition-colors"
                                 >
                                     <LogOut size={16} />
-                                    Sign Out
+                                    Logout
                                 </button>
                             </div>
                         )}
