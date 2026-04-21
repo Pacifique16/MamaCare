@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AdminLayout from '../../components/layout/AdminLayout';
-import AdminFooter from '../../components/layout/AdminFooter';
+
 import { Users, ShieldCheck, CheckCircle2, Search, Filter, Download, Edit2, Ban, ChevronLeft, ChevronRight, Trash2, XCircle, ChevronUp, ChevronDown, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { doctorsApi } from '../../api/services';
@@ -144,7 +144,7 @@ const DoctorManagement = () => {
 
         {/* Filters */}
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between p-4">
-          <div className="relative w-full md:w-[400px]">
+          <div className="relative flex-1">
             <Search size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
@@ -172,9 +172,12 @@ const DoctorManagement = () => {
               <select 
                 value={specialtyFilter} 
                 onChange={e => { setSpecialtyFilter(e.target.value); setPage(1); }} 
-                className="w-full px-6 py-3 bg-white border border-mamacare-teal/30 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-600 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 font-poppins appearance-none cursor-pointer hover:border-mamacare-teal transition-all pr-12 min-w-[180px]"
+                className="w-full px-6 py-3 bg-white border border-mamacare-teal/30 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-600 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 font-poppins appearance-none cursor-pointer hover:border-mamacare-teal transition-all pr-12 min-w-[220px]"
               >
-                {specialties.map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
+                <option value="All">ALL SPECIALISATION</option>
+                {specialties.filter(s => s !== 'All').map(s => (
+                  <option key={s} value={s}>{s.toUpperCase()}</option>
+                ))}
               </select>
               <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-mamacare-teal pointer-events-none" />
             </div>
@@ -286,8 +289,6 @@ const DoctorManagement = () => {
             </div>
           </div>
         </div>
-
-        <AdminFooter />
       </div>
     </AdminLayout>
   );
