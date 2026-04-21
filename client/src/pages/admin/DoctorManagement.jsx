@@ -5,7 +5,7 @@ import { Users, ShieldCheck, CheckCircle2, Search, Filter, Download, Edit2, Ban,
 import { useNavigate } from 'react-router-dom';
 import { doctorsApi } from '../../api/services';
 
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 4;
 
 const DoctorManagement = () => {
   const navigate = useNavigate();
@@ -128,7 +128,7 @@ const DoctorManagement = () => {
             <div key={s.label} className={`${s.bg} rounded-3xl p-8 border border-gray-100/50 shadow-sm transition-all duration-300 hover:shadow-md`}>
               <div className="space-y-4">
                 <div className="flex justify-between items-start">
-                  <span className="text-[12px] font-semibold text-gray-700 ">{s.label}</span>
+                  <span className="text-[13px] font-semibold text-gray-700 ">{s.label}</span>
                   <div className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-white/60 ${s.color}`}>
                     {s.trend}
                   </div>
@@ -190,16 +190,16 @@ const DoctorManagement = () => {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-50/50">
-                <th className="p-8 text-[10px] font-bold text-gray-400 uppercase tracking-widest cursor-pointer select-none" onClick={() => handleSort('fullName')}>
+                <th className="p-8 text-[14px] font-semibold text-gray-700 cursor-pointer select-none" onClick={() => handleSort('fullName')}>
                   <div className="flex items-center gap-2">Doctor Details <SortIcon field="fullName" /></div>
                 </th>
-                <th className="p-8 text-[10px] font-bold text-gray-400 uppercase tracking-widest cursor-pointer select-none" onClick={() => handleSort('specialty')}>
+                <th className="p-8 text-[14px] font-semibold text-gray-700 cursor-pointer select-none" onClick={() => handleSort('specialty')}>
                   <div className="flex items-center gap-2">Specialty <SortIcon field="specialty" /></div>
                 </th>
-                <th className="p-8 text-[10px] font-bold text-gray-400 uppercase tracking-widest cursor-pointer select-none" onClick={() => handleSort('status')}>
+                <th className="p-8 text-[14px] font-semibold text-gray-700 cursor-pointer select-none" onClick={() => handleSort('status')}>
                   <div className="flex items-center gap-2">Status <SortIcon field="status" /></div>
                 </th>
-                <th className="p-8 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Actions</th>
+                <th className="p-8 text-[14px] font-semibold text-gray-700">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -230,7 +230,7 @@ const DoctorManagement = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="p-8"><p className="text-sm font-bold text-gray-600">{doc.specialty}</p></td>
+                  <td className="p-8"><p className="text-sm  text-gray-900">{doc.specialty}</p></td>
                   <td className="p-8">
                     <span className={`flex items-center gap-2 w-fit px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest ${
                       doc.status === 'Verified' ? 'bg-teal-50 text-mamacare-teal' :
@@ -269,7 +269,7 @@ const DoctorManagement = () => {
             </tbody>
           </table>
 
-          {/* Pagination */}
+          {totalPages > 1 && (
           <div className="p-8 bg-gray-50/50 flex items-center justify-between border-t border-gray-50">
             <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">
               Showing {filtered.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length}
@@ -288,6 +288,7 @@ const DoctorManagement = () => {
               </button>
             </div>
           </div>
+          )}
         </div>
       </div>
     </AdminLayout>
