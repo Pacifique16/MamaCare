@@ -71,7 +71,7 @@ const ArticleDetail = () => {
       <main className="pt-32 pb-20 max-w-3xl mx-auto px-6 space-y-10">
 
         {/* Back */}
-        <Link to="/library" className="inline-flex items-center gap-1.5 text-sm font-bold text-gray-400 hover:text-mamacare-teal transition-colors">
+        <Link to="/library" className="inline-flex items-center gap-1.5 text-sm font-bold text-gray-600 hover:text-mamacare-teal transition-colors">
           <ChevronLeft size={16} /> Back to Library
         </Link>
 

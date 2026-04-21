@@ -3,7 +3,7 @@ import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import { messagesApi } from '../api/services';
 import { useAuth } from '../context/AuthContext';
-import { Send, CheckCheck, MessageSquare, ChevronLeft, Phone } from 'lucide-react';
+import { Send, CheckCheck, MessageSquare, ChevronLeft, Phone, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const MotherMessaging = () => {
@@ -16,6 +16,7 @@ const MotherMessaging = () => {
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const bottomRef = useRef(null);
   const pollRef = useRef(null);
 
@@ -102,53 +103,68 @@ const MotherMessaging = () => {
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
+  const filteredDoctors = doctors.filter(d => d.doctorName?.toLowerCase().includes(searchQuery.toLowerCase()) || d.specialty?.toLowerCase().includes(searchQuery.toLowerCase()));
+
   return (
     <div className="min-h-screen bg-[#FAFAFA] font-poppins">
       <Navbar />
-      <main className="pt-32 pb-20 max-w-5xl mx-auto px-4">
-        <Link to="/dashboard" className="inline-flex items-center gap-1.5 text-sm font-bold text-gray-400 hover:text-[#005C5C] transition-colors mb-6">
+      <main className="pt-32 pb-20 max-w-6xl mx-auto px-4">
+        <Link to="/dashboard" className="inline-flex items-center gap-1.5 text-sm font-bold text-gray-400 hover:text-mamacare-teal transition-colors mb-6">
           <ChevronLeft size={16} /> Back to Dashboard
         </Link>
 
-        <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden flex h-[600px]">
+        <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex h-[700px]">
 
           {/* Doctor list sidebar */}
-          <div className="w-[280px] border-r border-gray-100 flex flex-col bg-gray-50/50 shrink-0">
-            <div className="p-4 border-b border-gray-100">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Your Doctors</p>
+          <div className="w-[320px] border-r border-gray-100 flex flex-col bg-gray-50/30 shrink-0">
+            <div className="p-6 border-b border-gray-100 space-y-4 bg-white">
+              <p className="text-[10px] font-bold text-mamacare-teal uppercase tracking-[0.25em]">Your Doctors</p>
+              <div className="relative">
+                <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input 
+                  type="text" 
+                  placeholder="Search doctors..." 
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className="w-full bg-gray-50 border border-gray-100 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none focus:border-mamacare-teal/30 focus:bg-white transition-all"
+                />
+              </div>
             </div>
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto p-3 space-y-1">
               {loading ? (
                 Array(3).fill(0).map((_, i) => (
                   <div key={i} className="p-4 flex gap-3 animate-pulse">
-                    <div className="w-10 h-10 rounded-full bg-gray-200 shrink-0" />
+                    <div className="w-12 h-12 rounded-full bg-gray-200 shrink-0" />
                     <div className="flex-1 space-y-2 pt-1">
                       <div className="h-3 bg-gray-200 rounded w-3/4" />
                       <div className="h-3 bg-gray-100 rounded w-1/2" />
                     </div>
                   </div>
                 ))
-              ) : doctors.length === 0 ? (
-                <div className="p-6 text-center text-gray-400 text-xs">No doctors available</div>
+              ) : filteredDoctors.length === 0 ? (
+                <div className="p-6 text-center text-gray-400 text-sm font-medium">No doctors found</div>
               ) : (
-                doctors.map(doc => (
+                filteredDoctors.map(doc => (
                   <button key={doc.doctorId} onClick={() => handleSelectDoctor(doc)}
-                    className={`w-full p-4 border-b border-gray-50 text-left flex items-start gap-3 transition-all hover:bg-white ${activeDoctor?.doctorId === doc.doctorId ? 'bg-white border-l-4 border-l-[#005C5C]' : 'border-l-4 border-l-transparent'}`}>
-                    <div className="w-10 h-10 rounded-full bg-teal-100 text-[#005C5C] flex items-center justify-center shrink-0 overflow-hidden">
-                      {doc.doctorImage
-                        ? <img src={doc.doctorImage} alt={doc.doctorName} className="w-full h-full object-cover" />
-                        : <span className="font-bold text-sm">{doc.doctorName?.split(' ').filter(w => w !== 'Dr.').map(n => n[0]).join('').slice(0, 2)}</span>
-                      }
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex justify-between items-center mb-0.5">
-                        <span className={`text-sm truncate ${doc.unreadCount > 0 ? 'font-bold text-gray-900' : 'font-semibold text-gray-700'}`}>{doc.doctorName}</span>
-                        {doc.lastMessageAt && <span className="text-[10px] text-gray-400 shrink-0 ml-1">{formatTime(doc.lastMessageAt)}</span>}
+                    className={`w-full p-4 rounded-2xl text-left flex items-start gap-4 transition-all ${activeDoctor?.doctorId === doc.doctorId ? 'bg-white shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100' : 'hover:bg-gray-100/50 border border-transparent'}`}>
+                    <div className="relative">
+                      <div className="w-12 h-12 rounded-2xl bg-teal-50 text-mamacare-teal flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
+                        {doc.doctorImage
+                          ? <img src={doc.doctorImage} alt={doc.doctorName} className="w-full h-full object-cover" />
+                          : <span className="font-bold text-base">{doc.doctorName?.split(' ').filter(w => w !== 'Dr.').map(n => n[0]).join('').slice(0, 2)}</span>
+                        }
                       </div>
-                      <p className="text-xs text-gray-400 truncate">{doc.lastMessage || doc.specialty}</p>
+                      <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></div>
+                    </div>
+                    <div className="flex-1 min-w-0 pt-0.5">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className={`text-sm truncate ${doc.unreadCount > 0 ? 'font-bold text-gray-900' : 'font-bold text-gray-700'}`}>{doc.doctorName}</span>
+                        {doc.lastMessageAt && <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest shrink-0 ml-2">{formatTime(doc.lastMessageAt)}</span>}
+                      </div>
+                      <p className={`text-xs truncate ${doc.unreadCount > 0 ? 'font-semibold text-gray-800' : 'text-gray-500'}`}>{doc.lastMessage || doc.specialty}</p>
                     </div>
                     {doc.unreadCount > 0 && (
-                      <span className="w-5 h-5 bg-[#005C5C] text-white text-[10px] font-bold rounded-full flex items-center justify-center shrink-0 mt-0.5">{doc.unreadCount}</span>
+                      <span className="w-5 h-5 bg-orange-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center shrink-0 mt-1 shadow-sm shadow-orange-500/20">{doc.unreadCount}</span>
                     )}
                   </button>
                 ))
@@ -158,37 +174,44 @@ const MotherMessaging = () => {
 
           {/* Chat area */}
           {!activeDoctor ? (
-            <div className="flex-1 flex flex-col items-center justify-center text-gray-400 gap-3">
-              <MessageSquare size={48} className="opacity-20" />
-              <p className="font-semibold text-sm">Select a doctor to start messaging</p>
+            <div className="flex-1 flex flex-col items-center justify-center text-gray-400 gap-4 bg-gray-50/10">
+              <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center">
+                <MessageSquare size={32} className="text-gray-300" />
+              </div>
+              <p className="font-bold text-gray-500 text-sm tracking-wide">Select a conversation</p>
             </div>
           ) : (
-            <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col bg-gray-50/10 relative">
               {/* Header */}
-              <div className="h-16 border-b border-gray-100 px-6 flex items-center gap-3 bg-white shrink-0">
-                <div className="w-9 h-9 rounded-full bg-teal-100 text-[#005C5C] flex items-center justify-center overflow-hidden shrink-0">
-                  {activeDoctor.doctorImage
-                    ? <img src={activeDoctor.doctorImage} alt={activeDoctor.doctorName} className="w-full h-full object-cover" />
-                    : <span className="font-bold text-sm">{activeDoctor.doctorName?.split(' ').filter(w => w !== 'Dr.').map(n => n[0]).join('').slice(0, 2)}</span>
-                  }
+              <div className="h-20 border-b border-gray-100 px-8 flex items-center gap-4 bg-white/80 backdrop-blur-md shrink-0 absolute top-0 left-0 right-0 z-10">
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-2xl bg-teal-50 text-mamacare-teal flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                    {activeDoctor.doctorImage
+                      ? <img src={activeDoctor.doctorImage} alt={activeDoctor.doctorName} className="w-full h-full object-cover" />
+                      : <span className="font-bold text-base">{activeDoctor.doctorName?.split(' ').filter(w => w !== 'Dr.').map(n => n[0]).join('').slice(0, 2)}</span>
+                    }
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></div>
                 </div>
                 <div className="flex-1">
-                  <p className="font-bold text-gray-900 text-sm leading-tight">{activeDoctor.doctorName}</p>
-                  <p className="text-[10px] text-gray-400">{activeDoctor.specialty}</p>
+                  <p className="font-bold text-gray-900 text-base leading-tight mb-0.5">{activeDoctor.doctorName}</p>
+                  <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">{activeDoctor.specialty}</p>
                 </div>
                 {activeDoctor.doctorPhone && (
                   <a href={`tel:${activeDoctor.doctorPhone}`}
-                    className="w-9 h-9 bg-green-50 text-green-600 rounded-full flex items-center justify-center hover:bg-green-100 transition-colors"
+                    className="w-10 h-10 bg-white border border-gray-100 text-gray-600 rounded-xl flex items-center justify-center hover:text-mamacare-teal hover:border-mamacare-teal/20 hover:bg-teal-50 shadow-sm transition-all"
                     title={`Call ${activeDoctor.doctorName}`}>
-                    <Phone size={16} />
+                    <Phone size={18} />
                   </a>
                 )}
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50/30">
+              <div className="flex-1 overflow-y-auto px-8 pt-28 pb-32 space-y-6">
                 {messages.length === 0 && (
-                  <p className="text-center text-gray-400 text-sm py-10">No messages yet. Say hello!</p>
+                  <div className="text-center py-10">
+                     <p className="text-gray-400 text-sm font-medium bg-white inline-block px-4 py-2 rounded-full border border-gray-100 shadow-sm">No messages yet. Say hello!</p>
+                  </div>
                 )}
                 {messages.map((msg, i) => {
                   const isMe = !msg.sentByDoctor;
@@ -196,28 +219,28 @@ const MotherMessaging = () => {
                   return (
                     <React.Fragment key={msg.id}>
                       {showDate && (
-                        <div className="text-center">
-                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-100 px-3 py-1 rounded-full">
+                        <div className="text-center my-6">
+                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-white border border-gray-100 px-4 py-1.5 rounded-full shadow-sm">
                             {new Date(msg.sentAt).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
                           </span>
                         </div>
                       )}
-                      <div className={`flex items-end gap-2 ${isMe ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`flex items-end gap-3 ${isMe ? 'justify-end' : 'justify-start'}`}>
                         {!isMe && (
-                          <div className="w-7 h-7 rounded-full bg-teal-100 text-[#005C5C] flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden">
+                          <div className="w-8 h-8 rounded-xl bg-teal-50 text-mamacare-teal flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden shadow-sm">
                             {activeDoctor.doctorImage
                               ? <img src={activeDoctor.doctorImage} alt="" className="w-full h-full object-cover" />
                               : <span>{activeDoctor.doctorName?.split(' ').filter(w => w !== 'Dr.').map(n => n[0]).join('').slice(0, 2)}</span>
                             }
                           </div>
                         )}
-                        <div className={`max-w-xs px-4 py-3 rounded-2xl ${isMe ? 'bg-[#005C5C] text-white rounded-br-none' : 'bg-white border border-gray-100 text-gray-800 rounded-bl-none shadow-sm'}`}>
-                          <p className="text-sm leading-relaxed">{msg.content}</p>
-                          <div className={`flex items-center gap-1 mt-1 ${isMe ? 'justify-end' : ''}`}>
-                            <span className={`text-[10px] ${isMe ? 'text-white/60' : 'text-gray-400'}`}>
+                        <div className={`max-w-[70%] px-5 py-3.5 ${isMe ? 'bg-gradient-to-tr from-mamacare-teal to-[#007A7A] text-white rounded-3xl rounded-br-sm shadow-lg shadow-mamacare-teal/20' : 'bg-white border border-gray-100 text-gray-700 rounded-3xl rounded-bl-sm shadow-[0_4px_20px_rgb(0,0,0,0.03)]'}`}>
+                          <p className="text-[14px] leading-relaxed font-medium">{msg.content}</p>
+                          <div className={`flex items-center gap-1.5 mt-1.5 ${isMe ? 'justify-end' : ''}`}>
+                            <span className={`text-[10px] font-bold uppercase tracking-wider ${isMe ? 'text-white/70' : 'text-gray-400'}`}>
                               {new Date(msg.sentAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                             </span>
-                            {isMe && <CheckCheck size={12} className={msg.isRead ? 'text-teal-300' : 'text-white/40'} />}
+                            {isMe && <CheckCheck size={14} className={msg.isRead ? 'text-[#4ade80]' : 'text-white/40'} />}
                           </div>
                         </div>
                       </div>
@@ -228,17 +251,19 @@ const MotherMessaging = () => {
               </div>
 
               {/* Input */}
-              <form onSubmit={handleSend} className="p-4 bg-white border-t border-gray-100 shrink-0">
-                <div className="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-full px-4 py-2 focus-within:border-[#005C5C] focus-within:bg-white transition-all">
-                  <input value={text} onChange={e => setText(e.target.value)}
-                    placeholder="Type a message..."
-                    className="flex-1 bg-transparent border-none focus:ring-0 text-sm text-gray-900 outline-none" />
-                  <button type="submit" disabled={!text.trim() || sending}
-                    className="w-9 h-9 bg-[#005C5C] text-white rounded-full flex items-center justify-center hover:bg-[#004848] transition-all disabled:opacity-40 shrink-0">
-                    <Send size={15} className="translate-x-0.5 -translate-y-0.5" />
-                  </button>
-                </div>
-              </form>
+              <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-white via-white to-transparent pointer-events-none">
+                <form onSubmit={handleSend} className="max-w-3xl mx-auto pointer-events-auto shadow-[0_8px_30px_rgb(0,0,0,0.08)] rounded-full">
+                  <div className="flex items-center gap-3 bg-white border border-gray-100 rounded-full pl-6 pr-2 py-2 focus-within:border-mamacare-teal focus-within:ring-4 focus-within:ring-mamacare-teal/10 transition-all">
+                    <input value={text} onChange={e => setText(e.target.value)}
+                      placeholder="Type your message..."
+                      className="flex-1 bg-transparent border-none focus:ring-0 text-sm font-medium text-gray-900 outline-none placeholder:text-gray-400" />
+                    <button type="submit" disabled={!text.trim() || sending}
+                      className="w-12 h-12 bg-mamacare-teal text-white rounded-full flex items-center justify-center hover:bg-[#004848] transition-all disabled:opacity-40 disabled:hover:bg-mamacare-teal shrink-0 hover:scale-105 active:scale-95 shadow-md">
+                      <Send size={18} className="translate-x-0.5 -translate-y-0.5" />
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
           )}
         </div>
