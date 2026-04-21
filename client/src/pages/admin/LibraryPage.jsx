@@ -6,6 +6,15 @@ import { Plus, Edit2, Trash2, BookOpen, X, Eye, EyeOff, ImagePlus } from 'lucide
 
 const CATEGORIES = ['Nutrition', 'Safety', 'MentalHealth', 'FetalDevelopment', 'Fitness', 'Postpartum'];
 const CATEGORY_LABELS = { Nutrition: 'Nutrition', Safety: 'Safety', MentalHealth: 'Wellness', FetalDevelopment: 'Fetal Development', Fitness: 'Fitness', Postpartum: 'Postpartum' };
+const CATEGORY_COLORS = {
+  Nutrition: 'bg-[#FFEBEE] text-[#E91E63]',
+  Safety: 'bg-[#FFF3E0] text-[#EF6C00]',
+  MentalHealth: 'bg-[#F3E5F5] text-[#7B1FA2]',
+  FetalDevelopment: 'bg-[#E0F2F1] text-[#00796B]',
+  Fitness: 'bg-[#E3F2FD] text-[#1565C0]',
+  Postpartum: 'bg-[#FFF8E1] text-[#F57F17]',
+  Default: 'bg-gray-100 text-gray-600'
+};
 
 const EMPTY_FORM = { title: '', summary: '', content: '', category: 'Nutrition', imageUrl: '', status: 'Draft' };
 
@@ -110,22 +119,19 @@ const LibraryPage = () => {
 
   return (
     <AdminLayout>
-      <div className="p-8 max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#005C5C]/10 rounded-xl flex items-center justify-center">
-              <BookOpen size={20} className="text-[#005C5C]" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-black text-gray-900">Health Library</h1>
-              <p className="text-gray-400 text-sm">Create and manage articles for mothers</p>
-            </div>
+      <div className="max-w-7xl mx-auto p-8 space-y-12 animate-in slide-in-from-bottom-4 duration-700">
+        {/* High-Fidelity Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-gray-100 pb-10 font-poppins">
+          <div className="space-y-1">
+            <span className="text-[10px] font-bold text-mamacare-teal uppercase tracking-[0.25em]">CONTENT MANAGEMENT</span>
+            <h1 className="text-6xl font-bold text-gray-900 tracking-tighter">Health Library</h1>
           </div>
-          <button onClick={openCreate}
-            className="flex items-center gap-2 bg-[#005C5C] text-white px-5 py-3 rounded-xl font-bold text-sm hover:bg-[#004848] transition-all active:scale-95">
-            <Plus size={18} /> New Article
-          </button>
+          <div className="flex items-center gap-4">
+            <button onClick={openCreate}
+              className="bg-mamacare-teal text-white px-8 py-3 rounded-xl font-bold text-xs shadow-lg shadow-mamacare-teal/10 transition-all hover:bg-mamacare-teal-dark active:scale-[0.98] flex items-center gap-2 font-poppins">
+              <Plus size={18} /> New Article
+            </button>
+          </div>
         </div>
 
         {/* Table */}
@@ -136,58 +142,63 @@ const LibraryPage = () => {
         ) : articles.length === 0 ? (
           <div className="text-center py-20 text-gray-400">
             <BookOpen size={48} className="mx-auto mb-3 opacity-30" />
-            <p className="font-semibold">No articles yet. Create your first one.</p>
+            <p className="font-semibold text-sm font-poppins">No articles yet. Create your first one.</p>
           </div>
         ) : (
-          <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="bg-gray-50 border-b border-gray-100">
-                  <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Article</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Category</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Updated</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Actions</th>
-                </tr>
-              </thead>
+          <div className="bg-white rounded-[2.5rem] border border-gray-100 overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] font-poppins">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-gray-50/50 border-b border-gray-100">
+                    <th className="px-8 py-6 text-[14px] font-semibold text-gray-700">ARTICLE</th>
+                    <th className="px-8 py-6 text-[14px] font-semibold text-gray-700">CATEGORY</th>
+                    <th className="px-8 py-6 text-[14px] font-semibold text-gray-700">STATUS</th>
+                    <th className="px-8 py-6 text-[14px] font-semibold text-gray-700">UPDATED</th>
+                    <th className="px-8 py-6 text-[14px] font-semibold text-gray-700">ACTIONS</th>
+                  </tr>
+                </thead>
               <tbody>
                 {articles.map(article => (
                   <tr key={article.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        {article.imageUrl && (
-                          <img src={article.imageUrl} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" onError={e => e.target.style.display='none'} />
+                    <td className="px-8 py-6">
+                      <div className="flex items-center gap-4">
+                        {article.imageUrl ? (
+                          <img src={article.imageUrl} alt="" className="w-12 h-12 rounded-xl object-cover shrink-0" onError={e => e.target.style.display='none'} />
+                        ) : (
+                          <div className="w-12 h-12 rounded-xl bg-mamacare-teal/10 flex items-center justify-center shrink-0">
+                            <BookOpen size={20} className="text-mamacare-teal" />
+                          </div>
                         )}
                         <div>
                           <p className="font-bold text-gray-900 text-sm">{article.title}</p>
-                          {article.summary && <p className="text-xs text-gray-400 line-clamp-1 max-w-xs">{article.summary}</p>}
+                          {article.summary && <p className="text-[11px] font-medium text-gray-400 line-clamp-1 max-w-xs mt-0.5">{article.summary}</p>}
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="px-2.5 py-1 bg-[#005C5C]/10 text-[#005C5C] text-xs font-semibold rounded-md">
+                    <td className="px-8 py-6">
+                      <span className={`px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-full ${CATEGORY_COLORS[article.category] || CATEGORY_COLORS.Default}`}>
                         {CATEGORY_LABELS[article.category] || article.category}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-8 py-6">
                       <button onClick={() => toggleStatus(article)}
-                        className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all ${article.status === 'Published' ? 'bg-green-50 text-green-700 hover:bg-green-100' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
+                        className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${article.status === 'Published' ? 'bg-green-50 text-green-600 hover:bg-green-100' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
                         {article.status === 'Published' ? <Eye size={12} /> : <EyeOff size={12} />}
                         {article.status}
                       </button>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-400">
+                    <td className="px-8 py-6 text-sm font-bold text-gray-500">
                       {new Date(article.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-8 py-6">
                       <div className="flex items-center gap-2">
                         <button onClick={() => openEdit(article)}
-                          className="p-2 text-gray-400 hover:text-[#005C5C] hover:bg-[#005C5C]/10 rounded-lg transition-all">
-                          <Edit2 size={15} />
+                          className="p-2.5 text-mamacare-teal hover:bg-teal-50 bg-gray-50 rounded-xl transition-all">
+                          <Edit2 size={16} />
                         </button>
                         <button onClick={() => setDeleteId(article.id)}
-                          className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all">
-                          <Trash2 size={15} />
+                          className="p-2.5 text-red-500 hover:bg-red-50 bg-gray-50 rounded-xl transition-all">
+                          <Trash2 size={16} />
                         </button>
                       </div>
                     </td>
@@ -195,6 +206,7 @@ const LibraryPage = () => {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         )}
       </div>
