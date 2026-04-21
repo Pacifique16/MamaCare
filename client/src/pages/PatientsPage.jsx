@@ -167,16 +167,16 @@ function PatientsPage() {
               { label: 'Third Trimester', value: thirdTrimester, trend: 'active', progress: `${(thirdTrimester/patients.length)*100}%`, color: 'text-purple-500' },
               { label: 'High Risk', value: highRisk, trend: 'critical', progress: `${(highRisk/patients.length)*100}%`, color: 'text-red-500' },
             ].map((s) => (
-              <div key={s.label} className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm transition-all duration-300">
+              <div key={s.label} className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm transition-all duration-300 hover:shadow-md">
                 <div className="space-y-4">
                   <div className="flex justify-between items-start">
                     <span className="text-[12px] font-bold text-gray-700">{s.label}</span>
-                    <div className={`px-2 py-0.5 rounded text-[10px] font-black uppercase  tracking-widest bg-gray-50 ${s.color}`}>
+                    <div className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-gray-50 ${s.color}`}>
                       {s.trend}
                     </div>
                   </div>
-                  <h3 className="text-3xl font-bold text-gray-900 tracking-tight">{s.value}</h3>
-                  <div className="h-1 w-full bg-gray-50 rounded-full overflow-hidden">
+                  <h3 className="text-4xl font-bold text-gray-900 tracking-tight">{s.value}</h3>
+                  <div className="h-1.5 w-full bg-black/5 rounded-full overflow-hidden">
                     <div className="h-full bg-mamacare-teal rounded-full" style={{ width: s.progress }} />
                   </div>
                 </div>
@@ -188,14 +188,14 @@ function PatientsPage() {
         {/* Filters */}
         {!loading && !error && (
           <div className="flex flex-col md:flex-row gap-4 items-start md:items-center flex-wrap">
-            <div className="relative flex-1 min-w-[200px]">
+            <div className="relative flex-1">
               <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Find patients by name or phone… "
-                className="w-full pl-10 pr-4 py-3 bg-white border border-gray-100 rounded-xl text-xs font-medium text-gray-700 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/10 font-poppins"
+                placeholder="Search by patient, doctor or specialty…"
+                className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-2xl text-sm font-medium text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20"
               />
             </div>
 
@@ -203,7 +203,7 @@ function PatientsPage() {
               <select
                 value={trimesterTab}
                 onChange={(e) => setTrimesterTab(e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-gray-100 rounded-xl text-[11px] font-bold uppercase tracking-widest text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/10 font-poppins appearance-none cursor-pointer hover:border-mamacare-teal/20 transition-all pr-10"
+                className="w-full px-6 py-3 bg-white border border-mamacare-teal/30 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-600 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 font-poppins appearance-none cursor-pointer hover:border-mamacare-teal transition-all pr-12"
               >
                 {TRIMESTER_TABS.map((tab) => (
                   <option key={tab} value={tab}>
@@ -211,36 +211,34 @@ function PatientsPage() {
                   </option>
                 ))}
               </select>
-              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-mamacare-teal pointer-events-none" />
             </div>
 
             <div className="relative">
               <select
                 value={riskFilter}
                 onChange={(e) => setRiskFilter(e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-gray-100 rounded-xl text-[11px] font-bold uppercase tracking-widest text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/10 font-poppins appearance-none cursor-pointer hover:border-mamacare-teal/20 transition-all pr-10"
+                className="w-full px-6 py-3 bg-white border border-mamacare-teal/30 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-600 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 font-poppins appearance-none cursor-pointer hover:border-mamacare-teal transition-all pr-12"
               >
                 <option value="All">RISK LEVEL: ALL</option>
                 <option value="Low">RISK: LOW</option>
                 <option value="Medium">RISK: MEDIUM</option>
                 <option value="High">RISK: HIGH</option>
               </select>
-              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-mamacare-teal pointer-events-none" />
             </div>
 
-            <div className="flex items-center gap-2 font-poppins">
-              <div className="relative flex-1">
-                <select
-                  value={sort}
-                  onChange={(e) => setSort(e.target.value)}
-                  className="w-full px-4 py-3 bg-white border border-gray-100 rounded-xl text-[11px] font-bold uppercase tracking-widest text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/10 appearance-none cursor-pointer hover:border-mamacare-teal/20 transition-all pr-10"
-                >
-                  {SORT_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>{o.label}</option>
-                  ))}
-                </select>
-                <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-              </div>
+            <div className="relative">
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
+                className="w-full px-6 py-3 bg-white border border-mamacare-teal/30 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-600 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 appearance-none cursor-pointer hover:border-mamacare-teal transition-all pr-12"
+              >
+                {SORT_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
+              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-mamacare-teal pointer-events-none" />
             </div>
           </div>
         )}

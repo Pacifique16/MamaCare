@@ -191,16 +191,16 @@ function PatientAppointmentsPage() {
               { label: 'Completed', value: completed, trend: 'success', progress: `${(completed/appointments.length)*100}%`, color: 'text-green-500' },
               { label: 'Cancelled', value: cancelled, trend: 'attention', progress: `${(cancelled/appointments.length)*100}%`, color: 'text-red-500' },
             ].map((s) => (
-              <div key={s.label} className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm transition-all duration-300">
+              <div key={s.label} className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm transition-all duration-300 hover:shadow-md">
                 <div className="space-y-4">
                   <div className="flex justify-between items-start">
-                    <span className="text-[12px] font-semibold text-gray-600">{s.label}</span>
+                    <span className="text-[12px] font-bold text-gray-700">{s.label}</span>
                     <div className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-gray-50 ${s.color}`}>
                       {s.trend}
                     </div>
                   </div>
-                  <h3 className="text-3xl font-bold text-gray-900 tracking-tight">{s.value}</h3>
-                  <div className="h-1 w-full bg-gray-50 rounded-full overflow-hidden">
+                  <h3 className="text-4xl font-bold text-gray-900 tracking-tight">{s.value}</h3>
+                  <div className="h-1.5 w-full bg-black/5 rounded-full overflow-hidden">
                     <div className="h-full bg-mamacare-teal rounded-full" style={{ width: s.progress }} />
                   </div>
                 </div>
@@ -229,7 +229,7 @@ function PatientAppointmentsPage() {
               <select
                 value={activeTab}
                 onChange={(e) => setActiveTab(e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 font-poppins appearance-none cursor-pointer hover:border-mamacare-teal/20 transition-all pr-10"
+                className="w-full px-6 py-3 bg-white border border-mamacare-teal/30 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-600 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 font-poppins appearance-none cursor-pointer hover:border-mamacare-teal transition-all pr-12"
               >
                 {TABS.map((tab) => (
                   <option key={tab} value={tab}>
@@ -237,15 +237,14 @@ function PatientAppointmentsPage() {
                   </option>
                 ))}
               </select>
-              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none font-poppins uppercase tracking-widest" />
+              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-mamacare-teal pointer-events-none" />
             </div>
 
-            {/* Status filter */}
             <div className="relative">
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 appearance-none cursor-pointer hover:border-mamacare-teal/20 transition-all pr-10"
+                className="w-full px-6 py-3 bg-white border border-mamacare-teal/30 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-600 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 appearance-none cursor-pointer hover:border-mamacare-teal transition-all pr-12"
               >
                 <option value="All">ALL STATUSES</option>
                 <option value="Scheduled">SCHEDULED</option>
@@ -254,35 +253,26 @@ function PatientAppointmentsPage() {
                 <option value="Completed">COMPLETED</option>
                 <option value="Cancelled">CANCELLED</option>
               </select>
-              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-mamacare-teal pointer-events-none" />
             </div>
 
             {/* Sort */}
-            <div className="relative flex items-center gap-2">
-              <div className="relative flex-1">
-                <select
-                  value={sort}
-                  onChange={(e) => setSort(e.target.value)}
-                  className="w-full px-4 py-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-500 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 appearance-none cursor-pointer hover:border-mamacare-teal/20 transition-all pr-10"
-                >
-                  {SORT_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>{o.label}</option>
-                  ))}
-                </select>
-                <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-              </div>
+            <div className="relative">
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
+                className="w-full px-6 py-3 bg-white border border-mamacare-teal/30 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-600 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 appearance-none cursor-pointer hover:border-mamacare-teal transition-all pr-12"
+              >
+                {SORT_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
+              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-mamacare-teal pointer-events-none" />
             </div>
 
 
 
-            {/* Export */}
-            {/* <button
-              onClick={handleExport}
-              className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-500 hover:text-mamacare-teal hover:border-mamacare-teal/30 transition-all"
-            >
-              <Download size={14} />
-              Export CSV
-            </button> */}
+
           </div>
         )}
 

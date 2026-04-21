@@ -121,15 +121,15 @@ const DoctorManagement = () => {
         {/* Professional SaaS Stats Row */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 font-poppins pt-4">
           {[
-            { label: 'Total Practitioners', value: totalDoctors, trend: 'stable', progress: '100%', color: 'text-mamacare-teal', bg: 'bg-white' },
-            { label: 'Pending Verification', value: pendingDoctors, trend: 'attention', progress: `${(pendingDoctors/totalDoctors)*100}%`, color: 'text-red-500', bg: 'bg-red-50' },
-            { label: 'Verified Doctors', value: verifiedDoctors, trend: 'active', progress: `${(verifiedDoctors/totalDoctors)*100}%`, color: 'text-cyan-600', bg: 'bg-cyan-50' },
+            { label: 'Total Practitioners', value: totalDoctors, trend: 'stable', progress: '100%', color: 'text-mamacare-teal'},
+            { label: 'Pending Verification', value: pendingDoctors, trend: 'attention', progress: `${(pendingDoctors/totalDoctors)*100}%`, color: 'text-red-500' },
+            { label: 'Verified Doctors', value: verifiedDoctors, trend: 'active', progress: `${(verifiedDoctors/totalDoctors)*100}%`, color: 'text-cyan-600' },
           ].map((s) => (
             <div key={s.label} className={`${s.bg} rounded-3xl p-8 border border-gray-100/50 shadow-sm transition-all duration-300 hover:shadow-md`}>
               <div className="space-y-4">
                 <div className="flex justify-between items-start">
-                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{s.label}</span>
-                  <div className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-white/60 ${s.color}`}>
+                  <span className="text-[12px] font-semibold text-gray-700 ">{s.label}</span>
+                  <div className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-white/60 ${s.color}`}>
                     {s.trend}
                   </div>
                 </div>
@@ -143,7 +143,7 @@ const DoctorManagement = () => {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white/50 p-4 rounded-[2rem]">
+        <div className="flex flex-col md:flex-row gap-4 items-center justify-between p-4">
           <div className="relative w-full md:w-[400px]">
             <Search size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
@@ -151,28 +151,34 @@ const DoctorManagement = () => {
               value={search}
               onChange={e => { setSearch(e.target.value); setPage(1); }}
               placeholder="Search by name or medical ID..."
-              className="w-full bg-white border border-gray-100 rounded-2xl py-5 pl-16 pr-6 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-mamacare-teal/5 transition-all"
+              className="w-full pl-16 pr-4 py-3 bg-white border border-gray-200 rounded-2xl text-sm font-medium text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20"
             />
           </div>
           <div className="flex items-center gap-4 flex-wrap">
-            <div className="flex items-center gap-2 bg-white border border-gray-100 px-6 py-4 rounded-2xl">
-              <Filter size={16} className="text-gray-400" />
-              <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }} className="bg-transparent font-bold text-sm text-gray-500 focus:outline-none cursor-pointer">
-                <option value="All">All Status</option>
-                <option value="Verified">Verified</option>
-                <option value="Pending">Pending</option>
-                <option value="Inactive">Inactive</option>
+            <div className="relative">
+              <select 
+                value={statusFilter} 
+                onChange={e => { setStatusFilter(e.target.value); setPage(1); }} 
+                className="w-full px-6 py-3 bg-white border border-mamacare-teal/30 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-600 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 font-poppins appearance-none cursor-pointer hover:border-mamacare-teal transition-all pr-12"
+              >
+                <option value="All">ALL STATUS</option>
+                <option value="Verified">VERIFIED</option>
+                <option value="Pending">PENDING</option>
+                <option value="Inactive">INACTIVE</option>
               </select>
+              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-mamacare-teal pointer-events-none" />
             </div>
-            <div className="flex items-center gap-2 bg-white border border-gray-100 px-6 py-4 rounded-2xl">
-              <Filter size={16} className="text-gray-400" />
-              <select value={specialtyFilter} onChange={e => { setSpecialtyFilter(e.target.value); setPage(1); }} className="bg-transparent font-bold text-sm text-gray-500 focus:outline-none cursor-pointer max-w-[180px]">
-                {specialties.map(s => <option key={s}>{s}</option>)}
+            <div className="relative">
+              <select 
+                value={specialtyFilter} 
+                onChange={e => { setSpecialtyFilter(e.target.value); setPage(1); }} 
+                className="w-full px-6 py-3 bg-white border border-mamacare-teal/30 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-600 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20 font-poppins appearance-none cursor-pointer hover:border-mamacare-teal transition-all pr-12 min-w-[180px]"
+              >
+                {specialties.map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
               </select>
+              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-mamacare-teal pointer-events-none" />
             </div>
-            <button onClick={handleExport} className="flex items-center gap-2 bg-white border border-gray-100 px-6 py-4 rounded-2xl font-bold text-sm text-gray-500 hover:bg-gray-50">
-              <Download size={16} /> Export
-            </button>
+
           </div>
         </div>
 
