@@ -28,7 +28,8 @@ public record LibraryArticleDto(
     string? ImageUrl,
     DateTime PublishedAt,
     DateTime UpdatedAt,
-    string? Content = null
+    string? Content = null,
+    int ViewCount = 0
 );
 
 public record CreateArticleDto(
@@ -87,11 +88,18 @@ public record CreatePrescriptionDto(
     string? Notes
 );
 
+public record EnrollmentDayDto(string Day, int Registrations);
+
 public record AdminStatsDto(
     int TotalMothers,
     int TotalDoctors,
     int PendingDoctors,
     int TodayAppointments,
     int HighRiskMothers,
-    int ActiveSessions
+    int ActiveSessions,
+    double TriageSuccessRate,
+    int LibraryViews,
+    int LowRiskMothers,
+    int MediumRiskMothers,
+    List<EnrollmentDayDto> EnrollmentTrend
 );

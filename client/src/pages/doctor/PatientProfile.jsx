@@ -27,6 +27,9 @@ const PatientProfile = () => {
   const [loading, setLoading] = useState(true);
 
   const [prescriptions, setPrescriptions] = useState([]);
+  const [triageSessions, setTriageSessions] = useState([]);
+  const [expandedTriage, setExpandedTriage] = useState(null);
+  const [showAllTriage, setShowAllTriage] = useState(false);
   const [showPrescribeModal, setShowPrescribeModal] = useState(false);
   const [prescribeForm, setPrescribeForm] = useState({ medicineName: '', dosage: '', frequency: '', duration: '', notes: '' });
   const [prescribing, setPrescribing] = useState(false);
@@ -37,11 +40,13 @@ const PatientProfile = () => {
       mothersApi.getVitals(id),
       mothersApi.getAppointments(id),
       prescriptionsApi.getAll({ motherId: id }),
-    ]).then(([mRes, vRes, aRes, pRes]) => {
+      mothersApi.getTriage(id),
+    ]).then(([mRes, vRes, aRes, pRes, tRes]) => {
       setMother(mRes.data);
       setVitals(vRes.data || []);
       setAppointments(aRes.data || []);
       setPrescriptions(pRes.data || []);
+      setTriageSessions(tRes.data || []);
     }).catch(() => {})
       .finally(() => setLoading(false));
   }, [id]);
@@ -101,6 +106,7 @@ const PatientProfile = () => {
           <p className="text-gray-500 font-medium">
             Gestational Age: <span className="font-bold text-[#005C5C]">{mother.gestationalWeek} Weeks</span>
             {' • '}Due: <span className="font-bold text-gray-700">{new Date(mother.expectedDueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+            {(mother.address || mother.location) && <>{' • '}<span className="font-bold text-gray-700">{mother.address || mother.location}</span></>}
           </p>
         </div>
         <div className="flex gap-3 mt-6 md:mt-0">
@@ -151,7 +157,7 @@ const PatientProfile = () => {
                 {mother.location && (
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <MapPin size={14} className="text-[#005C5C] shrink-0" />
-                    {mother.location}
+                    {mother.address || mother.location}
                   </div>
                 )}
               </div>
@@ -272,6 +278,52 @@ const PatientProfile = () => {
                   </div>
                 ))}
               </div>
+            )}
+          </div>
+
+          {/* Triage Sessions */}
+          <div className="mt-8 pt-6 border-t border-gray-50">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Triage Sessions</p>
+              {triageSessions.length > 0 && <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded-full">{triageSessions.length} total</span>}
+            </div>
+            {triageSessions.length === 0 ? (
+              <p className="text-sm text-gray-400 text-center py-6">No triage sessions recorded.</p>
+            ) : (
+              <div className="space-y-2">
+                {(showAllTriage ? triageSessions : triageSessions.slice(0, 5)).map(t => {
+                  const riskBadge = t.riskLevel === 'High' ? 'bg-red-50 text-red-600 border-red-100'
+                    : t.riskLevel === 'Medium' ? 'bg-orange-50 text-orange-500 border-orange-100'
+                    : 'bg-teal-50 text-teal-600 border-teal-100';
+                  const isExpanded = expandedTriage === t.id;
+                  return (
+                    <div key={t.id} className="bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden">
+                      <button onClick={() => setExpandedTriage(isExpanded ? null : t.id)}
+                        className="w-full flex items-center justify-between gap-3 px-4 py-3 text-left hover:bg-gray-100/50 transition-colors">
+                        <div className="flex items-center gap-3">
+                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border shrink-0 ${riskBadge}`}>{t.riskLevel}</span>
+                          <span className="text-xs text-gray-500 font-medium truncate max-w-[200px]">{t.aiRecommendation}</span>
+                        </div>
+                        <span className="text-[10px] text-gray-400 font-bold shrink-0">{new Date(t.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                      </button>
+                      {isExpanded && (
+                        <div className="px-4 pb-4 space-y-2 border-t border-gray-100">
+                          <p className="text-xs text-gray-600 leading-relaxed pt-3">{t.aiRecommendation}</p>
+                          {t.bloodPressureSystolic && (
+                            <p className="text-[10px] text-gray-400 font-bold">BP: {t.bloodPressureSystolic}/{t.bloodPressureDiastolic} mmHg{t.temperature ? ` · Temp: ${t.temperature}°C` : ''}{t.heartRate ? ` · HR: ${t.heartRate} bpm` : ''}</p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            {triageSessions.length > 5 && (
+              <button onClick={() => setShowAllTriage(p => !p)}
+                className="mt-3 w-full text-center text-xs font-bold text-[#005C5C] hover:underline">
+                {showAllTriage ? 'Show less' : `View all ${triageSessions.length} sessions`}
+              </button>
             )}
           </div>
         </div>

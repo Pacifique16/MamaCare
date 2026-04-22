@@ -3,6 +3,7 @@ using System;
 using MamaCare.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MamaCare.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260421225557_AddRiskLevelToTriageSession")]
+    partial class AddRiskLevelToTriageSession
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -347,9 +350,6 @@ namespace MamaCare.API.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("ViewCount")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.ToTable("LibraryArticles");
@@ -364,8 +364,7 @@ namespace MamaCare.API.Migrations
                             Status = 1,
                             Summary = "Optimizing your rest is crucial as you approach delivery.",
                             Title = "Safe Sleep Positions during the Third Trimester",
-                            UpdatedAt = new DateTime(2026, 3, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ViewCount = 0
+                            UpdatedAt = new DateTime(2026, 3, 28, 0, 0, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
@@ -376,8 +375,7 @@ namespace MamaCare.API.Migrations
                             Status = 1,
                             Summary = "Essential vitamins and nutrients for you and your baby.",
                             Title = "The Third Trimester Diet: What to Eat",
-                            UpdatedAt = new DateTime(2026, 4, 2, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ViewCount = 0
+                            UpdatedAt = new DateTime(2026, 4, 2, 0, 0, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
@@ -388,8 +386,7 @@ namespace MamaCare.API.Migrations
                             Status = 1,
                             Summary = "Safe exercises to keep you active during pregnancy.",
                             Title = "Pregnancy Safety: Gentle Movement Guide",
-                            UpdatedAt = new DateTime(2026, 3, 23, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ViewCount = 0
+                            UpdatedAt = new DateTime(2026, 3, 23, 0, 0, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
@@ -400,8 +397,7 @@ namespace MamaCare.API.Migrations
                             Status = 0,
                             Summary = "Mindfulness and support strategies for new mothers.",
                             Title = "Managing Postpartum Anxiety",
-                            UpdatedAt = new DateTime(2026, 4, 5, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ViewCount = 0
+                            UpdatedAt = new DateTime(2026, 4, 5, 0, 0, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
@@ -412,8 +408,7 @@ namespace MamaCare.API.Migrations
                             Status = 1,
                             Summary = "What to expect and how to prepare in your first 12 weeks.",
                             Title = "First Trimester Essentials",
-                            UpdatedAt = new DateTime(2026, 3, 8, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ViewCount = 0
+                            UpdatedAt = new DateTime(2026, 3, 8, 0, 0, 0, 0, DateTimeKind.Utc)
                         },
                         new
                         {
@@ -424,8 +419,7 @@ namespace MamaCare.API.Migrations
                             Status = 1,
                             Summary = "Low-impact workouts approved for all trimesters.",
                             Title = "Safe Exercises for Pregnancy",
-                            UpdatedAt = new DateTime(2026, 3, 30, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ViewCount = 0
+                            UpdatedAt = new DateTime(2026, 3, 30, 0, 0, 0, 0, DateTimeKind.Utc)
                         });
                 });
 
@@ -917,7 +911,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 4, 22, 1, 33, 7, 319, DateTimeKind.Utc).AddTicks(5545),
+                            CreatedAt = new DateTime(2026, 4, 21, 22, 55, 56, 341, DateTimeKind.Utc).AddTicks(9911),
                             Email = "uwimana@mamacare.app",
                             FullName = "Uwimana Clarisse",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -928,7 +922,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 4, 22, 1, 33, 7, 319, DateTimeKind.Utc).AddTicks(8087),
+                            CreatedAt = new DateTime(2026, 4, 21, 22, 55, 56, 342, DateTimeKind.Utc).AddTicks(2418),
                             Email = "mukamana@mamacare.app",
                             FullName = "Mukamana Espérance",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -938,7 +932,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 4, 22, 1, 33, 7, 319, DateTimeKind.Utc).AddTicks(8090),
+                            CreatedAt = new DateTime(2026, 4, 21, 22, 55, 56, 342, DateTimeKind.Utc).AddTicks(2420),
                             Email = "niyonsenga@mamacare.app",
                             FullName = "Niyonsenga Vestine",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -948,7 +942,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2026, 4, 22, 1, 33, 7, 319, DateTimeKind.Utc).AddTicks(8091),
+                            CreatedAt = new DateTime(2026, 4, 21, 22, 55, 56, 342, DateTimeKind.Utc).AddTicks(2422),
                             Email = "uwase@mamacare.app",
                             FullName = "Uwase Alphonsine",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -958,7 +952,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2026, 4, 22, 1, 33, 7, 319, DateTimeKind.Utc).AddTicks(8092),
+                            CreatedAt = new DateTime(2026, 4, 21, 22, 55, 56, 342, DateTimeKind.Utc).AddTicks(2423),
                             Email = "ingabire@mamacare.app",
                             FullName = "Ingabire Solange",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -968,7 +962,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2026, 4, 22, 1, 33, 7, 319, DateTimeKind.Utc).AddTicks(8115),
+                            CreatedAt = new DateTime(2026, 4, 21, 22, 55, 56, 342, DateTimeKind.Utc).AddTicks(2445),
                             Email = "s.mitchell@mamacare.app",
                             FullName = "Dr. Sarah Mitchell",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -979,7 +973,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2026, 4, 22, 1, 33, 7, 319, DateTimeKind.Utc).AddTicks(8116),
+                            CreatedAt = new DateTime(2026, 4, 21, 22, 55, 56, 342, DateTimeKind.Utc).AddTicks(2447),
                             Email = "m.chen@mamacare.app",
                             FullName = "Dr. Michael Chen",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -990,7 +984,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2026, 4, 22, 1, 33, 7, 319, DateTimeKind.Utc).AddTicks(8117),
+                            CreatedAt = new DateTime(2026, 4, 21, 22, 55, 56, 342, DateTimeKind.Utc).AddTicks(2448),
                             Email = "e.rodriguez@mamacare.app",
                             FullName = "Dr. Elena Rodriguez",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -1001,7 +995,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 9,
-                            CreatedAt = new DateTime(2026, 4, 22, 1, 33, 7, 319, DateTimeKind.Utc).AddTicks(8118),
+                            CreatedAt = new DateTime(2026, 4, 21, 22, 55, 56, 342, DateTimeKind.Utc).AddTicks(2449),
                             Email = "admin@mamacare.app",
                             FullName = "Admin Sarah",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
