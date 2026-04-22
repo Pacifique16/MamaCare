@@ -124,138 +124,187 @@ const Messaging = () => {
   };
 
   return (
-    <DoctorLayout title="Secure Messaging" subtitle="Communicate with your patients securely.">
-      <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden flex h-[640px]">
-
-        {/* Sidebar */}
-        <div className="w-[320px] border-r border-gray-100 flex flex-col bg-gray-50/50 shrink-0">
-          <div className="p-4 border-b border-gray-100">
-            <div className="relative">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input value={search} onChange={e => setSearch(e.target.value)}
-                placeholder="Search patients..."
-                className="w-full h-10 bg-white border border-gray-200 rounded-xl pl-9 pr-3 text-sm focus:outline-none focus:border-[#005C5C] transition-colors" />
-            </div>
+    <DoctorLayout>
+      <div className="max-w-7xl mx-auto space-y-12 font-poppins animate-in fade-in duration-1000">
+        
+        {/* Premium Branding Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-gray-100 pb-10">
+          <div className="space-y-1">
+            <span className="text-[10px] font-bold text-mamacare-teal uppercase tracking-[0.25em]">SECURE COMMUNICATION</span>
+            <h1 className="text-6xl font-bold text-gray-900 tracking-tighter">Clinical Messages</h1>
           </div>
-
-          <div className="flex-1 overflow-y-auto">
-            {loading ? (
-              Array(4).fill(0).map((_, i) => (
-                <div key={i} className="p-4 flex gap-3 animate-pulse">
-                  <div className="w-10 h-10 rounded-full bg-gray-200 shrink-0" />
-                  <div className="flex-1 space-y-2 pt-1">
-                    <div className="h-3 bg-gray-200 rounded w-3/4" />
-                    <div className="h-3 bg-gray-100 rounded w-full" />
-                  </div>
-                </div>
-              ))
-            ) : filtered.length === 0 ? (
-              <div className="p-8 text-center text-gray-400 text-sm">
-                <MessageSquare size={32} className="mx-auto mb-2 opacity-30" />
-                No conversations yet
-              </div>
-            ) : (
-              filtered.map(conv => (
-                <button key={conv.motherId} onClick={() => handleSelectConv(conv)}
-                  className={`w-full p-4 border-b border-gray-50 text-left flex items-start gap-3 transition-all hover:bg-white ${activeConv?.motherId === conv.motherId ? 'bg-white border-l-4 border-l-[#005C5C]' : 'border-l-4 border-l-transparent'}`}>
-                  <div className="w-10 h-10 rounded-full bg-teal-100 text-[#005C5C] flex items-center justify-center shrink-0 overflow-hidden">
-                    {avatar(conv.motherName, conv.motherImage)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-center mb-0.5">
-                      <span className={`text-sm truncate ${conv.unreadCount > 0 ? 'font-bold text-gray-900' : 'font-semibold text-gray-700'}`}>{conv.motherName}</span>
-                      <span className="text-[10px] text-gray-400 shrink-0 ml-1">{formatTime(conv.lastMessageAt)}</span>
-                    </div>
-                    <p className={`text-xs truncate ${conv.unreadCount > 0 ? 'font-semibold text-gray-800' : 'text-gray-400'}`}>{conv.lastMessage}</p>
-                  </div>
-                  {conv.unreadCount > 0 && (
-                    <span className="w-5 h-5 bg-[#005C5C] text-white text-[10px] font-bold rounded-full flex items-center justify-center shrink-0 mt-0.5">{conv.unreadCount}</span>
-                  )}
-                </button>
-              ))
-            )}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-100 rounded-lg shadow-sm">
+              <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+              <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">
+                Live Chat Status
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Chat area */}
-        {!activeConv ? (
-          <div className="flex-1 flex flex-col items-center justify-center text-gray-400 gap-3">
-            <MessageSquare size={48} className="opacity-20" />
-            <p className="font-semibold">Select a conversation</p>
-          </div>
-        ) : (
-          <div className="flex-1 flex flex-col">
-            {/* Header */}
-            <div className="h-16 border-b border-gray-100 px-6 flex items-center gap-3 bg-white shrink-0">
-              <div className="w-9 h-9 rounded-full bg-teal-100 text-[#005C5C] flex items-center justify-center overflow-hidden">
-                {avatar(activeConv.motherName, activeConv.motherImage)}
+        <div className="bg-white rounded-[2.5rem] border border-white shadow-card overflow-hidden flex h-[750px]">
+          {/* Sidebar */}
+          <div className="w-[360px] border-r border-gray-50 flex flex-col bg-gray-50/30 shrink-0">
+            <div className="p-8 border-b border-gray-50">
+              <div className="relative group">
+                <Search size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-mamacare-teal transition-colors" />
+                <input value={search} onChange={e => setSearch(e.target.value)}
+                  placeholder="Search patients..."
+                  className="w-full pl-16 pr-6 py-4 bg-white border border-transparent rounded-2xl text-sm font-bold text-gray-900 placeholder:text-gray-400 focus:ring-4 focus:ring-mamacare-teal/5 transition-all outline-none shadow-sm" />
               </div>
-              <div className="flex-1">
-                <p className="font-bold text-gray-900 text-sm leading-tight">{activeConv.motherName}</p>
-                <p className="text-[10px] text-gray-400">Patient</p>
-              </div>
-              {activeConv.motherPhone && (
-                <a href={`tel:${activeConv.motherPhone}`}
-                  className="w-9 h-9 bg-green-50 text-green-600 rounded-full flex items-center justify-center hover:bg-green-100 transition-colors"
-                  title={`Call ${activeConv.motherName}`}>
-                  <Phone size={16} />
-                </a>
-              )}
             </div>
 
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50/30">
-              {messages.length === 0 && (
-                <p className="text-center text-gray-400 text-sm py-10">No messages yet. Say hello!</p>
-              )}
-              {messages.map((msg, i) => {
-                const isDoctor = msg.sentByDoctor;
-                const showTime = i === 0 || new Date(msg.sentAt).toDateString() !== new Date(messages[i - 1].sentAt).toDateString();
-                return (
-                  <React.Fragment key={msg.id}>
-                    {showTime && (
-                      <div className="text-center">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-100 px-3 py-1 rounded-full">
-                          {new Date(msg.sentAt).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
-                        </span>
+            <div className="flex-1 overflow-y-auto custom-scrollbar">
+              {loading ? (
+                Array(4).fill(0).map((_, i) => (
+                  <div key={i} className="p-8 flex gap-4 animate-pulse border-b border-gray-50/50">
+                    <div className="w-14 h-14 rounded-2xl bg-gray-200 shrink-0" />
+                    <div className="flex-1 space-y-3 pt-1">
+                      <div className="h-3 bg-gray-200 rounded w-3/4" />
+                      <div className="h-2 bg-gray-100 rounded w-full" />
+                    </div>
+                  </div>
+                ))
+              ) : filtered.length === 0 ? (
+                <div className="p-20 text-center space-y-4">
+                  <div className="w-16 h-16 bg-gray-100 rounded-3xl flex items-center justify-center text-gray-300 mx-auto">
+                    <MessageSquare size={32} />
+                  </div>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">No conversations yet</p>
+                </div>
+              ) : (
+                filtered.map(conv => (
+                  <button key={conv.motherId} onClick={() => handleSelectConv(conv)}
+                    className={`w-full p-8 border-b border-gray-50/50 text-left flex items-start gap-5 transition-all hover:bg-white relative group ${activeConv?.motherId === conv.motherId ? 'bg-white' : ''}`}>
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 overflow-hidden shadow-sm transition-transform group-hover:scale-110 ${activeConv?.motherId === conv.motherId ? 'bg-mamacare-teal text-white' : 'bg-teal-50 text-mamacare-teal'}`}>
+                      {avatar(conv.motherName, conv.motherImage)}
+                    </div>
+                    <div className="flex-1 min-w-0 pt-1">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className={`text-sm truncate font-bold ${conv.unreadCount > 0 ? 'text-gray-900' : 'text-gray-700'}`}>{conv.motherName}</span>
+                        <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">{formatTime(conv.lastMessageAt)}</span>
                       </div>
+                      <p className={`text-[12px] truncate leading-relaxed ${conv.unreadCount > 0 ? 'font-bold text-gray-900' : 'text-gray-500'}`}>{conv.lastMessage || 'Start a new conversation'}</p>
+                    </div>
+                    {conv.unreadCount > 0 && (
+                      <span className="absolute top-1/2 -translate-y-1/2 right-6 w-6 h-6 bg-red-500 text-white text-[10px] font-black rounded-xl flex items-center justify-center shadow-lg shadow-red-200">{conv.unreadCount}</span>
                     )}
-                    <div className={`flex items-end gap-2 ${isDoctor ? 'justify-end' : 'justify-start'}`}>
-                      {!isDoctor && (
-                        <div className="w-7 h-7 rounded-full bg-teal-100 text-[#005C5C] flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden">
-                          {avatar(activeConv.motherName, activeConv.motherImage)}
+                    {activeConv?.motherId === conv.motherId && (
+                      <div className="absolute left-0 top-8 bottom-8 w-1 bg-mamacare-teal rounded-r-full" />
+                    )}
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Chat area */}
+          {!activeConv ? (
+            <div className="flex-1 flex flex-col items-center justify-center bg-white gap-6">
+              <div className="w-24 h-24 bg-gray-50 rounded-[2.5rem] flex items-center justify-center text-gray-200 animate-bounce-slow">
+                <MessageSquare size={48} />
+              </div>
+              <div className="text-center space-y-1">
+                <p className="font-bold text-gray-900 text-lg">Your Workspace Messaging</p>
+                <p className="text-sm text-gray-400">Select a patient from the sidebar to begin consulting.</p>
+              </div>
+            </div>
+          ) : (
+            <div className="flex-1 flex flex-col bg-white">
+              {/* Header */}
+              <div className="h-24 border-b border-gray-50 px-10 flex items-center justify-between bg-white shrink-0">
+                <div className="flex items-center gap-5">
+                  <div className="w-12 h-12 rounded-2xl bg-teal-50 text-mamacare-teal flex items-center justify-center overflow-hidden shadow-sm">
+                    {avatar(activeConv.motherName, activeConv.motherImage)}
+                  </div>
+                  <div>
+                    <p className="font-bold text-gray-900 text-base leading-tight">{activeConv.motherName}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Active Now</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  {activeConv.motherPhone && (
+                    <a href={`tel:${activeConv.motherPhone}`}
+                      className="w-12 h-12 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center hover:bg-green-600 hover:text-white transition-all shadow-sm group"
+                      title={`Call ${activeConv.motherName}`}>
+                      <Phone size={20} className="group-hover:rotate-12 transition-transform" />
+                    </a>
+                  )}
+                  <button className="w-12 h-12 bg-gray-50 text-gray-400 rounded-2xl flex items-center justify-center hover:bg-gray-100 transition-all">
+                    <Search size={20} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Messages */}
+              <div className="flex-1 overflow-y-auto p-10 space-y-8 bg-gray-50/10 custom-scrollbar">
+                {messages.length === 0 && (
+                  <div className="py-20 text-center space-y-4">
+                    <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center text-teal-100 mx-auto border border-gray-50">
+                      <Send size={32} />
+                    </div>
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">No clinical history here. Send a secure greeting.</p>
+                  </div>
+                )}
+                {messages.map((msg, i) => {
+                  const isDoctor = msg.sentByDoctor;
+                  const showTime = i === 0 || new Date(msg.sentAt).toDateString() !== new Date(messages[i - 1].sentAt).toDateString();
+                  return (
+                    <React.Fragment key={msg.id}>
+                      {showTime && (
+                        <div className="flex items-center gap-4 py-4">
+                          <div className="h-px bg-gray-100 flex-1" />
+                          <span className="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] bg-white px-4">
+                            {new Date(msg.sentAt).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+                          </span>
+                          <div className="h-px bg-gray-100 flex-1" />
                         </div>
                       )}
-                      <div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${isDoctor ? 'bg-[#005C5C] text-white rounded-br-none' : 'bg-white border border-gray-100 text-gray-800 rounded-bl-none shadow-sm'}`}>
-                        <p className="text-sm leading-relaxed">{msg.content}</p>
-                        <div className={`flex items-center gap-1 mt-1 ${isDoctor ? 'justify-end' : ''}`}>
-                          <span className={`text-[10px] ${isDoctor ? 'text-white/60' : 'text-gray-400'}`}>
-                            {new Date(msg.sentAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                          </span>
-                          {isDoctor && <CheckCheck size={12} className={msg.isRead ? 'text-teal-300' : 'text-white/40'} />}
+                      <div className={`flex items-end gap-4 ${isDoctor ? 'justify-end' : 'justify-start'}`}>
+                        {!isDoctor && (
+                          <div className="w-10 h-10 rounded-xl bg-teal-50 text-mamacare-teal flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden shadow-sm">
+                            {avatar(activeConv.motherName, activeConv.motherImage)}
+                          </div>
+                        )}
+                        <div className="space-y-2 max-w-[70%]">
+                          <div className={`px-6 py-4 rounded-[2rem] shadow-sm relative group ${isDoctor ? 'bg-mamacare-teal text-white rounded-br-none' : 'bg-white border border-white text-gray-800 rounded-bl-none shadow-card'}`}>
+                            <p className="text-sm font-medium leading-relaxed">{msg.content}</p>
+                            <div className={`flex items-center gap-2 mt-2 ${isDoctor ? 'justify-end' : ''}`}>
+                              <span className={`text-[9px] font-black uppercase tracking-widest ${isDoctor ? 'text-white/60' : 'text-gray-400'}`}>
+                                {new Date(msg.sentAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                              {isDoctor && <CheckCheck size={14} className={msg.isRead ? 'text-teal-300' : 'text-white/40'} />}
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </React.Fragment>
-                );
-              })}
-              <div ref={bottomRef} />
-            </div>
-
-            {/* Input */}
-            <form onSubmit={handleSend} className="p-4 bg-white border-t border-gray-100 shrink-0">
-              <div className="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-full px-4 py-2 focus-within:border-[#005C5C] focus-within:bg-white transition-all">
-                <input value={text} onChange={e => setText(e.target.value)}
-                  placeholder="Type a secure message..."
-                  className="flex-1 bg-transparent border-none focus:ring-0 text-sm text-gray-900 outline-none" />
-                <button type="submit" disabled={!text.trim() || sending}
-                  className="w-9 h-9 bg-[#005C5C] text-white rounded-full flex items-center justify-center hover:bg-[#004848] transition-all disabled:opacity-40 shrink-0">
-                  <Send size={15} className="translate-x-0.5 -translate-y-0.5" />
-                </button>
+                    </React.Fragment>
+                  );
+                })}
+                <div ref={bottomRef} />
               </div>
-            </form>
-          </div>
-        )}
+
+              {/* Input */}
+              <div className="p-10 bg-white border-t border-gray-50 shrink-0">
+                <form onSubmit={handleSend} className="relative flex items-center gap-4">
+                  <div className="flex-1 bg-gray-50 rounded-[2rem] px-8 py-5 focus-within:bg-white focus-within:ring-4 focus-within:ring-mamacare-teal/5 border border-transparent focus-within:border-mamacare-teal/10 transition-all flex items-center shadow-inner group">
+                    <input value={text} onChange={e => setText(e.target.value)}
+                      placeholder="Type a secure medical consultation message..."
+                      className="flex-1 bg-transparent border-none focus:ring-0 text-sm font-bold text-gray-900 placeholder:text-gray-400 outline-none" />
+                    <button type="submit" disabled={!text.trim() || sending}
+                      className="w-12 h-12 bg-mamacare-teal text-white rounded-2xl flex items-center justify-center hover:bg-[#004848] transition-all disabled:opacity-30 shrink-0 shadow-lg shadow-mamacare-teal/20 group-hover:scale-105 active:scale-95">
+                      <Send size={20} className="translate-x-0.5" />
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </DoctorLayout>
   );

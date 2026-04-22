@@ -144,7 +144,7 @@ const DoctorDashboard = () => {
         ) : (
           <div className="grid md:grid-cols-4 gap-6">
             {statCards.map((stat, idx) => (
-              <div key={idx} className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300">
+              <div key={idx} className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden">
                 <div className="space-y-4">
                   <div className="flex justify-between items-start">
                     <span className="text-[13px] font-medium text-gray-700">
@@ -159,7 +159,7 @@ const DoctorDashboard = () => {
                     {stat.value}
                   </h3>
 
-                  <div className="absolute bottom-10 left-0 h-1 bg-gray-50/50 w-full">
+                  <div className="absolute bottom-2 left-0 h-1.5 bg-gray-50/50 w-full">
                     <div 
                       className={`h-full ${stat.color.replace('text-', 'bg-')} rounded-r-full transition-all duration-1000`}
                       style={{ width: `${Math.max(15, (stat.value / Math.max(1, patients.length)) * 100)}%` }}

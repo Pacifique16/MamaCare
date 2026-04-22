@@ -122,7 +122,7 @@ const PatientRoster = () => {
                   <stat.icon size={24} />
                 </div>
               </div>
-              <div className="absolute bottom-10 left-0 h-1 bg-gray-50/50 w-full">
+              <div className="absolute bottom-2 left-0 h-1.5 bg-gray-50/50 w-full">
                 <div className={`h-full ${stat.color.replace('text', 'bg')} rounded-r-full transition-all duration-1000`} style={{ width: stat.progress }} />
               </div>
             </div>
