@@ -18,12 +18,15 @@ export const doctorsApi = {
   getPatientsByPriority: (id) => api.get(`/doctors/${id}/patients/priority`),
   create: (data) => api.post('/doctors', data),
   update: (id, data) => api.put(`/doctors/${id}`, data),
+  updateMe: (data) => api.patch('/doctors/me', data),
   verify: (id) => api.patch(`/doctors/${id}/verify`),
   suspend: (id) => api.patch(`/doctors/${id}/suspend`),
   delete: (id) => api.delete(`/doctors/${id}`),
   getCertifications: (id) => api.get(`/doctors/${id}/certifications`),
   addCertification: (id, data) => api.post(`/doctors/${id}/certifications`, data),
   deleteCertification: (id, certId) => api.delete(`/doctors/${id}/certifications/${certId}`),
+  addMyCertification: (data) => api.post('/doctors/me/certifications', data),
+  deleteMyCertification: (certId) => api.delete(`/doctors/me/certifications/${certId}`),
   getSchedule: (id) => api.get(`/doctors/${id}/schedule`),
   getActivity: (id) => api.get(`/doctors/${id}/activity`),
   resetPassword: (id, password) => api.patch(`/doctors/${id}/reset-password`, JSON.stringify(password), { headers: { 'Content-Type': 'application/json' } }),
@@ -72,6 +75,7 @@ export const messagesApi = {
 export const libraryApi = {
   getAll: (params) => api.get('/library', { params }),
   getById: (id) => api.get(`/library/${id}`),
+  recordView: (id) => api.post(`/library/${id}/view`),
   create: (data) => api.post('/library', data),
   update: (id, data) => api.put(`/library/${id}`, data),
   delete: (id) => api.delete(`/library/${id}`),
@@ -98,6 +102,10 @@ export const articleRequestsApi = {
 export const contactMessagesApi = {
   getAll: () => api.get('/contact-messages'),
   markRead: (id) => api.patch(`/contact-messages/${id}/read`),
+}
+
+export const chatApi = {
+  send: (message, history) => api.post('/chat', { message, history }),
 }
 
 export const authApi = {

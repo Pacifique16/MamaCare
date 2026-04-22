@@ -12,7 +12,9 @@ public record MotherSummaryDto(
     DateTime ExpectedDueDate,
     double WeightKg,
     string? Location,
-    string? PhoneNumber = null
+    string? PhoneNumber = null,
+    BloodType BloodType = BloodType.Unknown,
+    string? Address = null
 );
 
 public record MotherDetailDto(
@@ -57,6 +59,7 @@ public record CreateMotherDto(
 public record UpdateMotherDto(
     string? Location,
     DateTime? ExpectedDueDate,
+    DateTime? DateOfBirth,
     int? GestationalWeek,
     Trimester? CurrentTrimester,
     double? WeightKg,

@@ -18,11 +18,23 @@ const SYMPTOMS_DB = {
     { id: 'headache_severe', label: 'Severe Headache', icon: Skull, color: 'text-red-500', bg: 'bg-red-50' },
     { id: 'vision_blurred', label: 'Blurred Vision', icon: Eye, color: 'text-red-500', bg: 'bg-red-50' },
     { id: 'swelling_sudden', label: 'Sudden Swelling', icon: Activity, color: 'text-red-500', bg: 'bg-red-50' },
+    { id: 'bleeding_vaginal', label: 'Vaginal Bleeding', icon: Droplets, color: 'text-red-500', bg: 'bg-red-50' },
+    { id: 'chest_pain', label: 'Chest Pain', icon: Heart, color: 'text-red-500', bg: 'bg-red-50' },
+    { id: 'breathing_difficulty', label: 'Difficulty Breathing', icon: Zap, color: 'text-red-500', bg: 'bg-red-50' },
+    { id: 'fetal_movement_reduced', label: 'Reduced Fetal Movement', icon: Activity, color: 'text-red-500', bg: 'bg-red-50' },
+    { id: 'seizure', label: 'Seizure / Convulsion', icon: Skull, color: 'text-red-500', bg: 'bg-red-50' },
   ],
   moderate: [
-    { id: 'nausea', label: 'Nausea', icon: Zap, color: 'text-orange-400', bg: 'bg-orange-50' },
+    { id: 'nausea', label: 'Nausea / Vomiting', icon: Zap, color: 'text-orange-400', bg: 'bg-orange-50' },
     { id: 'fatigue', label: 'Fatigue', icon: Thermometer, color: 'text-orange-400', bg: 'bg-orange-50' },
     { id: 'headache_mild', label: 'Mild Headache', icon: Heart, color: 'text-orange-400', bg: 'bg-orange-50' },
+    { id: 'back_pain', label: 'Back Pain', icon: Activity, color: 'text-orange-400', bg: 'bg-orange-50' },
+    { id: 'abdominal_cramps', label: 'Abdominal Cramps', icon: Zap, color: 'text-orange-400', bg: 'bg-orange-50' },
+    { id: 'fever', label: 'Fever', icon: Thermometer, color: 'text-orange-400', bg: 'bg-orange-50' },
+    { id: 'dizziness', label: 'Dizziness', icon: Eye, color: 'text-orange-400', bg: 'bg-orange-50' },
+    { id: 'swelling_mild', label: 'Mild Swelling (feet/ankles)', icon: Droplets, color: 'text-orange-400', bg: 'bg-orange-50' },
+    { id: 'urination_painful', label: 'Painful Urination', icon: Droplets, color: 'text-orange-400', bg: 'bg-orange-50' },
+    { id: 'insomnia', label: 'Insomnia / Poor Sleep', icon: Clock, color: 'text-orange-400', bg: 'bg-orange-50' },
   ]
 };
 
@@ -33,6 +45,7 @@ const TriageWizard = () => {
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(0);
   const [savedTriageId, setSavedTriageId] = useState(null);
+  const [triageResult, setTriageResult] = useState(null);
   
   // Assessment State
   const [assessment, setAssessment] = useState({
@@ -146,8 +159,10 @@ const TriageWizard = () => {
                         bloodPressureSystolic: parseInt(assessment.vitals.systolic) || null,
                         bloodPressureDiastolic: parseInt(assessment.vitals.diastolic) || null,
                         temperature: parseFloat(assessment.vitals.temp) || null,
+                        heartRate: parseFloat(assessment.vitals.heartRate) || null,
                       });
                       setSavedTriageId(res?.data?.id || null);
+                      setTriageResult(res?.data || null);
                     } catch {}
                   }}
                   onBack={prevStep} 
@@ -157,7 +172,7 @@ const TriageWizard = () => {
                 <ProcessingStep onNext={nextStep} />
               )}
               {step === 5 && (
-                <ResultsStep assessment={assessment} onRestart={() => setStep(1)} />
+                <ResultsStep assessment={assessment} triageResult={triageResult} onRestart={() => { setStep(1); setTriageResult(null); }} />
               )}
             </motion.div>
           </AnimatePresence>
@@ -332,6 +347,25 @@ const VitalsStep = ({ assessment, setAssessment, onNext, onBack }) => (
             className="w-full p-5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#003e3d]/20 text-2xl font-bold"
           />
         </div>
+        <div className="space-y-3">
+          <label className="text-[10px] font-black uppercase tracking-widest text-[#003e3d]">Temperature (°C)</label>
+          <input 
+            type="text" 
+            value={assessment.vitals.temp} 
+            onChange={(e) => setAssessment(prev => ({ ...prev, vitals: { ...prev.vitals, temp: e.target.value } }))}
+            className="w-full p-5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#003e3d]/20 text-2xl font-bold"
+          />
+        </div>
+        <div className="space-y-3">
+          <label className="text-[10px] font-black uppercase tracking-widest text-[#003e3d]">Heart Rate (bpm)</label>
+          <input 
+            type="text" 
+            value={assessment.vitals.heartRate || ''} 
+            onChange={(e) => setAssessment(prev => ({ ...prev, vitals: { ...prev.vitals, heartRate: e.target.value } }))}
+            className="w-full p-5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#003e3d]/20 text-2xl font-bold"
+            placeholder="e.g. 80"
+          />
+        </div>
       </div>
 
       <div className="flex justify-between items-center pt-8 border-t border-gray-50">
@@ -386,37 +420,22 @@ const ProcessingStep = ({ onNext }) => {
 };
 
 /* --- Step 5: Results --- */
-const ResultsStep = ({ assessment, onRestart }) => {
-  const calculateRisk = () => {
-    const hasRedFlag = assessment.symptoms.some(id => SYMPTOMS_DB.redFlags.find(s => s.id === id));
-    const hasSevereMod = Object.values(assessment.severities).some(v => v === 'Severe');
-    
-    if (hasRedFlag || hasSevereMod) return {
-      level: 'High',
-      color: 'text-red-500',
-      border: 'border-red-100',
-      ring: 'border-red-500',
-      desc: 'Urgent medical evaluation is advised. Please proceed to the nearest maternity triage or contact your OBGYN immediately.'
-    };
-    
-    if (assessment.symptoms.length > 1) return {
-      level: 'Moderate',
-      color: 'text-orange-400',
-      border: 'border-orange-100',
-      ring: 'border-orange-400',
-      desc: 'Based on your profile, we recommend contacting your healthcare provider within 24 hours. The reported symptoms are stable but need clinical verification.'
-    };
-
-    return {
-      level: 'Low',
-      color: 'text-mamacare-teal',
-      border: 'border-teal-50',
-      ring: 'border-mamacare-teal',
-      desc: 'Your reported symptoms appear to be within normal pregnancy variations. Continue to rest and monitor for any changes.'
-    };
+const ResultsStep = ({ triageResult, onRestart }) => {
+  const outcomeMap = {
+    High: {
+      level: 'High', color: 'text-red-500', border: 'border-red-100', ring: 'border-red-500',
+    },
+    Medium: {
+      level: 'Medium', color: 'text-orange-400', border: 'border-orange-100', ring: 'border-orange-400',
+    },
+    Low: {
+      level: 'Low', color: 'text-mamacare-teal', border: 'border-teal-50', ring: 'border-mamacare-teal',
+    },
   };
 
-  const risk = calculateRisk();
+  const risk = triageResult
+    ? { ...outcomeMap[triageResult.riskLevel] || outcomeMap.Low, desc: triageResult.aiRecommendation }
+    : { level: 'Unknown', color: 'text-gray-400', border: 'border-gray-100', ring: 'border-gray-400', desc: 'Could not retrieve your results. Please try again.' };
 
   return (
     <div className="max-w-5xl mx-auto space-y-12 pb-10">

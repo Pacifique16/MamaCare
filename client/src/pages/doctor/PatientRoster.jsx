@@ -113,8 +113,11 @@ const PatientRoster = () => {
                   <tr key={p.id} className="hover:bg-gray-50/50 transition-colors cursor-pointer" onClick={() => navigate(`/doctor/patients/${p.id}`)}>
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-lg">
-                          {initials}
+                        <div className="w-12 h-12 rounded-full bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-lg overflow-hidden">
+                          {p.profileImageUrl
+                            ? <img src={p.profileImageUrl} alt={p.fullName} className="w-full h-full object-cover" />
+                            : initials
+                          }
                         </div>
                         <div>
                           <p className="font-bold text-gray-900">{p.fullName}</p>
@@ -180,8 +183,11 @@ const PatientRoster = () => {
                 return (
                   <div key={m.id} className="flex items-center justify-between px-6 py-4 border-b border-gray-50 hover:bg-gray-50">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-sm">
-                        {m.fullName?.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                      <div className="w-10 h-10 rounded-full bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-sm overflow-hidden">
+                        {m.profileImageUrl
+                          ? <img src={m.profileImageUrl} alt={m.fullName} className="w-full h-full object-cover" />
+                          : m.fullName?.split(' ').map(n => n[0]).join('').slice(0, 2)
+                        }
                       </div>
                       <div>
                         <p className="font-bold text-gray-900 text-sm">{m.fullName}</p>

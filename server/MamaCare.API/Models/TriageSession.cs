@@ -16,6 +16,7 @@ public class TriageSession
     public double? HeartRate { get; set; }
     public double? Temperature { get; set; }
     public TriageOutcome Outcome { get; set; }
+    public RiskLevel RiskLevel { get; set; } = RiskLevel.Low;
     public string? AiRecommendation { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

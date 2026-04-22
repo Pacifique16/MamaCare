@@ -23,7 +23,7 @@ public class MothersController : ControllerBase
             .Select(m => new MotherSummaryDto(
                 m.Id, m.User.FullName, m.User.ProfileImageUrl,
                 m.GestationalWeek, m.CurrentTrimester, m.RiskLevel,
-                m.ExpectedDueDate, m.WeightKg, m.Location))
+                m.ExpectedDueDate, m.WeightKg, m.Location, m.User.PhoneNumber, m.BloodType, m.Address))
             .ToListAsync();
         return Ok(mothers);
     }
@@ -85,7 +85,7 @@ public class MothersController : ControllerBase
                 t.Id, t.MotherId, t.Mother.User.FullName, t.Symptoms,
                 t.SeverityScore, t.DurationDescription, t.BloodPressureSystolic,
                 t.BloodPressureDiastolic, t.HeartRate, t.Temperature,
-                t.Outcome, t.AiRecommendation, t.CreatedAt))
+                t.Outcome, t.RiskLevel, t.AiRecommendation, t.CreatedAt))
             .ToListAsync();
         return Ok(sessions);
     }
@@ -129,6 +129,7 @@ public class MothersController : ControllerBase
 
         if (dto.Location is not null) mother.Location = dto.Location;
         if (dto.ExpectedDueDate.HasValue) mother.ExpectedDueDate = DateTime.SpecifyKind(dto.ExpectedDueDate.Value, DateTimeKind.Utc);
+        if (dto.DateOfBirth.HasValue) mother.DateOfBirth = DateTime.SpecifyKind(dto.DateOfBirth.Value, DateTimeKind.Utc);
         if (dto.GestationalWeek.HasValue) mother.GestationalWeek = dto.GestationalWeek.Value;
         if (dto.CurrentTrimester.HasValue) mother.CurrentTrimester = dto.CurrentTrimester.Value;
         if (dto.WeightKg.HasValue) mother.WeightKg = dto.WeightKg.Value;
