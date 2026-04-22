@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DoctorLayout from '../../components/layout/DoctorLayout';
-import { AlertTriangle, Calendar, Eye, MessageSquare, Plus, X, Search } from 'lucide-react';
+import { AlertTriangle, Calendar, Eye, MessageSquare, Plus, X, Search, ChevronDown, Activity, Users, ClipboardCheck } from 'lucide-react';
 import { doctorsApi, mothersApi, appointmentsApi } from '../../api/services';
 import { useAuth } from '../../context/AuthContext';
+import toast from 'react-hot-toast';
 
 const riskColor = (risk) => ({
   High: { badge: 'bg-red-50 text-red-600', dot: 'bg-red-500' },
@@ -68,141 +69,205 @@ const PatientRoster = () => {
   );
 
   return (
-    <DoctorLayout title="Maternal Patient Roster" subtitle={`Managing ${patients.length} active prenatal journeys`} activeActionButton={actionButton}>
-      <div className="grid md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-3xl p-8 border border-gray-100 flex items-start justify-between">
-          <div className="space-y-4">
-            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">HIGH RISK</p>
-            <h3 className="text-4xl font-extrabold text-red-600">{String(highRisk).padStart(2, '0')}</h3>
+    <DoctorLayout>
+      <div className="max-w-7xl mx-auto space-y-12 font-poppins animate-in fade-in duration-1000">
+        
+        {/* Premium Branding Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-gray-100 pb-10">
+          <div className="space-y-1">
+            <span className="text-[10px] font-bold text-mamacare-teal uppercase tracking-[0.25em]">PATIENT CARE</span>
+            <h1 className="text-6xl font-bold text-gray-900 tracking-tighter">Patient Roster</h1>
           </div>
-          <div className="w-12 h-12 bg-red-50 text-red-500 rounded-full flex items-center justify-center"><AlertTriangle size={20} /></div>
-        </div>
-        <div className="bg-white rounded-3xl p-8 border border-gray-100 flex items-start justify-between">
-          <div className="space-y-4">
-            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">DUE THIS MONTH</p>
-            <h3 className="text-4xl font-extrabold text-[#005C5C]">{String(dueThisMonth).padStart(2, '0')}</h3>
-          </div>
-          <div className="w-12 h-12 bg-teal-50 text-teal-600 rounded-full flex items-center justify-center"><Calendar size={20} /></div>
-        </div>
-        <div className="bg-[#007373] text-white rounded-3xl p-8 flex justify-between relative overflow-hidden shadow-lg">
-          <div className="space-y-4 z-10 relative">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-teal-100">PROGRAM HEALTH</p>
-            <h3 className="text-4xl font-extrabold text-white">98.2%</h3>
-            <p className="text-sm font-medium text-teal-50">Vitals reporting compliance is at an all-time high.</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50">
-                <th className="px-8 py-6 text-[10px] font-bold text-gray-500 uppercase tracking-widest">PATIENT DETAILS</th>
-                <th className="px-8 py-6 text-[10px] font-bold text-gray-500 uppercase tracking-widest">GESTATIONAL AGE</th>
-                <th className="px-8 py-6 text-[10px] font-bold text-gray-500 uppercase tracking-widest">RISK LEVEL</th>
-                <th className="px-8 py-6 text-[10px] font-bold text-gray-500 uppercase tracking-widest">DUE DATE</th>
-                <th className="px-8 py-6 text-[10px] font-bold text-gray-500 uppercase tracking-widest text-right">ACTIONS</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {patients.map((p) => {
-                const colors = riskColor(p.riskLevel);
-                const initials = p.fullName.split(' ').map(n => n[0]).join('').slice(0, 2);
-                return (
-                  <tr key={p.id} className="hover:bg-gray-50/50 transition-colors cursor-pointer" onClick={() => navigate(`/doctor/patients/${p.id}`)}>
-                    <td className="px-8 py-6">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-lg">
-                          {initials}
-                        </div>
-                        <div>
-                          <p className="font-bold text-gray-900">{p.fullName}</p>
-                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">ID: #{p.id}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-8 py-6">
-                      <div className="space-y-2 w-32">
-                        <p className="font-bold text-gray-900 text-sm">{p.gestationalWeek} Weeks</p>
-                        <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                          <div className="h-full bg-[#005C5C] rounded-full" style={{ width: `${(p.gestationalWeek / 40) * 100}%` }}></div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-8 py-6">
-                      <span className={`px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest inline-flex items-center gap-1.5 ${colors.badge}`}>
-                        <div className={`w-1.5 h-1.5 rounded-full ${colors.dot}`}></div>
-                        {p.riskLevel} RISK
-                      </span>
-                    </td>
-                    <td className="px-8 py-6">
-                      <p className="font-bold text-sm text-gray-900">
-                        {new Date(p.expectedDueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                      </p>
-                    </td>
-                    <td className="px-8 py-6 text-right">
-                      <div className="flex items-center justify-end gap-3 text-gray-400">
-                        <button className="p-2 hover:bg-gray-100 rounded-lg hover:text-[#005C5C]" onClick={e => { e.stopPropagation(); navigate(`/doctor/messaging?motherId=${p.id}`); }}><MessageSquare size={18} /></button>
-                        <button className="p-2 hover:bg-teal-50 rounded-lg text-[#005C5C] bg-teal-50/50" onClick={e => { e.stopPropagation(); navigate(`/doctor/patients/${p.id}`); }}><Eye size={18} /></button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-        <div className="px-8 py-6 border-t border-gray-50 flex items-center justify-between text-sm text-gray-500 font-medium bg-white">
-          <p>Showing {patients.length} patients</p>
-        </div>
-      </div>
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-          <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl flex flex-col max-h-[80vh]">
-            <div className="flex items-center justify-between p-6 border-b border-gray-100">
-              <h2 className="text-xl font-black text-gray-900">Add New Patient</h2>
-              <button onClick={() => setShowModal(false)} className="p-2 hover:bg-gray-100 rounded-xl"><X size={20} className="text-gray-400" /></button>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-100 rounded-lg shadow-sm">
+              <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+              <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">
+                Active Surveillance
+              </span>
             </div>
-            <div className="p-4 border-b border-gray-100">
-              <div className="relative">
-                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input value={search} onChange={e => setSearch(e.target.value)}
-                  placeholder="Search by name or email..."
-                  className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-[#005C5C]" />
+            <button 
+              onClick={openModal}
+              className="bg-mamacare-teal text-white px-8 py-3 rounded-xl font-bold text-[13px] shadow-lg shadow-mamacare-teal/10 transition-all hover:bg-[#004848] active:scale-[0.98] flex items-center gap-2"
+            >
+              <Plus size={18} />
+              Add New Patient
+            </button>
+          </div>
+        </div>
+
+        {/* High-Fidelity Stat Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {[
+            { title: 'Total Patients', value: patients.length, change: 'Active prenatal files', icon: Users, color: 'text-teal-600', bg: 'bg-teal-50', progress: '100%' },
+            { title: 'High Risk', value: highRisk, change: 'Critical attention', icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-50', progress: `${(highRisk/patients.length)*100}%` },
+            { title: 'Due This Month', value: dueThisMonth, change: 'Expected deliveries', icon: Calendar, color: 'text-orange-500', bg: 'bg-orange-50', progress: `${(dueThisMonth/patients.length)*100}%` },
+            { title: 'Program Health', value: '98.2%', change: 'Compliance rate', icon: Activity, color: 'text-blue-500', bg: 'bg-blue-50', progress: '98.2%' },
+          ].map((stat, i) => (
+            <div key={i} className="bg-white rounded-[2.5rem] p-8 border border-white shadow-card transition-all duration-300 hover:shadow-xl hover:scale-[1.02] group relative overflow-hidden">
+              <div className="flex justify-between items-start relative z-10">
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{stat.title}</p>
+                    <h3 className="text-4xl font-bold text-gray-900 tracking-tight">{stat.value}</h3>
+                  </div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{stat.change}</p>
+                </div>
+                <div className={`w-14 h-14 ${stat.bg} ${stat.color} rounded-2xl flex items-center justify-center transition-transform group-hover:rotate-12`}>
+                  <stat.icon size={24} />
+                </div>
+              </div>
+              <div className="absolute bottom-0 left-0 h-1.5 bg-gray-50 w-full">
+                <div className={`h-full ${stat.color.replace('text', 'bg')} rounded-full`} style={{ width: stat.progress }} />
               </div>
             </div>
-            <div className="overflow-y-auto flex-1">
-              {filteredMothers.length === 0 ? (
-                <p className="text-center text-gray-400 text-sm py-10">No mothers found</p>
-              ) : filteredMothers.map(m => {
-                const alreadyAdded = patients.some(p => p.id === m.id);
-                return (
-                  <div key={m.id} className="flex items-center justify-between px-6 py-4 border-b border-gray-50 hover:bg-gray-50">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-sm">
-                        {m.fullName?.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                      </div>
-                      <div>
-                        <p className="font-bold text-gray-900 text-sm">{m.fullName}</p>
-                        <p className="text-xs text-gray-400">{m.email}</p>
-                      </div>
-                    </div>
-                    {alreadyAdded ? (
-                      <span className="text-xs font-bold text-gray-400 px-3 py-1 bg-gray-100 rounded-full">Already added</span>
-                    ) : (
-                      <button onClick={() => addPatient(m)} disabled={adding === m.id}
-                        className="px-4 py-2 bg-[#005C5C] text-white text-xs font-bold rounded-xl hover:bg-[#004848] disabled:opacity-50 transition-all">
-                        {adding === m.id ? 'Adding...' : 'Add'}
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
+          ))}
+        </div>
+
+        {/* Main Content Area */}
+        <div className="bg-white rounded-[2.5rem] border border-white shadow-card overflow-hidden">
+          <div className="p-10 flex justify-between items-center border-b border-gray-50 bg-white">
+            <div className="space-y-1">
+              <span className="text-[9px] font-black text-mamacare-teal uppercase tracking-[0.2em]">PATIENT MANAGEMENT</span>
+              <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Active Patient Directory</h2>
+            </div>
+            <div className="flex gap-4">
+              <div className="relative">
+                <button className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm bg-gray-50 text-gray-600 border border-gray-100 hover:bg-gray-100 transition-all">
+                  Sort: Recent <ChevronDown size={16} />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-gray-50/50">
+                  <th className="p-8 text-[14px] font-semibold text-gray-600">Patient Name</th>
+                  <th className="p-8 text-[14px] font-semibold text-gray-600">Gestational Age</th>
+                  <th className="p-8 text-[14px] font-semibold text-gray-600 text-center">Risk Level</th>
+                  <th className="p-8 text-[14px] font-semibold text-gray-600">Expected Due Date</th>
+                  <th className="p-8 text-[14px] font-semibold text-gray-600 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {patients.map((p) => {
+                  const colors = riskColor(p.riskLevel);
+                  const initials = p.fullName.split(' ').map(n => n[0]).join('').slice(0, 2);
+                  return (
+                    <tr key={p.id} className="hover:bg-gray-50/50 transition-all cursor-pointer group" onClick={() => navigate(`/doctor/patients/${p.id}`)}>
+                      <td className="p-8">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-lg shadow-sm group-hover:scale-110 transition-transform">
+                            {initials}
+                          </div>
+                          <div className="space-y-0.5">
+                            <p className="font-bold text-gray-900 text-sm group-hover:text-mamacare-teal transition-colors">{p.fullName}</p>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">ID: MP00{p.id}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-8">
+                        <div className="space-y-2 w-32">
+                          <p className="font-bold text-gray-900 text-sm">{p.gestationalWeek} Weeks</p>
+                          <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                            <div className="h-full bg-mamacare-teal rounded-full" style={{ width: `${(p.gestationalWeek / 40) * 100}%` }} />
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-8 text-center">
+                        <span className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest inline-flex items-center gap-2 ${colors.badge}`}>
+                          <div className={`w-1.5 h-1.5 rounded-full ${colors.dot} animate-pulse`} />
+                          {p.riskLevel} RISK
+                        </span>
+                      </td>
+                      <td className="p-8">
+                        <p className="font-bold text-sm text-gray-900">
+                          {new Date(p.expectedDueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </p>
+                      </td>
+                      <td className="p-8 text-right">
+                        <div className="flex items-center justify-end gap-3 transition-opacity">
+                          <button className="p-3 hover:bg-gray-100 rounded-xl text-gray-400 hover:text-mamacare-teal transition-all" onClick={e => { e.stopPropagation(); navigate(`/doctor/messaging?motherId=${p.id}`); }}>
+                            <MessageSquare size={18} />
+                          </button>
+                          <button className="p-3 bg-teal-50 text-mamacare-teal rounded-xl hover:bg-mamacare-teal hover:text-white transition-all shadow-sm" onClick={e => { e.stopPropagation(); navigate(`/doctor/patients/${p.id}`); }}>
+                            <Eye size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <div className="p-8 border-t border-gray-50 flex items-center justify-between text-[11px] font-black text-gray-400 uppercase tracking-widest bg-gray-50/30">
+            <p>Showing {patients.length} Registered Patients</p>
+            <div className="flex gap-2">
+              <button className="px-4 py-2 bg-white rounded-lg border border-gray-100 hover:bg-gray-50 transition-all disabled:opacity-30">Previous</button>
+              <button className="px-4 py-2 bg-white rounded-lg border border-gray-100 hover:bg-gray-50 transition-all">Next</button>
             </div>
           </div>
         </div>
-      )}
+
+        {/* Modal Polishing */}
+        {showModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-md px-4 animate-in fade-in duration-300">
+            <div className="bg-white rounded-[2.5rem] w-full max-w-xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
+              <div className="flex items-center justify-between p-10 border-b border-gray-50">
+                <div className="space-y-1">
+                  <p className="text-[10px] font-bold text-mamacare-teal uppercase tracking-[0.2em]">REGISTRATION</p>
+                  <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Add New Patient</h2>
+                </div>
+                <button onClick={() => setShowModal(false)} className="p-3 hover:bg-gray-100 rounded-2xl text-gray-400 transition-all"><X size={24} /></button>
+              </div>
+              <div className="p-8 border-b border-gray-50 bg-gray-50/30">
+                <div className="relative">
+                  <Search size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input value={search} onChange={e => setSearch(e.target.value)}
+                    placeholder="Search for mother by name or email..."
+                    className="w-full pl-14 pr-6 py-4 rounded-2xl border border-gray-100 text-sm font-bold text-gray-900 focus:outline-none focus:ring-4 focus:ring-mamacare-teal/5 focus:bg-white transition-all shadow-sm" />
+                </div>
+              </div>
+              <div className="overflow-y-auto flex-1 p-4 space-y-2">
+                {filteredMothers.length === 0 ? (
+                  <div className="py-20 text-center">
+                    <Users size={48} className="text-gray-100 mx-auto mb-4" />
+                    <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">No matching mothers found</p>
+                  </div>
+                ) : filteredMothers.map(m => {
+                  const alreadyAdded = patients.some(p => p.id === m.id);
+                  return (
+                    <div key={m.id} className="flex items-center justify-between p-6 rounded-[1.5rem] border border-transparent hover:border-gray-100 hover:bg-gray-50 transition-all group">
+                      <div className="flex items-center gap-4">
+                        <div className="w-14 h-14 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-lg shadow-sm group-hover:scale-110 transition-transform">
+                          {m.fullName?.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                        </div>
+                        <div className="space-y-0.5">
+                          <p className="font-bold text-gray-900 text-sm">{m.fullName}</p>
+                          <p className="text-xs text-gray-500 font-medium">{m.email}</p>
+                        </div>
+                      </div>
+                      {alreadyAdded ? (
+                        <span className="text-[10px] font-black text-gray-400 px-4 py-2 bg-gray-100 rounded-xl uppercase tracking-widest">Already Linked</span>
+                      ) : (
+                        <button onClick={() => addPatient(m)} disabled={adding === m.id}
+                          className="px-6 py-3 bg-mamacare-teal text-white text-[11px] font-black rounded-xl hover:bg-[#004848] disabled:opacity-50 transition-all uppercase tracking-widest shadow-lg shadow-mamacare-teal/10 active:scale-95">
+                          {adding === m.id ? 'Adding...' : 'Link Patient'}
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="p-8 border-t border-gray-50 text-center">
+                <p className="text-xs text-gray-400 font-medium italic">Only verified mothers can be linked to your clinical roster.</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </DoctorLayout>
   );
 };

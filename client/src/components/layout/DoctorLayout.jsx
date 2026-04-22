@@ -37,7 +37,7 @@ const DoctorLayout = ({ children, title, subtitle, activeActionButton }) => {
                             <input 
                                 type="text" 
                                 placeholder="Search by name, patient ID, or status..." 
-                                className="w-full h-11 bg-gray-50 border border-gray-100 rounded-xl pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-mamacare-teal/10 focus:bg-white transition-all"
+                                className="w-full h-11 bg-white border border-gray-300 rounded-xl pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-mamacare-teal/10 focus:bg-white transition-all placeholder:text-gray-500"
                             />
                         </div>
                         {/* <div className="flex gap-2">
@@ -48,11 +48,8 @@ const DoctorLayout = ({ children, title, subtitle, activeActionButton }) => {
 
                     <div className="flex items-center gap-6 pl-10">
                         <div className="flex items-center gap-4 border-r border-gray-100 pr-6 mr-6">
-                            <button className="p-2.5 bg-gray-50 text-gray-400 rounded-xl hover:bg-gray-100 transition-all">
+                            <button className="p-2.5 bg-gray-50 text-gray-600 rounded-xl hover:bg-gray-100 transition-all">
                                 <Bell size={20} />
-                            </button>
-                            <button className="p-2.5 bg-gray-50 text-gray-400 rounded-xl hover:bg-gray-100 transition-all">
-                                <HelpCircle size={20} />
                             </button>
                         </div>
                         <div className="flex items-center gap-3">
@@ -103,13 +100,6 @@ const DoctorLayout = ({ children, title, subtitle, activeActionButton }) => {
                     )}
                     {children}
                 </main>
-
-                <footer className="py-4 px-10 border-t border-gray-50 bg-white">
-                    <div className="flex justify-between items-center text-[10px] font-bold text-gray-300 uppercase tracking-widest">
-                        <span>MamaCare Provider Portal • HIPAA Compliant Environment</span>
-                        <span className="text-[10px] font-bold text-[#005c5c]/60 uppercase tracking-widest">© 2026 MamaCare Maternal Health Platform.</span>
-                    </div>
-                </footer>
             </div>
         </div>
     );

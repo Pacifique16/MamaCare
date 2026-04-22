@@ -7,7 +7,8 @@ import {
   MessageSquare, 
   BookOpen, 
   Settings,
-  LogOut
+  LogOut,
+  Baby
 } from 'lucide-react';
 
 const DoctorSidebar = () => {
@@ -29,7 +30,7 @@ const DoctorSidebar = () => {
             <div className="p-8">
                 <NavLink to="/doctor/dashboard" className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-mamacare-teal rounded-xl flex items-center justify-center text-white">
-                        <span className="font-black text-xl">M</span>
+                        <Baby size={24} />
                     </div>
                     <div className="flex flex-col">
                         <span className="text-xl font-bold text-gray-900 tracking-tight leading-none">MamaCare</span>
@@ -44,10 +45,10 @@ const DoctorSidebar = () => {
                         key={item.path}
                         to={item.path}
                         className={({ isActive }) => `
-                            flex items-center gap-4 px-4 py-4 rounded-2xl font-bold text-sm transition-all group
+                            flex items-center gap-4 px-4 py-4 rounded-2xl font-medium text-sm transition-all group
                             ${isActive 
-                                ? 'bg-mamacare-teal/5 text-mamacare-teal border-r-4 border-mamacare-teal rounded-r-none pr-12 scale-[1.02]' 
-                                : 'text-gray-400 hover:bg-gray-50 hover:text-gray-600'
+                                ? 'bg-mamacare-teal/5 text-mamacare-teal border-r-4 font-bold border-mamacare-teal rounded-r-none pr-12 scale-[1.02]' 
+                                : 'text-gray-700 hover:bg-gray-50 hover:text-gray-600'
                             }
                         `}
                     >
@@ -61,8 +62,11 @@ const DoctorSidebar = () => {
                 <NavLink
                     to="/settings"
                     className={({ isActive }) => `
-                        flex items-center gap-4 px-4 py-4 rounded-2xl font-bold text-sm transition-all
-                        ${isActive ? 'bg-gray-100 text-gray-900' : 'text-gray-400 hover:bg-gray-50 hover:text-gray-600'}
+                        flex items-center gap-4 px-4 py-4 rounded-2xl font-medium text-sm transition-all
+                       ${isActive 
+                                ? 'bg-mamacare-teal/5 text-mamacare-teal border-r-4 font-bold border-mamacare-teal rounded-r-none pr-12 scale-[1.02]' 
+                                : 'text-gray-700 hover:bg-gray-50 hover:text-gray-600'
+                            }
                     `}
                 >
                     <Settings size={20} />
