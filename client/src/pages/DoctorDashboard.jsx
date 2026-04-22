@@ -33,6 +33,7 @@ const DoctorDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [filterOpen, setFilterOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState('All');
+  const [page, setPage] = useState(1);
   const [dismissedAlerts, setDismissedAlerts] = useState(
     () => JSON.parse(sessionStorage.getItem('dismissed_alerts') || '[]')
   );
