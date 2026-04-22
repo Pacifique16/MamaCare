@@ -1,8 +1,8 @@
-import { User, ChevronDown, Globe, Bell, LayoutDashboard, Stethoscope, BookOpen, Calendar as CalendarIcon, Heart, Activity, LogOut, Baby, X, MessageSquare } from 'lucide-react';
+import { User, ChevronDown, Globe, Bell, LayoutDashboard, Stethoscope, BookOpen, Calendar as CalendarIcon, Heart, Activity, LogOut, Baby, X, MessageSquare, Pill } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { appointmentsApi, messagesApi } from '../../api/services';
+import { appointmentsApi, messagesApi, prescriptionsApi } from '../../api/services';
 
 const Navbar = () => {
   const location = useLocation();
@@ -14,6 +14,7 @@ const Navbar = () => {
   const notifRef = useRef(null);
 
   const [unreadMessages, setUnreadMessages] = useState(0);
+  const [newPrescriptions, setNewPrescriptions] = useState(0);
 
   const handleLogout = () => {
     logout();
@@ -41,6 +42,18 @@ const Navbar = () => {
     checkUnread();
     const interval = setInterval(checkUnread, 30000);
     return () => clearInterval(interval);
+  }, [user]);
+
+  // Fetch cancelled appointments as notifications for mothers
+  useEffect(() => {
+    if (user?.role !== 'Mother' || !user?.motherId) return;
+    prescriptionsApi.getAll({ motherId: user.motherId })
+      .then(r => {
+        const total = r.data.length;
+        const seen = Number(localStorage.getItem(`seen_rx_${user.motherId}`) || 0);
+        setNewPrescriptions(Math.max(0, total - seen));
+      })
+      .catch(() => {});
   }, [user]);
 
   // Fetch cancelled appointments as notifications for mothers
@@ -75,6 +88,7 @@ const Navbar = () => {
     { name: 'Library', path: '/library', icon: BookOpen },
     { name: 'Appointments', path: '/appointments', icon: CalendarIcon },
     { name: 'Messages', path: '/messaging', icon: MessageSquare, badge: unreadMessages },
+    { name: 'Prescriptions', path: '/prescriptions', icon: Pill, badge: newPrescriptions },
   ];
 
   return (

@@ -83,6 +83,12 @@ export const settingsApi = {
   changePassword: (data) => api.put('/settings/password', data),
 }
 
+export const prescriptionsApi = {
+  getAll: (params) => api.get('/prescriptions', { params }),
+  create: (data) => api.post('/prescriptions', data),
+  delete: (id) => api.delete(`/prescriptions/${id}`),
+}
+
 export const articleRequestsApi = {
   getAll: () => api.get('/ArticleRequests'),
   create: (data) => api.post('/ArticleRequests', data),

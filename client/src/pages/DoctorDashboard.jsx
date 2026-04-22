@@ -33,7 +33,16 @@ const DoctorDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [filterOpen, setFilterOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState('All');
-  const [page, setPage] = useState(1);
+  const [dismissedAlerts, setDismissedAlerts] = useState(
+    () => JSON.parse(sessionStorage.getItem('dismissed_alerts') || '[]')
+  );
+
+  const dismissAlert = (id) => {
+    const updated = [...dismissedAlerts, id];
+    setDismissedAlerts(updated);
+    sessionStorage.setItem('dismissed_alerts', JSON.stringify(updated));
+  };
+
   const navigate = useNavigate();
 
   // Focused patient is always the first high-risk one
@@ -114,8 +123,8 @@ const DoctorDashboard = () => {
         </div>
 
         {/* Emergency Alert — shown if any high-risk patient exists */}
-        {focusedPatient && focusedPatient.riskLevel === 'High' && (
-          <div className="bg-[#FFEBEB] border-l-[6px] border-red-500 rounded-3xl p-8 flex items-center justify-between shadow-sm">
+        {focusedPatient && focusedPatient.riskLevel === 'High' && !dismissedAlerts.includes(focusedPatient.id) && (
+          <div className="bg-[#FFEBEB] border-l-[6px] border-red-500 rounded-2xl p-6 flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-5">
               <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-red-500 shadow-sm animate-pulse shrink-0">
                 <AlertTriangle size={24} />
@@ -127,9 +136,9 @@ const DoctorDashboard = () => {
                 <p className="text-sm text-red-700 font-medium">Requires immediate clinical attention and review.</p>
               </div>
             </div>
-            <div className="flex gap-4 shrink-0">
-              <button className="bg-[#C62828] text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-[#B71C1C] transition-all shadow-lg active:scale-95">Review Case</button>
-              <button className="bg-white/50 text-red-700 px-6 py-3 rounded-xl font-bold text-sm hover:bg-white transition-all active:scale-95">Dismiss</button>
+            <div className="flex gap-4">
+              <button onClick={() => navigate(`/doctor/patients/${focusedPatient.id}`)} className="bg-[#C62828] text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-[#B71C1C] transition-all shadow-lg active:scale-95">Review Case</button>
+              <button onClick={() => dismissAlert(focusedPatient.id)} className="bg-white/50 text-red-700 px-6 py-3 rounded-xl font-bold text-sm hover:bg-white transition-all active:scale-95">Dismiss</button>
             </div>
           </div>
         )}
@@ -250,8 +259,8 @@ const DoctorDashboard = () => {
                             {new Date(patient.expectedDueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                           </p>
                         </td>
-                        <td className="p-6 text-right">
-                          <button className="text-mamacare-teal font-extrabold text-xs uppercase tracking-widest hover:text-[#004848] transition-colors">Manage</button>
+                        <td className="p-8 text-right">
+                          <button onClick={() => navigate(`/doctor/patients/${patient.id}`)} className="text-[#005C5C] font-extrabold text-sm hover:underline tracking-tight">Manage</button>
                         </td>
                       </tr>
                     ))}

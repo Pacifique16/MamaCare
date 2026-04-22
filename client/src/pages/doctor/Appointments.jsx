@@ -2,9 +2,10 @@ import React, { useEffect, useState, useMemo } from 'react';
 import DoctorLayout from '../../components/layout/DoctorLayout';
 import {
   Search, CalendarDays, CheckCircle, XCircle, Clock,
-  ArrowUpDown, Download, Plus, User, Tag, FileText, Stethoscope, ChevronLeft, ChevronRight, ChevronDown
+  ArrowUpDown, Download, Plus, User, Tag, FileText, Stethoscope,
+  CheckCircle2, Calendar, Bell
 } from 'lucide-react';
-import { patientAppointmentsApi, appointmentsApi } from '../../api/services';
+import { patientAppointmentsApi, appointmentsApi, messagesApi } from '../../api/services';
 import { useAuth } from '../../context/AuthContext';
 
 const STATUS_STYLES = {
@@ -80,6 +81,29 @@ const DoctorAppointments = () => {
     try {
       if (appt._source === 'mother') {
         await appointmentsApi.update(appt._rawId, { status: 'Confirmed' });
+        setAppointments(prev => prev.map(a => a.id === appt.id ? { ...a, status: 'Confirmed' } : a));
+      } else {
+        await patientAppointmentsApi.update(appt.id, {
+          patientId: appt.patientId, doctorId: appt.doctorId,
+          appointmentDate: appt.appointmentDate, type: appt.type,
+          notes: appt.notes, status: 'Completed', cancellationReason: null,
+        });
+        setAppointments(prev => prev.map(a => a.id === appt.id ? { ...a, status: 'Completed' } : a));
+      }
+    } catch { alert('Failed to update appointment.'); }
+  };
+
+  const handleComplete = async (appt) => {
+    try {
+      if (appt._source === 'mother') {
+        await appointmentsApi.update(appt._rawId, { status: 'Completed' });
+        // Notify mother via message
+        await messagesApi.send({
+          motherId: appt.patientId,
+          doctorId,
+          content: `Your ${TYPE_LABELS[appt.type] || appt.type} appointment on ${new Date(appt.appointmentDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} has been marked as completed. Thank you for your visit.`,
+          sentByDoctor: true,
+        });
       } else {
         await patientAppointmentsApi.update(appt.id, {
           patientId: appt.patientId, doctorId: appt.doctorId,
@@ -87,8 +111,8 @@ const DoctorAppointments = () => {
           notes: appt.notes, status: 'Completed', cancellationReason: null,
         });
       }
-      setAppointments(prev => prev.map(a => a.id === appt.id ? { ...a, status: 'Confirmed' } : a));
-    } catch { alert('Failed to approve appointment.'); }
+      setAppointments(prev => prev.map(a => a.id === appt.id ? { ...a, status: 'Completed' } : a));
+    } catch { alert('Failed to mark as completed.'); }
   };
 
   const handleRejectConfirm = async () => {
@@ -133,6 +157,13 @@ const DoctorAppointments = () => {
     a.href = url; a.download = `my-appointments-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
     URL.revokeObjectURL(url);
   };
+
+  const typeBadge = (type) => TYPE_LABELS[type] ? 'bg-teal-50 text-teal-700' : 'bg-gray-100 text-gray-500';
+  const typeLabel = (type) => TYPE_LABELS[type] || type || 'Unknown';
+  const statusDot = (status) => ({
+    Scheduled: 'bg-teal-500', Confirmed: 'bg-blue-500',
+    Completed: 'bg-green-500', Cancelled: 'bg-red-400', Waiting: 'bg-orange-400'
+  }[status] || 'bg-gray-400');
 
   const now = new Date();
 
@@ -255,23 +286,23 @@ const DoctorAppointments = () => {
                 <tbody className="divide-y divide-gray-50">
                   {appointments.filter(a => new Date(a.appointmentDate).toDateString() === new Date().toDateString()).map(appt => {
                     const isUrgent = appt.type === 'UrgentFollowUp';
-                    const colors = STATUS_STYLES[appt.status] || { badge: 'bg-gray-50 text-gray-400', dot: 'bg-gray-400' };
+                    const name = appt.patientName || appt.motherName || 'Unknown';
                     return (
                       <tr key={appt.id} className={`hover:bg-gray-50/50 transition-all group ${isUrgent ? 'bg-red-50/10' : ''}`}>
                         <td className="p-8">
                           <div className="flex items-center gap-4">
-                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-lg shadow-sm group-hover:scale-110 transition-transform ${isUrgent ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-teal-50 text-teal-700'}`}>
-                              {appt.patientName?.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${isUrgent ? 'bg-red-100 text-[#C62828] border-2 border-red-200' : 'bg-teal-50 text-teal-600'}`}>
+                              {name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                             </div>
-                            <div className="space-y-0.5">
-                              <p className={`font-bold text-sm ${isUrgent ? 'text-red-600' : 'text-gray-900'} group-hover:text-mamacare-teal transition-colors`}>{appt.patientName}</p>
-                              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">ID: MP00{appt.patientId}</p>
+                            <div>
+                              <p className={`font-bold ${isUrgent ? 'text-[#C62828]' : 'text-gray-900'}`}>{name}</p>
+                              <p className="text-[12px] font-bold text-gray-600 mt-0.5">ID: #{appt.patientId || appt.motherId}</p>
                             </div>
                           </div>
                         </td>
-                        <td className="p-8">
-                          <div className="flex items-center gap-2 text-sm font-bold text-gray-900">
-                            <Clock size={16} className="text-mamacare-teal" />
+                        <td className="px-8 py-6">
+                          <div className={`flex items-center gap-2 text-sm font-bold ${isUrgent ? 'text-[#C62828]' : 'text-gray-900'}`}>
+                            <Clock size={16} className={isUrgent ? 'text-[#C62828]' : 'text-[#005C5C]'} />
                             {new Date(appt.appointmentDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                           </div>
                         </td>
@@ -287,14 +318,16 @@ const DoctorAppointments = () => {
                             {appt.status}
                           </span>
                         </td>
-                        <td className="p-8 text-right">
-                          <div className="flex items-center justify-end gap-3 transition-opacity">
-                            <button className="p-3 hover:bg-gray-100 rounded-xl text-gray-400 hover:text-mamacare-teal transition-all" title="View Details">
-                              <FileText size={18} />
+                        <td className="px-8 py-6">
+                          <div className="flex items-center justify-end gap-4 text-gray-400">
+                            <button
+                              onClick={() => handleComplete(appt)}
+                              title="Mark as completed"
+                              className="hover:scale-110 transition-transform cursor-pointer text-[#005C5C] hover:text-green-600">
+                              <CheckCircle2 size={16} />
                             </button>
-                            <button className="p-3 bg-teal-50 text-mamacare-teal rounded-xl hover:bg-mamacare-teal hover:text-white transition-all shadow-sm" title="Quick Action">
-                              <CheckCircle size={18} />
-                            </button>
+                            <Calendar size={16} className="hover:text-gray-900 hover:scale-110 transition-transform cursor-pointer" />
+                            <Bell size={16} className="hover:text-gray-900 hover:scale-110 transition-transform cursor-pointer" />
                           </div>
                         </td>
                       </tr>

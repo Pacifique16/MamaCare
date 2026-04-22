@@ -5,7 +5,6 @@ import {
   Users, 
   Calendar, 
   MessageSquare, 
-  BookOpen, 
   Settings,
   LogOut,
   Baby
@@ -22,7 +21,6 @@ const DoctorSidebar = () => {
         { icon: Users, label: 'Patients', path: '/doctor/patients' },
         { icon: Calendar, label: 'Appointments', path: '/doctor/appointments' },
         { icon: MessageSquare, label: 'Messaging', path: '/doctor/messaging' },
-        { icon: BookOpen, label: 'Library', path: '/doctor/library' },
     ];
 
     return (
