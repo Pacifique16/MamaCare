@@ -2,17 +2,17 @@ import React, { useEffect, useState, useMemo } from 'react';
 import DoctorLayout from '../../components/layout/DoctorLayout';
 import {
   Search, CalendarDays, CheckCircle, XCircle, Clock,
-  ArrowUpDown, Download, Plus, User, Tag, FileText, Stethoscope
+  ArrowUpDown, Download, Plus, User, Tag, FileText, Stethoscope, ChevronLeft, ChevronRight, ChevronDown
 } from 'lucide-react';
 import { patientAppointmentsApi, appointmentsApi } from '../../api/services';
 import { useAuth } from '../../context/AuthContext';
 
 const STATUS_STYLES = {
-  Scheduled: 'bg-teal-50 text-mamacare-teal',
-  Confirmed: 'bg-blue-50 text-blue-600',
-  Completed: 'bg-green-50 text-green-600',
-  Cancelled: 'bg-red-50 text-red-400',
-  Waiting: 'bg-orange-50 text-orange-500',
+  Scheduled: { badge: 'bg-teal-50 text-mamacare-teal', dot: 'bg-mamacare-teal' },
+  Confirmed: { badge: 'bg-blue-50 text-blue-600', dot: 'bg-blue-500' },
+  Completed: { badge: 'bg-green-50 text-green-600', dot: 'bg-green-500' },
+  Cancelled: { badge: 'bg-red-50 text-red-400', dot: 'bg-red-400' },
+  Waiting: { badge: 'bg-orange-50 text-orange-500', dot: 'bg-orange-500' },
 };
 
 const TYPE_LABELS = {
@@ -26,7 +26,7 @@ const TYPE_LABELS = {
 };
 
 const TABS = ['All', 'Upcoming', 'Past'];
-const PAGE_SIZE = 9;
+const PAGE_SIZE = 4;
 
 const DoctorAppointments = () => {
   const { user } = useAuth();
@@ -37,6 +37,7 @@ const DoctorAppointments = () => {
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [isTabDropdownOpen, setIsTabDropdownOpen] = useState(false);
   const [sort, setSort] = useState('date_asc');
   const [page, setPage] = useState(1);
 
@@ -163,99 +164,137 @@ const DoctorAppointments = () => {
   const completed = appointments.filter(a => a.status === 'Completed').length;
   const cancelled = appointments.filter(a => a.status === 'Cancelled').length;
 
-  return (
-    <DoctorLayout title="My Appointments" subtitle="Review, approve or reject patient appointment requests.">
-      <div className="space-y-10">
+  const stats = [
+    { label: 'Scheduled', value: scheduled, icon: CalendarDays, color: 'text-teal-600', bg: 'bg-teal-50', progress: `${(scheduled/(appointments.length||1))*100}%` },
+    { label: 'Completed', value: completed, icon: CheckCircle, color: 'text-green-500', bg: 'bg-green-50', progress: `${(completed/(appointments.length||1))*100}%` },
+    { label: 'Cancelled', value: cancelled, icon: XCircle, color: 'text-red-400', bg: 'bg-red-50', progress: `${(cancelled/(appointments.length||1))*100}%` },
+    { label: 'Total Visits', value: appointments.length, icon: Stethoscope, color: 'text-blue-500', bg: 'bg-blue-50', progress: '100%' },
+  ];
 
-        {/* Stats */}
+  return (
+    <DoctorLayout>
+      <div className="max-w-7xl mx-auto space-y-12 font-poppins animate-in fade-in duration-1000">
+        
+        {/* Premium Branding Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-gray-100 pb-10">
+          <div className="space-y-1">
+            <span className="text-[10px] font-bold text-mamacare-teal uppercase tracking-[0.25em]">CLINICAL SCHEDULE</span>
+            <h1 className="text-6xl font-bold text-gray-900 tracking-tighter">My Appointments</h1>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-100 rounded-lg shadow-sm">
+              <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+              <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">
+                Live Status Tracker
+              </span>
+            </div>
+            <button className="bg-mamacare-teal text-white px-8 py-3 rounded-xl font-bold text-[13px] shadow-lg shadow-mamacare-teal/10 transition-all hover:bg-[#004848] active:scale-[0.98] flex items-center gap-2">
+              <Plus size={18} />
+              Book Appointment
+            </button>
+          </div>
+        </div>
+
+        {/* High-Fidelity Stat Cards */}
         {!loading && (
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { label: 'Scheduled', value: scheduled, icon: CalendarDays, color: 'bg-teal-50 text-mamacare-teal' },
-              { label: 'Completed', value: completed, icon: CheckCircle, color: 'bg-green-50 text-green-500' },
-              { label: 'Cancelled', value: cancelled, icon: XCircle, color: 'bg-red-50 text-red-400' },
-            ].map(s => (
-              <div key={s.label} className="bg-white rounded-[2.5rem] p-8 border border-white shadow-card flex items-center justify-between">
-                <div className="space-y-2">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{s.label}</p>
-                  <h3 className="text-5xl font-extrabold text-gray-900 tracking-tighter">{s.value}</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {stats.map((s, i) => (
+              <div key={i} className="bg-white rounded-[2.5rem] p-8 border border-white shadow-card transition-all duration-300 hover:shadow-xl hover:scale-[1.02] group relative overflow-hidden">
+                <div className="flex justify-between items-start relative z-10">
+                  <div className="space-y-4">
+                    <div className="space-y-1">
+                      <p className="text-[14px] font-semibold text-gray-700">{s.label}</p>
+                      <h3 className="text-4xl font-bold text-gray-900 tracking-tight">{s.value}</h3>
+                    </div>
+                  </div>
+                  <div className={`w-14 h-14 ${s.bg} ${s.color} rounded-2xl flex items-center justify-center transition-transform group-hover:rotate-12`}>
+                    <s.icon size={24} />
+                  </div>
                 </div>
-                <div className={`w-14 h-14 ${s.color} rounded-2xl flex items-center justify-center`}>
-                  <s.icon size={24} />
+                <div className="absolute bottom-10 left-0 h-1 bg-gray-50/50 w-full">
+                  <div className={`h-full ${s.color.replace('text', 'bg')} rounded-r-full transition-all duration-1000`} style={{ width: s.progress }} />
                 </div>
               </div>
             ))}
           </div>
         )}
 
-      {/* Today's Schedule */}
-      <div className="mb-14">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Today's Schedule</h2>
-          <p className="text-sm font-bold text-gray-500">
-            {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-          </p>
-        </div>
+        {/* Today's Schedule Table */}
+        <div className="bg-white rounded-[2.5rem] border border-white shadow-card overflow-hidden">
+          <div className="p-10 flex justify-between items-center border-b border-gray-50 bg-white">
+            <div className="space-y-1">
+              <span className="text-[9px] font-black text-mamacare-teal uppercase tracking-[0.2em]">CURRENT VISITS</span>
+              <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Today's Schedule</h2>
+            </div>
+            <p className="bg-blue-50 text-blue-800 text-[10px] font-black  uppercase tracking-widest  px-4 py-2 rounded-lg">
+              {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+            </p>
+          </div>
 
-        <div className="bg-white rounded-[2.5rem] border border-gray-100 overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] pb-4">
           {loading ? (
             <div className="p-10 space-y-4">
               {[...Array(3)].map((_, i) => <div key={i} className="h-16 bg-gray-50 rounded-2xl animate-pulse" />)}
             </div>
-          ) : filtered.length === 0 ? (
-            <p className="p-10 text-gray-400 font-medium text-sm text-center">No appointments scheduled for today.</p>
+          ) : appointments.filter(a => new Date(a.appointmentDate).toDateString() === new Date().toDateString()).length === 0 ? (
+            <div className="p-20 text-center space-y-4">
+              <CalendarDays size={48} className="text-gray-100 mx-auto" />
+              <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">No appointments scheduled for today.</p>
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-gray-50/50">
-                    <th className="px-8 py-6 text-[10px] font-extrabold text-gray-400 uppercase tracking-[0.15em]">PATIENT</th>
-                    <th className="px-8 py-6 text-[10px] font-extrabold text-gray-400 uppercase tracking-[0.15em]">TIME</th>
-                    <th className="px-8 py-6 text-[10px] font-extrabold text-gray-400 uppercase tracking-[0.15em]">VISIT TYPE</th>
-                    <th className="px-8 py-6 text-[10px] font-extrabold text-gray-400 uppercase tracking-[0.15em]">STATUS</th>
-                    <th className="px-8 py-6 text-[10px] font-extrabold text-gray-400 uppercase tracking-[0.15em] text-right">ACTIONS</th>
+                    <th className="p-8 text-[14px] font-semibold text-gray-600">Patient</th>
+                    <th className="p-8 text-[14px] font-semibold text-gray-600">Time</th>
+                    <th className="p-8 text-[14px] font-semibold text-gray-600">Visit Type</th>
+                    <th className="p-8 text-[14px] font-semibold text-gray-600">Status</th>
+                    <th className="p-8 text-[14px] font-semibold text-gray-600 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {filtered.map(appt => {
+                  {appointments.filter(a => new Date(a.appointmentDate).toDateString() === new Date().toDateString()).map(appt => {
                     const isUrgent = appt.type === 'UrgentFollowUp';
+                    const colors = STATUS_STYLES[appt.status] || { badge: 'bg-gray-50 text-gray-400', dot: 'bg-gray-400' };
                     return (
-                      <tr key={appt.id} className={`hover:bg-gray-50/50 transition-colors ${isUrgent ? 'bg-red-50/30' : ''}`}>
-                        <td className="px-8 py-6">
+                      <tr key={appt.id} className={`hover:bg-gray-50/50 transition-all group ${isUrgent ? 'bg-red-50/10' : ''}`}>
+                        <td className="p-8">
                           <div className="flex items-center gap-4">
-                            <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${isUrgent ? 'bg-red-100 text-[#C62828] border-2 border-red-200' : 'bg-teal-50 text-teal-600'}`}>
-                              {appt.motherName.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-lg shadow-sm group-hover:scale-110 transition-transform ${isUrgent ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-teal-50 text-teal-700'}`}>
+                              {appt.patientName?.split(' ').map(n => n[0]).join('').slice(0, 2)}
                             </div>
-                            <div>
-                              <p className={`font-bold ${isUrgent ? 'text-[#C62828]' : 'text-gray-900'}`}>{appt.motherName}</p>
-                              <p className="text-[12px] font-bold text-gray-600 mt-0.5">ID: #{appt.motherId}</p>
+                            <div className="space-y-0.5">
+                              <p className={`font-bold text-sm ${isUrgent ? 'text-red-600' : 'text-gray-900'} group-hover:text-mamacare-teal transition-colors`}>{appt.patientName}</p>
+                              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">ID: MP00{appt.patientId}</p>
                             </div>
                           </div>
                         </td>
-                        <td className="px-8 py-6">
-                          <div className={`flex items-center gap-2 text-sm font-bold ${isUrgent ? 'text-[#C62828]' : 'text-gray-900'}`}>
-                            <Clock size={16} className={isUrgent ? 'text-[#C62828]' : 'text-[#005C5C]'} />
-                            {new Date(appt.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                        <td className="p-8">
+                          <div className="flex items-center gap-2 text-sm font-bold text-gray-900">
+                            <Clock size={16} className="text-mamacare-teal" />
+                            {new Date(appt.appointmentDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                           </div>
                         </td>
-                        <td className="px-8 py-6">
-                          <span className={`px-4 py-1.5 font-bold text-[10px] uppercase tracking-widest rounded-full ${typeBadge(appt.type)}`}>
-                            {typeLabel(appt.type)}
+                        <td className="p-8">
+                          <span className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest inline-flex items-center gap-2 ${isUrgent ? 'bg-red-600 text-white shadow-lg shadow-red-200' : 'bg-gray-50 text-gray-600 border border-gray-100'}`}>
+                            {isUrgent && <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />}
+                            {TYPE_LABELS[appt.type] || appt.type}
                           </span>
                         </td>
-                        <td className="px-8 py-6">
-                          <div className="flex items-center gap-2">
-                            <div className={`w-2 h-2 rounded-full ${statusDot(appt.status)} ${isUrgent ? 'animate-pulse' : ''}`}></div>
-                            <span className={`text-sm font-bold ${isUrgent ? 'text-[#C62828]' : 'text-gray-900'}`}>
-                              {isUrgent ? 'URGENT' : appt.status}
-                            </span>
-                          </div>
+                        <td className="p-8">
+                          <span className={`px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest inline-flex items-center gap-2 ${colors.badge}`}>
+                            <div className={`w-1.5 h-1.5 rounded-full ${colors.dot} animate-pulse`} />
+                            {appt.status}
+                          </span>
                         </td>
-                        <td className="px-8 py-6">
-                          <div className="flex items-center justify-end gap-4 text-gray-400">
-                            <CheckCircle2 size={16} className="text-[#005C5C] hover:scale-110 transition-transform cursor-pointer" />
-                            <Calendar size={16} className="hover:text-gray-900 hover:scale-110 transition-transform cursor-pointer" />
-                            <Bell size={16} className="hover:text-gray-900 hover:scale-110 transition-transform cursor-pointer" />
+                        <td className="p-8 text-right">
+                          <div className="flex items-center justify-end gap-3 transition-opacity">
+                            <button className="p-3 hover:bg-gray-100 rounded-xl text-gray-400 hover:text-mamacare-teal transition-all" title="View Details">
+                              <FileText size={18} />
+                            </button>
+                            <button className="p-3 bg-teal-50 text-mamacare-teal rounded-xl hover:bg-mamacare-teal hover:text-white transition-all shadow-sm" title="Quick Action">
+                              <CheckCircle size={18} />
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -265,53 +304,44 @@ const DoctorAppointments = () => {
               </table>
             </div>
           )}
-
-          <div className="px-8 pt-6 border-t border-gray-50 flex items-center justify-between text-sm text-gray-500 font-medium">
-            <p>Showing {filtered.length} appointment{filtered.length !== 1 ? 's' : ''} for today</p>
-          </div>
         </div>
-      </div>
 
-      {/* Filters */}
-      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center flex-wrap">
-        <div className="relative flex-1 min-w-[200px]">
-          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+      {/* Filters Section */}
+      <div className="bg-white rounded-[2.5rem] p-10 border border-white shadow-card flex flex-col md:flex-row gap-6 items-center">
+        <div className="relative flex-1 w-full group">
+          <Search size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-mamacare-teal transition-colors" />
           <input
             type="text" value={search} onChange={e => setSearch(e.target.value)}
-            placeholder="Search by patient or type..."
-            className="w-full pl-10 pr-4 py-3 bg-white border border-gray-100 rounded-2xl text-sm font-medium text-gray-700 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-mamacare-teal/20"
+            placeholder="Search by patient or visit type..."
+            className="w-full pl-16 pr-8 py-5 bg-gray-50/50 border border-transparent rounded-[2rem] text-sm font-medium text-gray-900 focus:bg-white focus:border-mamacare-teal/20 focus:ring-4 focus:ring-mamacare-teal/5 transition-all outline-none"
           />
         </div>
-        <div className="flex gap-1 bg-gray-100 p-1 rounded-2xl">
+
+        <div className="flex gap-4 items-center shrink-0 w-full md:w-auto">
+          <select 
+            value={activeTab} 
+            onChange={e => setActiveTab(e.target.value)}
+            className="flex-1 md:flex-none px-8 py-5 bg-gray-50/50 border border-transparent rounded-[2rem] text-[10px] font-black uppercase tracking-widest text-gray-600 focus:bg-white focus:border-mamacare-teal/20 focus:ring-4 focus:ring-mamacare-teal/5 transition-all outline-none"
+          >
             {TABS.map(tab => (
-              <button key={tab} onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 rounded-xl text-[11px] font-bold uppercase tracking-widest transition-all ${activeTab === tab ? 'bg-white text-mamacare-teal shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}>
-                {tab}
-              </button>
+              <option key={tab} value={tab}>{tab === 'All' ? 'All Schedules' : tab}</option>
             ))}
-          </div>
+          </select>
+
           <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
-            className="px-4 py-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-500 focus:outline-none">
+            className="flex-1 md:flex-none px-8 py-5 bg-gray-50/50 border border-transparent rounded-[2rem] text-[10px] font-black uppercase tracking-widest text-gray-600 focus:bg-white focus:border-mamacare-teal/20 focus:ring-4 focus:ring-mamacare-teal/5 transition-all outline-none">
             <option value="All">All Statuses</option>
             <option value="Scheduled">Scheduled</option>
+            <option value="Confirmed">Confirmed</option>
             <option value="Completed">Completed</option>
             <option value="Cancelled">Cancelled</option>
           </select>
-          <div className="flex items-center gap-2">
-            <ArrowUpDown size={14} className="text-gray-400" />
-            <select value={sort} onChange={e => setSort(e.target.value)}
-              className="px-4 py-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-500 focus:outline-none">
-              <option value="date_asc">Date ↑</option>
-              <option value="date_desc">Date ↓</option>
-              <option value="status">Status</option>
-              <option value="patient">Patient</option>
-            </select>
-          </div>
           <button onClick={handleExport}
-            className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-100 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-gray-500 hover:text-mamacare-teal transition-all">
-            <Download size={14} /> Export CSV
+            className="px-8 py-5 bg-mamacare-teal/5 text-mamacare-teal rounded-[2rem] text-[10px] font-black uppercase tracking-widest hover:bg-mamacare-teal hover:text-white transition-all flex items-center gap-2">
+            <Download size={14} /> Export
           </button>
         </div>
+      </div>
 
         {/* Loading */}
         {loading && (
@@ -335,98 +365,98 @@ const DoctorAppointments = () => {
         {/* Cards Grid */}
         {!loading && paginated.length > 0 && (
           <>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
               {paginated.map(appt => {
                 const formattedDate = new Date(appt.appointmentDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
                 const formattedTime = new Date(appt.appointmentDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
                 const isScheduled = appt.status === 'Scheduled' || appt.status === 'Waiting';
+                const colors = STATUS_STYLES[appt.status] || { badge: 'bg-gray-50 text-gray-400', dot: 'bg-gray-400' };
+                
                 return (
-                  <div key={appt.id} className="bg-white rounded-[2.5rem] p-8 border border-white shadow-card hover:shadow-2xl transition-all">
-                    <div className="flex items-start justify-between mb-6">
-                      <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-2xl bg-[#E0F2F1] flex items-center justify-center text-mamacare-teal shrink-0">
-                          <Stethoscope size={22} />
+                  <div key={appt.id} className="bg-white rounded-[2.5rem] p-10 border border-white shadow-card hover:shadow-2xl transition-all group relative overflow-hidden">
+                    <div className="flex items-start justify-between mb-8 relative z-10">
+                      <div className="flex items-center gap-5">
+                        <div className="w-16 h-16 rounded-[2rem] bg-teal-50 flex items-center justify-center text-mamacare-teal shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+                          <Stethoscope size={28} />
                         </div>
                         <div>
-                          <h3 className="font-bold text-gray-900 text-base leading-tight">{appt.patientName}</h3>
-                          <p className="text-[10px] font-semibold text-gray-400 mt-0.5">Patient</p>
+                          <h3 className="font-bold text-gray-900 text-lg group-hover:text-mamacare-teal transition-colors">{appt.patientName}</h3>
+                          <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mt-1">APPOINTMENT ID: {appt.id.toString().replace('m-', 'MA')}</p>
                         </div>
                       </div>
-                      <span className={`px-3 py-1.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest ${STATUS_STYLES[appt.status] || 'bg-gray-50 text-gray-400'}`}>
+                      <span className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest inline-flex items-center gap-2 ${colors.badge}`}>
+                        <div className={`w-1.5 h-1.5 rounded-full ${colors.dot} animate-pulse`} />
                         {appt.status}
                       </span>
                     </div>
 
-                    <div className="space-y-3 mb-8">
-                      <div className="flex items-center gap-3 text-sm text-gray-500">
-                        <CalendarDays size={14} className="text-gray-300 shrink-0" />
-                        <span className="font-medium">{formattedDate}</span>
+                    <div className="grid grid-cols-2 gap-6 mb-10 relative z-10">
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-3 text-sm text-gray-600 font-bold">
+                          <div className="w-8 h-8 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400"><CalendarDays size={14} /></div>
+                          {formattedDate}
+                        </div>
+                        <div className="flex items-center gap-3 text-sm text-gray-600 font-bold">
+                          <div className="w-8 h-8 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400"><Clock size={14} /></div>
+                          {formattedTime}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-3 text-sm text-gray-500">
-                        <Clock size={14} className="text-gray-300 shrink-0" />
-                        <span className="font-medium">{formattedTime}</span>
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-3 text-sm text-gray-600 font-bold">
+                          <div className="w-8 h-8 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400"><Tag size={14} /></div>
+                          {TYPE_LABELS[appt.type] || appt.type}
+                        </div>
+                        <div className="flex items-center gap-3 text-sm text-gray-600 font-bold">
+                          <div className="w-8 h-8 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400"><FileText size={14} /></div>
+                          {appt.notes || 'No clinical notes'}
+                        </div>
                       </div>
-                      {appt.type && (
-                        <div className="flex items-center gap-3 text-sm text-gray-500">
-                          <Tag size={14} className="text-gray-300 shrink-0" />
-                          <span className="font-medium">{TYPE_LABELS[appt.type] || appt.type}</span>
-                        </div>
-                      )}
-                      {appt.notes && (
-                        <div className="flex items-start gap-3 text-sm text-gray-500">
-                          <FileText size={14} className="text-gray-300 shrink-0 mt-0.5" />
-                          <span className="font-medium">{appt.notes}</span>
-                        </div>
-                      )}
-                      {appt.status === 'Cancelled' && appt.cancellationReason && (
-                        <div className="flex items-start gap-3 text-sm text-red-400">
-                          <XCircle size={14} className="shrink-0 mt-0.5" />
-                          <span className="font-medium">{appt.cancellationReason}</span>
-                        </div>
-                      )}
                     </div>
 
                     {isScheduled && (
-                      <div className="flex items-center gap-3 pt-6 border-t border-gray-50">
+                      <div className="flex items-center gap-4 pt-8 border-t border-gray-50 relative z-10">
                         <button onClick={() => handleApprove(appt)}
-                          className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-teal-50 hover:bg-mamacare-teal text-mamacare-teal hover:text-white rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all">
-                          <CheckCircle size={13} /> Approve
+                          className="flex-1 flex items-center justify-center gap-3 py-4 bg-mamacare-teal text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-[#004848] transition-all shadow-lg shadow-mamacare-teal/10 active:scale-[0.98]">
+                          <CheckCircle size={16} /> Confirm Visit
                         </button>
                         <button onClick={() => { setRejectTarget(appt); setRejectReason(''); }}
-                          className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-red-50 hover:bg-red-500 text-red-400 hover:text-white rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all">
-                          <XCircle size={13} /> Reject
+                          className="flex-1 flex items-center justify-center gap-3 py-4 bg-red-50 text-red-600 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all active:scale-[0.98]">
+                          <XCircle size={16} /> Cancel
                         </button>
                       </div>
                     )}
+                    
                     {!isScheduled && (
-                      <div className="pt-6 border-t border-gray-50 text-center text-[10px] font-bold text-gray-300 uppercase tracking-widest">
-                        {appt.status === 'Completed' ? '✓ Visit completed' : appt.status === 'Confirmed' ? '✓ Appointment confirmed' : '✗ Appointment cancelled'}
+                      <div className="pt-8 border-t border-gray-50 text-center relative z-10">
+                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                          {appt.status === 'Completed' ? 'Session finalized' : appt.status === 'Confirmed' ? 'Visit secured' : 'Engagement terminated'}
+                        </span>
                       </div>
                     )}
+
+                    {/* Subtle background decoration */}
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-gray-50/50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
                   </div>
                 );
               })}
             </div>
 
             {totalPages > 1 && (
-              <div className="flex items-center justify-between pt-4">
-                <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
+              <div className="p-8 bg-gray-50/50 flex items-center justify-between border-t border-gray-50 rounded-[2rem] mt-8">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                   Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length}
                 </p>
-                <div className="flex gap-2">
-                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                    className="px-4 py-2 bg-white border border-gray-100 rounded-xl text-[11px] font-bold text-gray-400 hover:text-mamacare-teal disabled:opacity-40 transition-all">
-                    Previous
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="p-3 text-gray-300 hover:text-mamacare-teal transition-all disabled:opacity-30">
+                    <ChevronLeft size={20} />
                   </button>
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
-                    <button key={p} onClick={() => setPage(p)}
-                      className={`w-9 h-9 rounded-xl text-[11px] font-bold transition-all ${page === p ? 'bg-mamacare-teal text-white' : 'bg-white border border-gray-100 text-gray-400 hover:text-mamacare-teal'}`}>
+                    <button key={p} onClick={() => setPage(p)} className={`w-10 h-10 rounded-xl font-bold text-sm transition-all ${p === page ? 'bg-mamacare-teal text-white shadow-lg shadow-mamacare-teal/20' : 'text-gray-400 hover:bg-white'}`}>
                       {p}
                     </button>
                   ))}
-                  <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                    className="px-4 py-2 bg-white border border-gray-100 rounded-xl text-[11px] font-bold text-gray-400 hover:text-mamacare-teal disabled:opacity-40 transition-all">
-                    Next
+                  <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="p-3 text-gray-400 hover:text-mamacare-teal transition-all disabled:opacity-30">
+                    <ChevronRight size={20} />
                   </button>
                 </div>
               </div>

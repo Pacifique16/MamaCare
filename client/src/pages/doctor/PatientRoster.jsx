@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DoctorLayout from '../../components/layout/DoctorLayout';
-import { AlertTriangle, Calendar, Eye, MessageSquare, Plus, X, Search, ChevronDown, Activity, Users, ClipboardCheck } from 'lucide-react';
+import { AlertTriangle, Calendar, Eye, MessageSquare, Plus, X, Search, ChevronDown, Activity, Users, ClipboardCheck, ChevronLeft, ChevronRight } from 'lucide-react';
 import { doctorsApi, mothersApi, appointmentsApi } from '../../api/services';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
@@ -12,11 +12,14 @@ const riskColor = (risk) => ({
   Low: { badge: 'bg-teal-50 text-teal-600', dot: 'bg-teal-500' },
 }[risk] || { badge: 'bg-gray-50 text-gray-400', dot: 'bg-gray-400' });
 
+const PAGE_SIZE = 4;
+
 const PatientRoster = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const doctorId = user?.doctorId || 1;
   const [patients, setPatients] = useState([]);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     doctorsApi.getPatients(doctorId).then(r => setPatients(r.data)).catch(() => {});
@@ -68,6 +71,9 @@ const PatientRoster = () => {
     </button>
   );
 
+  const totalPages = Math.max(1, Math.ceil(patients.length / PAGE_SIZE));
+  const paginatedPatients = patients.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
   return (
     <DoctorLayout>
       <div className="max-w-7xl mx-auto space-y-12 font-poppins animate-in fade-in duration-1000">
@@ -107,17 +113,17 @@ const PatientRoster = () => {
               <div className="flex justify-between items-start relative z-10">
                 <div className="space-y-4">
                   <div className="space-y-1">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{stat.title}</p>
+                    <p className="text-[14px] font-semibold text-gray-700">{stat.title}</p>
                     <h3 className="text-4xl font-bold text-gray-900 tracking-tight">{stat.value}</h3>
                   </div>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{stat.change}</p>
+                  <p className="text-[10px] font-medium text-gray-600 uppercase tracking-widest">{stat.change}</p>
                 </div>
                 <div className={`w-14 h-14 ${stat.bg} ${stat.color} rounded-2xl flex items-center justify-center transition-transform group-hover:rotate-12`}>
                   <stat.icon size={24} />
                 </div>
               </div>
-              <div className="absolute bottom-0 left-0 h-1.5 bg-gray-50 w-full">
-                <div className={`h-full ${stat.color.replace('text', 'bg')} rounded-full`} style={{ width: stat.progress }} />
+              <div className="absolute bottom-10 left-0 h-1 bg-gray-50/50 w-full">
+                <div className={`h-full ${stat.color.replace('text', 'bg')} rounded-r-full transition-all duration-1000`} style={{ width: stat.progress }} />
               </div>
             </div>
           ))}
@@ -151,7 +157,7 @@ const PatientRoster = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {patients.map((p) => {
+                {paginatedPatients.map((p) => {
                   const colors = riskColor(p.riskLevel);
                   const initials = p.fullName.split(' ').map(n => n[0]).join('').slice(0, 2);
                   return (
@@ -202,13 +208,27 @@ const PatientRoster = () => {
               </tbody>
             </table>
           </div>
-          <div className="p-8 border-t border-gray-50 flex items-center justify-between text-[11px] font-black text-gray-400 uppercase tracking-widest bg-gray-50/30">
-            <p>Showing {patients.length} Registered Patients</p>
-            <div className="flex gap-2">
-              <button className="px-4 py-2 bg-white rounded-lg border border-gray-100 hover:bg-gray-50 transition-all disabled:opacity-30">Previous</button>
-              <button className="px-4 py-2 bg-white rounded-lg border border-gray-100 hover:bg-gray-50 transition-all">Next</button>
+          
+          {totalPages > 1 && (
+            <div className="p-8 bg-gray-50/50 flex items-center justify-between border-t border-gray-50">
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, patients.length)} of {patients.length}
+              </p>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="p-3 text-gray-300 hover:text-mamacare-teal transition-all disabled:opacity-30">
+                  <ChevronLeft size={20} />
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                  <button key={p} onClick={() => setPage(p)} className={`w-10 h-10 rounded-xl font-bold text-sm transition-all ${p === page ? 'bg-mamacare-teal text-white shadow-lg shadow-mamacare-teal/20' : 'text-gray-400 hover:bg-white'}`}>
+                    {p}
+                  </button>
+                ))}
+                <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="p-3 text-gray-400 hover:text-mamacare-teal transition-all disabled:opacity-30">
+                  <ChevronRight size={20} />
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Modal Polishing */}

@@ -11,12 +11,16 @@ import {
   FileText,
   Send,
   Activity,
-  ChevronDown
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import DoctorLayout from '../components/layout/DoctorLayout';
 import { doctorsApi, messagesApi } from '../api/services';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+
+const PAGE_SIZE = 4;
 
 const DoctorDashboard = () => {
   const { user } = useAuth();
@@ -29,6 +33,7 @@ const DoctorDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [filterOpen, setFilterOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState('All');
+  const [page, setPage] = useState(1);
   const navigate = useNavigate();
 
   // Focused patient is always the first high-risk one
@@ -66,6 +71,7 @@ const DoctorDashboard = () => {
     setActiveFilter(risk);
     setFilterOpen(false);
     setPatients(risk === 'All' ? allPatients : allPatients.filter(p => p.riskLevel === risk));
+    setPage(1);
   };
 
   const statCards = [
@@ -80,6 +86,9 @@ const DoctorDashboard = () => {
     if (risk === 'Medium') return 'bg-orange-100 text-orange-600';
     return 'bg-teal-100 text-teal-600';
   };
+
+  const totalPages = Math.max(1, Math.ceil(patients.length / PAGE_SIZE));
+  const paginatedPatients = patients.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
     <DoctorLayout>
@@ -150,9 +159,9 @@ const DoctorDashboard = () => {
                     {stat.value}
                   </h3>
 
-                  <div className="h-1.5 w-full bg-black/5 rounded-full overflow-hidden">
+                  <div className="absolute bottom-10 left-0 h-1 bg-gray-50/50 w-full">
                     <div 
-                      className={`h-full ${stat.color.replace('text-', 'bg-')}`}
+                      className={`h-full ${stat.color.replace('text-', 'bg-')} rounded-r-full transition-all duration-1000`}
                       style={{ width: `${Math.max(15, (stat.value / Math.max(1, patients.length)) * 100)}%` }}
                     />
                   </div>
@@ -215,7 +224,7 @@ const DoctorDashboard = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
-                    {patients.map((patient, idx) => (
+                    {paginatedPatients.map((patient, idx) => (
                       <tr key={patient.id} className={`group hover:bg-gray-50/30 transition-all ${patient.riskLevel === 'High' ? 'bg-red-50/10' : ''}`}>
                         <td className="p-6">
                           <div className="flex items-center gap-4">
@@ -248,6 +257,27 @@ const DoctorDashboard = () => {
                     ))}
                   </tbody>
                 </table>
+
+                {totalPages > 1 && (
+                  <div className="p-6 bg-gray-50/30 flex items-center justify-between border-t border-gray-50">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                      Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, patients.length)} of {patients.length}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="p-2 text-gray-300 hover:text-mamacare-teal transition-all disabled:opacity-30">
+                        <ChevronLeft size={18} />
+                      </button>
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                        <button key={p} onClick={() => setPage(p)} className={`w-8 h-8 rounded-lg font-bold text-[11px] transition-all ${p === page ? 'bg-mamacare-teal text-white shadow-lg shadow-mamacare-teal/20' : 'text-gray-400 hover:bg-white'}`}>
+                          {p}
+                        </button>
+                      ))}
+                      <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="p-2 text-gray-400 hover:text-mamacare-teal transition-all disabled:opacity-30">
+                        <ChevronRight size={18} />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
