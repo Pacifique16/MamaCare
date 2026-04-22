@@ -35,20 +35,41 @@ const PatientProfile = () => {
   const [prescribing, setPrescribing] = useState(false);
 
   useEffect(() => {
-    Promise.all([
-      mothersApi.getById(id),
-      mothersApi.getVitals(id),
-      mothersApi.getAppointments(id),
-      prescriptionsApi.getAll({ motherId: id }),
-      mothersApi.getTriage(id),
-    ]).then(([mRes, vRes, aRes, pRes, tRes]) => {
-      setMother(mRes.data);
-      setVitals(vRes.data || []);
-      setAppointments(aRes.data || []);
-      setPrescriptions(pRes.data || []);
-      setTriageSessions(tRes.data || []);
-    }).catch(() => {})
-      .finally(() => setLoading(false));
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // Essential data
+        const mRes = await mothersApi.getById(id);
+        setMother(mRes.data);
+
+        // Secondary data (optional)
+        const fetchSecondary = async () => {
+          try {
+            const [vRes, aRes, pRes, tRes] = await Promise.all([
+              mothersApi.getVitals(id).catch(e => ({ data: [] })),
+              mothersApi.getAppointments(id).catch(e => ({ data: [] })),
+              prescriptionsApi.getAll({ motherId: id }).catch(e => ({ data: [] })),
+              mothersApi.getTriage(id).catch(e => ({ data: [] })),
+            ]);
+            setVitals(vRes.data || []);
+            setAppointments(aRes.data || []);
+            setPrescriptions(pRes.data || []);
+            setTriageSessions(tRes.data || []);
+          } catch (err) {
+            console.error("Error fetching secondary patient data:", err);
+          }
+        };
+
+        fetchSecondary();
+      } catch (err) {
+        console.error("Critical error fetching patient profile:", err);
+        setMother(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, [id]);
 
   const handlePrescribe = async (e) => {

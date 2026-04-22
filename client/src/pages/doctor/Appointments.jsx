@@ -3,7 +3,7 @@ import DoctorLayout from '../../components/layout/DoctorLayout';
 import {
   Search, CalendarDays, CheckCircle, XCircle, Clock,
   ArrowUpDown, Download, Plus, User, Tag, FileText, Stethoscope,
-  CheckCircle2, Calendar, Bell
+  CheckCircle2, Calendar, Bell, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { patientAppointmentsApi, appointmentsApi, messagesApi, doctorsApi } from '../../api/services';
 import { useAuth } from '../../context/AuthContext';
@@ -31,7 +31,7 @@ const PAGE_SIZE = 4;
 
 const DoctorAppointments = () => {
   const { user } = useAuth();
-  const doctorId = user?.doctorId;
+  const doctorId = user?.doctorId || 1;
 
   const [appointments, setAppointments] = useState([]);
   const [scheduleMap, setScheduleMap] = useState({});
@@ -52,15 +52,20 @@ const DoctorAppointments = () => {
     if (!doctorId) return;
     setLoading(true);
     try {
+      console.log('Fetching appointments for doctor:', doctorId);
       const [patientRes, motherRes, scheduleRes] = await Promise.all([
         patientAppointmentsApi.getAll({ doctorId }),
         appointmentsApi.getAll({ doctorId }),
         doctorsApi.getSchedule(doctorId),
       ]);
+      
+      console.log('Fetch success:', { patientCount: patientRes.data.length, motherCount: motherRes.data.length });
+
       // Build a map of patientName → patientImage from the schedule endpoint
       const map = {};
       scheduleRes.data.forEach(s => { if (s.patientImage) map[s.patientName] = s.patientImage; });
       setScheduleMap(map);
+
       // Normalize mother appointments to same shape
       const fromMother = motherRes.data.map(a => ({
         id: `m-${a.id}`,
@@ -78,7 +83,12 @@ const DoctorAppointments = () => {
       const fromPatient = patientRes.data.map(a => ({ ...a, _source: 'patient' }));
       setAppointments([...fromPatient, ...fromMother]
         .sort((a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate)));
-    } catch { } finally { setLoading(false); }
+    } catch (err) {
+      console.error('Failed to fetch appointments:', err);
+      toast.error('Failed to load appointments. Please check your connection.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { fetchAppointments(); }, [doctorId]);
@@ -293,6 +303,7 @@ const DoctorAppointments = () => {
                   {appointments.filter(a => new Date(a.appointmentDate).toDateString() === new Date().toDateString()).map(appt => {
                     const isUrgent = appt.type === 'UrgentFollowUp';
                     const name = appt.patientName || appt.motherName || 'Unknown';
+                    const colors = STATUS_STYLES[appt.status] || { badge: 'bg-gray-50 text-gray-400', dot: 'bg-gray-400' };
                     return (
                       <tr key={appt.id} className={`hover:bg-gray-50/50 transition-all group ${isUrgent ? 'bg-red-50/10' : ''}`}>
                         <td className="p-8">
