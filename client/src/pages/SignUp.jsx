@@ -5,6 +5,7 @@ import { Eye, EyeOff, ArrowRight, ShieldCheck, Heart, Baby, ChevronLeft } from '
 import signupBg from '../assets/signup-bg.png';
 import { mothersApi } from '../api/services';
 import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -14,17 +15,15 @@ const SignUp = () => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
 
     // Validation
-    if (!fullName.trim()) return setError('Full name is required.');
-    if (!email.trim()) return setError('Email is required.');
-    if (password.length < 6) return setError('Password must be at least 6 characters.');
+    if (!fullName.trim()) { toast.error('Full name is required.'); return; }
+    if (!email.trim()) { toast.error('Email is required.'); return; }
+    if (password.length < 6) { toast.error('Password must be at least 6 characters.'); return; }
 
     setLoading(true);
     try {
@@ -43,6 +42,7 @@ const SignUp = () => {
 
       // Auto-login after signup
       const loginResult = await login(email, password);
+      toast.success('Account created successfully!');
       if (loginResult.success) {
         navigate('/onboarding/step-1');
       } else {
@@ -50,10 +50,8 @@ const SignUp = () => {
       }
     } catch (err) {
       console.error('Signup error:', err);
-      console.error('Response:', err.response);
-      console.error('Message:', err.message);
       const msg = err.response?.data?.title || err.response?.data || err.message || 'Account creation failed.';
-      setError(typeof msg === 'string' ? msg : 'Account creation failed.');
+      toast.error(typeof msg === 'string' ? msg : 'Account creation failed.');
     } finally {
       setLoading(false);
     }
@@ -93,12 +91,6 @@ const SignUp = () => {
           <h2 className="text-5xl font-bold text-gray-900 tracking-tight">Start Your Journey</h2>
           <p className="text-lg text-gray-500 font-medium">Join thousands of mothers receiving expert support.</p>
         </div>
-
-        {error && (
-          <div className="bg-red-50 border border-red-100 text-red-600 text-sm font-medium px-4 py-3 rounded-xl">
-            {error}
-          </div>
-        )}
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-2">

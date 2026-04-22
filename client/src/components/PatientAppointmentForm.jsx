@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { X, Clock } from 'lucide-react'
+import toast from 'react-hot-toast'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { getVerifiedDoctors, getAvailableSlots } from '../api/patientAppointmentsApi'
@@ -40,7 +41,6 @@ function PatientAppointmentForm({ appointment, onSuccess, onCancel }) {
   const [form, setForm] = useState(EMPTY_FORM)
   const [errors, setErrors] = useState({})
   const [submitting, setSubmitting] = useState(false)
-  const [submitError, setSubmitError] = useState('')
 
   useEffect(() => {
     mothersApi.getAll().then((res) => setPatients(res.data)).catch(() => {})
@@ -100,8 +100,7 @@ function PatientAppointmentForm({ appointment, onSuccess, onCancel }) {
     const errs = validate()
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
 
-    setSubmitting(true)
-    setSubmitError('')
+     setSubmitting(true)
 
     const isSystemA = true // We are transitioning to System A (Mothers)
 
@@ -126,9 +125,10 @@ function PatientAppointmentForm({ appointment, onSuccess, onCancel }) {
         }
         await appointmentsApi.create(createPayload)
       }
+      toast.success(`Appointment ${isEdit ? 'updated' : 'created'} successfully.`)
       onSuccess()
     } catch (err) {
-      setSubmitError(
+      toast.error(
         err?.response?.data?.message ||
         err?.response?.data?.title ||
         'Something went wrong. Please try again.'
@@ -327,12 +327,6 @@ function PatientAppointmentForm({ appointment, onSuccess, onCancel }) {
                 placeholder="Reason for cancellation…"
                 className="input-field"
               />
-            </div>
-          )}
-
-          {submitError && (
-            <div className="bg-red-50 border border-red-100 rounded-2xl px-5 py-4 text-red-400 text-sm font-semibold">
-              {submitError}
             </div>
           )}
 

@@ -4,6 +4,7 @@ import AuthLayout from '../components/auth/AuthLayout';
 import { Eye, EyeOff, ArrowRight, Mail, Lock, ChevronLeft } from 'lucide-react';
 import signinCharacter from '../assets/signin-character.png';
 import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -11,19 +12,18 @@ const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
     const result = await login(email, password);
     setLoading(false);
     if (!result.success) {
-      setError(result.error);
+      toast.error(result.error || 'Failed to sign in.');
       return;
     }
+    toast.success('Logged in successfully!');
     const { role } = result.user;
     if (role === 'Mother') navigate('/dashboard');
     else if (role === 'Doctor') navigate('/doctor/dashboard');
@@ -52,12 +52,6 @@ const SignIn = () => {
           <h2 className="text-5xl font-bold text-gray-900 tracking-tight">Sign In</h2>
           <p className="text-lg text-gray-500 font-medium">Continue your wellness journey</p>
         </div>
-
-        {error && (
-          <div className="bg-red-50 border border-red-100 text-red-600 text-sm font-medium px-4 py-3 rounded-xl">
-            {error}
-          </div>
-        )}
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">

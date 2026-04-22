@@ -5,6 +5,7 @@ import AdminLayout from '../components/layout/AdminLayout'
 import PatientAppointmentCard from '../components/PatientAppointmentCard'
 import PatientAppointmentForm from '../components/PatientAppointmentForm'
 import { appointmentsApi } from '../api/services'
+import toast from 'react-hot-toast'
 
 const TABS = ['All', 'Upcoming', 'Past']
 const SORT_OPTIONS = [
@@ -18,7 +19,6 @@ const PAGE_SIZE = 9
 function PatientAppointmentsPage() {
   const [appointments, setAppointments] = useState([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
   const [showForm, setShowForm] = useState(false)
   const [editingAppointment, setEditingAppointment] = useState(null)
 
@@ -38,7 +38,6 @@ function PatientAppointmentsPage() {
 
   const fetchAppointments = async () => {
     setLoading(true)
-    setError('')
     try {
       // Use the Mothers-linked appointments endpoint for stability and seeded data
       const res = await appointmentsApi.getAll()
@@ -53,7 +52,7 @@ function PatientAppointmentsPage() {
       
       setAppointments(mapped)
     } catch {
-      setError('Failed to load appointments. Please check your connection and try again.')
+      toast.error('Failed to load appointments. Please check your connection and try again.')
     } finally {
       setLoading(false)
     }
@@ -71,14 +70,16 @@ function PatientAppointmentsPage() {
     try {
       await appointmentsApi.delete(id)
       setAppointments((prev) => prev.filter((a) => a.id !== id))
+      toast.success('Appointment deleted.')
     } catch {
-      alert('Failed to delete appointment. Please try again.')
+      toast.error('Failed to delete appointment. Please try again.')
     }
   }
 
   const handleFormSuccess = () => {
     setShowForm(false)
     setEditingAppointment(null)
+    toast.success('Appointment saved.')
     fetchAppointments()
   }
 
@@ -182,7 +183,7 @@ function PatientAppointmentsPage() {
         </div>
 
         {/* Professional SaaS Stats Row */}
-        {!loading && !error && (
+        {!loading && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 font-poppins">
             {[
               { label: 'Scheduled', value: scheduled, trend: 'upcoming', progress: `${(scheduled/appointments.length)*100}%`, color: 'text-mamacare-teal' },
@@ -208,7 +209,7 @@ function PatientAppointmentsPage() {
         )}
 
         {/* Search + Filters + Sort */}
-        {!loading && !error && (
+        {!loading && (
           <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
             {/* Search */}
             <div className="relative flex-1">
@@ -282,25 +283,8 @@ function PatientAppointmentsPage() {
           </div>
         )}
 
-        {/* Error */}
-        {!loading && error && (
-          <div className="bg-white rounded-[2.5rem] p-10 border border-red-100 shadow-card flex items-center justify-between">
-            <div>
-              <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest mb-1">Error</p>
-              <p className="font-bold text-gray-900">{error}</p>
-            </div>
-            <button
-              onClick={fetchAppointments}
-              className="flex items-center gap-2 px-6 py-3 bg-red-50 hover:bg-red-100 text-red-400 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all"
-            >
-              <RefreshCw size={14} />
-              Retry
-            </button>
-          </div>
-        )}
-
         {/* Empty State */}
-        {!loading && !error && filtered.length === 0 && (
+        {!loading && paginated.length === 0 && (
           <div className="bg-white rounded-[2.5rem] p-16 border border-white shadow-card flex flex-col items-center gap-6">
             <div className="w-16 h-16 rounded-3xl bg-teal-50 text-mamacare-teal flex items-center justify-center">
               <CalendarDays size={28} />
@@ -323,7 +307,7 @@ function PatientAppointmentsPage() {
         )}
 
         {/* Appointments Grid */}
-        {!loading && !error && paginated.length > 0 && (
+        {!loading && paginated.length > 0 && (
           <>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {paginated.map((a) => (

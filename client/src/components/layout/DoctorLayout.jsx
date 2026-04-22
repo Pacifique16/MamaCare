@@ -40,10 +40,10 @@ const DoctorLayout = ({ children, title, subtitle, activeActionButton }) => {
                                 className="w-full h-11 bg-gray-50 border border-gray-100 rounded-xl pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-mamacare-teal/10 focus:bg-white transition-all"
                             />
                         </div>
-                        <div className="flex gap-2">
+                        {/* <div className="flex gap-2">
                             <button className="px-4 py-2 bg-gray-50 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-100 transition-all">Risk: All</button>
                             <button className="px-4 py-2 bg-gray-50 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-100 transition-all">Status: Active</button>
-                        </div>
+                        </div> */}
                     </div>
 
                     <div className="flex items-center gap-6 pl-10">

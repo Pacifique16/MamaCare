@@ -5,6 +5,7 @@ import { messagesApi } from '../api/services';
 import { useAuth } from '../context/AuthContext';
 import { Send, CheckCheck, MessageSquare, ChevronLeft, Phone, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const MotherMessaging = () => {
   const { user } = useAuth();
@@ -90,7 +91,10 @@ const MotherMessaging = () => {
           ? { ...d, lastMessage: content, lastMessageAt: new Date().toISOString() }
           : d
       ));
-    } catch {}
+      toast.success('Message sent');
+    } catch (error) {
+      toast.error('Failed to send message. Please try again.');
+    }
     setSending(false);
   };
 

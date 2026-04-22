@@ -21,6 +21,7 @@ import {
     Upload
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { doctorsApi } from '../../api/services';
 import { uploadToCloudinary, downloadFile, uploadCertToCloudinary } from '../../api/cloudinary';
 
@@ -32,7 +33,6 @@ const EditDoctor = () => {
     const [doctor, setDoctor] = useState(null);
     const [form, setForm] = useState({ fullName: '', phoneNumber: '', specialty: '', licenseNumber: '', institution: '', yearsOfExperience: '', bio: '' });
     const [submitting, setSubmitting] = useState(false);
-    const [saved, setSaved] = useState(false);
     const [photoFile, setPhotoFile] = useState(null);
     const [photoPreview, setPhotoPreview] = useState(null);
     const photoInputRef = useRef(null);
@@ -93,14 +93,16 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
             const res = await doctorsApi.addCertification(id, { fileName: file.name, url });
             setCerts(prev => [res.data, ...prev]);
             setCertName('');
+            toast.success('Certificate uploaded successfully.');
         } catch (err) {
             if (!err?.response) {
                 // CORS false alarm — reload certs
                 const r = await doctorsApi.getCertifications(id);
                 setCerts(r.data);
                 setCertName('');
+                toast.success('Certificate uploaded successfully.');
             } else {
-                alert('Failed to upload certificate.');
+                toast.error('Failed to upload certificate.');
             }
         }
         setUploadingCert(false);
@@ -112,9 +114,13 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
         try {
             await doctorsApi.deleteCertification(id, certId);
             setCerts(prev => prev.filter(c => c.id !== certId));
+            toast.success('Certificate deleted.');
         } catch (err) {
-            if (!err?.response) setCerts(prev => prev.filter(c => c.id !== certId));
-            else alert('Failed to delete certificate.');
+            if (!err?.response) {
+                setCerts(prev => prev.filter(c => c.id !== certId));
+                toast.success('Certificate deleted.');
+            }
+            else toast.error('Failed to delete certificate.');
         }
     };
 
@@ -140,14 +146,12 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
                 specialty: form.specialty, licenseNumber: form.licenseNumber.trim(),
                 institution: form.institution.trim(), bio: form.bio.trim(), status
             }));
-            setSaved(true);
-            setTimeout(() => setSaved(false), 3000);
+            toast.success('Changes saved successfully!');
         } catch (err) {
             if (!err?.response) {
-                setSaved(true);
-                setTimeout(() => setSaved(false), 3000);
+                toast.success('Changes saved successfully!');
             } else {
-                alert('Failed to save changes.');
+                toast.error('Failed to save changes.');
             }
         } finally { setSubmitting(false); }
     };
@@ -172,17 +176,17 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
     };
 
     const handleResetPassword = async () => {
-        if (newPassword.length < 6) { alert('Password must be at least 6 characters.'); return; }
-        if (newPassword !== confirmPassword) { alert('Passwords do not match.'); return; }
+        if (newPassword.length < 6) { toast.error('Password must be at least 6 characters.'); return; }
+        if (newPassword !== confirmPassword) { toast.error('Passwords do not match.'); return; }
         setResettingPassword(true);
         try {
             await doctorsApi.resetPassword(id, newPassword);
             setShowResetModal(false);
             setNewPassword('');
             setConfirmPassword('');
-            alert('Password updated successfully.');
+            toast.success('Password updated successfully.');
         } catch (err) {
-            alert(err?.response?.data?.message || 'Failed to reset password.');
+            toast.error(err?.response?.data?.message || 'Failed to reset password.');
         }
         setResettingPassword(false);
     };
@@ -597,7 +601,7 @@ const tabs = ['Basic Info', 'Credentials', 'Schedule', 'Activity Log'];
                                 <button onClick={handleDiscard} className="text-gray-400 font-extrabold text-xs uppercase tracking-widest hover:text-gray-600 transition-all">Discard Changes</button>
                                 <button onClick={handleSave} disabled={submitting} className="bg-[#005C5C] text-white px-10 py-5 rounded-2xl font-bold text-sm shadow-xl shadow-mamacare-teal/20 transition-all hover:scale-105 active:scale-95 flex items-center gap-3 disabled:opacity-50">
                                    <Save size={18} />
-                                   {submitting ? 'Saving...' : saved ? '✓ Saved!' : 'Save Updates'}
+                                   {submitting ? 'Saving...' : 'Save Updates'}
                                 </button>
                              </div>
                           </div>

@@ -3,6 +3,7 @@ import AdminLayout from '../../components/layout/AdminLayout';
 
 import { Users, ShieldCheck, CheckCircle2, Search, Filter, Download, Edit2, Ban, ChevronLeft, ChevronRight, Trash2, XCircle, ChevronUp, ChevronDown, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { doctorsApi } from '../../api/services';
 
 const PAGE_SIZE = 4;
@@ -22,20 +23,35 @@ const DoctorManagement = () => {
   }, []);
 
   const handleVerify = async (id) => {
-    await doctorsApi.verify(id);
-    setDoctors(prev => prev.map(d => d.id === id ? { ...d, status: 'Verified' } : d));
+    try {
+      await doctorsApi.verify(id);
+      setDoctors(prev => prev.map(d => d.id === id ? { ...d, status: 'Verified' } : d));
+      toast.success('Doctor verified successfully!');
+    } catch (err) {
+      toast.error('Failed to verify doctor.');
+    }
   };
 
   const handleSuspend = async (id) => {
     if (!window.confirm('Suspend this doctor?')) return;
-    await doctorsApi.suspend(id);
-    setDoctors(prev => prev.map(d => d.id === id ? { ...d, status: 'Inactive' } : d));
+    try {
+      await doctorsApi.suspend(id);
+      setDoctors(prev => prev.map(d => d.id === id ? { ...d, status: 'Inactive' } : d));
+      toast.success('Doctor suspended.');
+    } catch (err) {
+      toast.error('Failed to suspend doctor.');
+    }
   };
 
   const handleReject = async (id) => {
     if (!window.confirm('Reject this doctor? They will be set to Inactive.')) return;
-    await doctorsApi.suspend(id);
-    setDoctors(prev => prev.map(d => d.id === id ? { ...d, status: 'Inactive' } : d));
+    try {
+      await doctorsApi.suspend(id);
+      setDoctors(prev => prev.map(d => d.id === id ? { ...d, status: 'Inactive' } : d));
+      toast.success('Doctor rejected.');
+    } catch (err) {
+      toast.error('Failed to reject doctor.');
+    }
   };
 
   const handleDelete = async (id) => {
@@ -43,7 +59,8 @@ const DoctorManagement = () => {
     try {
       await doctorsApi.delete(id);
       setDoctors(prev => prev.filter(d => d.id !== id));
-    } catch { alert('Failed to delete doctor.'); }
+      toast.success('Doctor deleted.');
+    } catch { toast.error('Failed to delete doctor.'); }
   };
 
   const handleSort = (field) => {

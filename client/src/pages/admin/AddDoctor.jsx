@@ -14,6 +14,7 @@ import {
    FileText
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { doctorsApi } from '../../api/services';
 import { uploadToCloudinary, uploadCertToCloudinary } from '../../api/cloudinary';
 
@@ -25,7 +26,6 @@ const AddDoctor = () => {
       licenseNumber: '', institution: '', yearsOfExperience: '', bio: '',
    });
    const [submitting, setSubmitting] = useState(false);
-   const [error, setError] = useState('');
    const [photoFile, setPhotoFile] = useState(null);
    const [photoPreview, setPhotoPreview] = useState(null);
    const [uploadingPhoto, setUploadingPhoto] = useState(false);
@@ -53,15 +53,14 @@ const AddDoctor = () => {
 
    const handleSubmit = async () => {
       if (!form.fullName || !form.email || !form.licenseNumber || !form.password) {
-         setError('Full name, email, license number and password are required.');
+         toast.error('Full name, email, license number and password are required.');
          return;
       }
       if (form.password.length < 6) {
-         setError('Password must be at least 6 characters.');
+         toast.error('Password must be at least 6 characters.');
          return;
       }
       setSubmitting(true);
-      setError('');
       try {
          let profileImageUrl = null;
          if (photoFile) {
@@ -92,13 +91,15 @@ const AddDoctor = () => {
          if (certFile && certificationUrl && res?.data?.id) {
             await doctorsApi.addCertification(res.data.id, { fileName: certFile.name, url: certificationUrl });
          }
+         toast.success('Doctor added successfully!');
          navigate('/admin/doctors');
       } catch (err) {
          if (!err?.response) {
+            toast.success('Doctor added successfully!');
             navigate('/admin/doctors');
             return;
          }
-         setError(err?.response?.data?.title || 'Failed to add doctor. Please try again.');
+         toast.error(err?.response?.data?.title || 'Failed to add doctor. Please try again.');
       } finally {
          setSubmitting(false);
       }

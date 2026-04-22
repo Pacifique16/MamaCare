@@ -3,6 +3,7 @@ import AdminLayout from '../../components/layout/AdminLayout';
 import { libraryApi } from '../../api/services';
 import { uploadToCloudinary } from '../../api/cloudinary';
 import { Plus, Edit2, Trash2, BookOpen, X, Eye, EyeOff, ImagePlus } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const CATEGORIES = ['Nutrition', 'Safety', 'MentalHealth', 'FetalDevelopment', 'Fitness', 'Postpartum'];
 const CATEGORY_LABELS = { Nutrition: 'Nutrition', Safety: 'Safety', MentalHealth: 'Wellness', FetalDevelopment: 'Fetal Development', Fitness: 'Fitness', Postpartum: 'Postpartum' };
@@ -25,7 +26,6 @@ const LibraryPage = () => {
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-  const [error, setError] = useState('');
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -44,7 +44,6 @@ const LibraryPage = () => {
     setForm(EMPTY_FORM);
     setImageFile(null);
     setImagePreview('');
-    setError('');
     setModal({ mode: 'create' });
   };
 
@@ -59,11 +58,10 @@ const LibraryPage = () => {
     });
     setImageFile(null);
     setImagePreview(article.imageUrl || '');
-    setError('');
     setModal({ mode: 'edit', id: article.id });
   };
 
-  const closeModal = () => { setModal(null); setError(''); setImageFile(null); setImagePreview(''); };
+  const closeModal = () => { setModal(null); setImageFile(null); setImagePreview(''); };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -74,9 +72,8 @@ const LibraryPage = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    if (!form.title.trim()) { setError('Title is required.'); return; }
+    if (!form.title.trim()) { toast.error('Title is required.'); return; }
     setSaving(true);
-    setError('');
     try {
       let imageUrl = form.imageUrl || null;
       if (imageFile) {
@@ -96,19 +93,23 @@ const LibraryPage = () => {
           status: form.status,
         });
       }
+      toast.success(modal.mode === 'create' ? 'Article created!' : 'Article updated!');
       closeModal();
       load();
-    } catch {
-      setError('Something went wrong. Please try again.');
+    } catch (err) {
+      toast.error('Failed to save article.');
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async () => {
-    await libraryApi.delete(deleteId);
-    setDeleteId(null);
-    setArticles(prev => prev.filter(a => a.id !== deleteId));
+    try {
+      await libraryApi.delete(deleteId);
+      setDeleteId(null);
+      toast.success('Article deleted.');
+      load();
+    } catch { toast.error('Failed to delete article.'); }
   };
 
   const toggleStatus = async (article) => {
