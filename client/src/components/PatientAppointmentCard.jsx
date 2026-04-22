@@ -116,7 +116,7 @@ function PatientAppointmentCard({ appointment, onEdit, onDelete }) {
           className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-teal-50/50 hover:bg-teal-50 text-mamacare-teal rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all"
         >
           <Edit2 size={13} />
-          Edit
+          Edit 
         </button>
         <button
           onClick={() => onDelete(appointment.id)}
