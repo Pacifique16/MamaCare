@@ -102,9 +102,9 @@ const ArticleDetail = () => {
         </p>
 
         {/* Content */}
-        {article.content ? (
+        {(article.content || article.Content) ? (
           <div className="max-w-none text-gray-700 leading-relaxed space-y-4 [&_h2]:text-[#003e3d] [&_h2]:font-black [&_h2]:text-2xl [&_h2]:mt-8 [&_h2]:mb-3 [&_h3]:text-[#003e3d] [&_h3]:font-black [&_h3]:text-xl [&_h3]:mt-6 [&_h3]:mb-2 [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-1 [&_li]:text-gray-600"
-            dangerouslySetInnerHTML={{ __html: article.content }} />
+            dangerouslySetInnerHTML={{ __html: article.content || article.Content }} />
         ) : (
           <div className="bg-[#F2FBFA] rounded-[2rem] p-10 space-y-4 text-center">
             <p className="text-mamacare-teal font-bold text-lg">Full article coming soon.</p>

@@ -25,6 +25,8 @@ import PatientRoster from './pages/doctor/PatientRoster';
 import PatientProfile from './pages/doctor/PatientProfile';
 import DoctorAppointments from './pages/doctor/Appointments';
 import Messaging from './pages/doctor/Messaging'
+import DoctorLibrary from './pages/doctor/DoctorLibrary';
+import DoctorArticleDetail from './pages/doctor/DoctorArticleDetail';
 import PatientsPage from './pages/PatientsPage';
 import PatientAppointmentsPage from './pages/PatientAppointmentsPage';
 import SettingsPage from './pages/SettingsPage';
@@ -41,11 +43,24 @@ import LibraryPage from './pages/admin/LibraryPage';
 import ContactMessagesPage from './pages/admin/ContactMessagesPage';
 
 import MotherMessaging from './pages/MotherMessaging';
+import CustomToast from './components/common/CustomToast';
 
 function App() {
   return (
     <Router>
-      <Toaster position="top-center" />
+      <Toaster 
+        position="top-right"
+        gutter={16}
+        containerStyle={{
+          top: 40,
+          right: 40,
+        }}
+        toastOptions={{
+          duration: 4000,
+        }}
+      >
+        {(t) => <CustomToast t={t} />}
+      </Toaster>
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
@@ -97,6 +112,8 @@ function App() {
           <Route path="/doctor/patients/:id" element={<PatientProfile />} />
           <Route path="/doctor/appointments" element={<DoctorAppointments />} />
           <Route path="/doctor/messaging" element={<Messaging />} />
+          <Route path="/doctor/library" element={<DoctorLibrary />} />
+          <Route path="/doctor/library/:id" element={<DoctorArticleDetail />} />
         </Route>
 
         {/* Shared Management Portal (Admin & Doctor) */}

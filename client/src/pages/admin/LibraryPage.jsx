@@ -293,7 +293,6 @@ const LibraryPage = () => {
                   rows={8} className="mt-1 w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#005C5C]/20 text-sm resize-none font-mono" />
               </div>
 
-              {error && <p className="text-red-500 text-sm">{error}</p>}
 
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={closeModal}

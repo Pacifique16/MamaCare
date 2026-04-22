@@ -84,9 +84,9 @@ export const settingsApi = {
 }
 
 export const articleRequestsApi = {
-  getAll: () => api.get('/article-requests'),
-  create: (data) => api.post('/article-requests', data),
-  updateStatus: (id, status) => api.patch(`/article-requests/${id}/status`, JSON.stringify(status), { headers: { 'Content-Type': 'application/json' } }),
+  getAll: () => api.get('/ArticleRequests'),
+  create: (data) => api.post('/ArticleRequests', data),
+  updateStatus: (id, status) => api.patch(`/ArticleRequests/${id}/status`, JSON.stringify(status), { headers: { 'Content-Type': 'application/json' } }),
 }
 
 export const contactMessagesApi = {
