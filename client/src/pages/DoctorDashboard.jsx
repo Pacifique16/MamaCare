@@ -238,8 +238,11 @@ const DoctorDashboard = () => {
                       <tr key={patient.id} className={`group hover:bg-gray-50/30 transition-all ${patient.riskLevel === 'High' ? 'bg-red-50/10' : ''}`}>
                         <td className="p-6">
                           <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-2xl bg-teal-50 text-mamacare-teal flex items-center justify-center font-bold text-lg border border-teal-100/50">
-                              {patient.fullName.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                            <div className="w-12 h-12 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-lg overflow-hidden shrink-0">
+                              {patient.profileImageUrl
+                                ? <img src={patient.profileImageUrl} alt={patient.fullName} className="w-full h-full object-cover" />
+                                : patient.fullName.split(' ').map(n => n[0]).join('').slice(0, 2)
+                              }
                             </div>
                             <div className="space-y-0.5">
                               <p className="font-bold text-gray-900 text-sm group-hover:text-mamacare-teal transition-colors">{patient.fullName}</p>

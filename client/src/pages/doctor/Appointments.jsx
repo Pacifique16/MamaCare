@@ -5,7 +5,7 @@ import {
   ArrowUpDown, Download, Plus, User, Tag, FileText, Stethoscope,
   CheckCircle2, Calendar, Bell
 } from 'lucide-react';
-import { patientAppointmentsApi, appointmentsApi, messagesApi } from '../../api/services';
+import { patientAppointmentsApi, appointmentsApi, messagesApi, doctorsApi } from '../../api/services';
 import { useAuth } from '../../context/AuthContext';
 
 const STATUS_STYLES = {
@@ -34,6 +34,7 @@ const DoctorAppointments = () => {
   const doctorId = user?.doctorId;
 
   const [appointments, setAppointments] = useState([]);
+  const [scheduleMap, setScheduleMap] = useState({});
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState('All');
@@ -51,10 +52,15 @@ const DoctorAppointments = () => {
     if (!doctorId) return;
     setLoading(true);
     try {
-      const [patientRes, motherRes] = await Promise.all([
+      const [patientRes, motherRes, scheduleRes] = await Promise.all([
         patientAppointmentsApi.getAll({ doctorId }),
         appointmentsApi.getAll({ doctorId }),
+        doctorsApi.getSchedule(doctorId),
       ]);
+      // Build a map of patientName → patientImage from the schedule endpoint
+      const map = {};
+      scheduleRes.data.forEach(s => { if (s.patientImage) map[s.patientName] = s.patientImage; });
+      setScheduleMap(map);
       // Normalize mother appointments to same shape
       const fromMother = motherRes.data.map(a => ({
         id: `m-${a.id}`,
@@ -291,8 +297,11 @@ const DoctorAppointments = () => {
                       <tr key={appt.id} className={`hover:bg-gray-50/50 transition-all group ${isUrgent ? 'bg-red-50/10' : ''}`}>
                         <td className="p-8">
                           <div className="flex items-center gap-4">
-                            <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${isUrgent ? 'bg-red-100 text-[#C62828] border-2 border-red-200' : 'bg-teal-50 text-teal-600'}`}>
-                              {name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold overflow-hidden shrink-0 ${isUrgent ? 'bg-red-100 text-[#C62828] border-2 border-red-200' : 'bg-teal-50 text-teal-600'}`}>
+                              {scheduleMap[name]
+                                ? <img src={scheduleMap[name]} alt={name} className="w-full h-full object-cover" />
+                                : name.split(' ').map(n => n[0]).join('').slice(0, 2)
+                              }
                             </div>
                             <div>
                               <p className={`font-bold ${isUrgent ? 'text-[#C62828]' : 'text-gray-900'}`}>{name}</p>

@@ -6,23 +6,37 @@ import { BarChart3, Heart, Plus, Edit2, Trash2, Calendar, TrendingUp } from 'luc
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { adminApi, libraryApi, doctorsApi } from '../../api/services';
 
+// Module-level cache — survives re-renders and navigation
+const _cache = { stats: null, queue: null, articles: null };
+
 const AdminDashboard = () => {
-  const [stats, setStats] = useState(null);
-  const [queue, setQueue] = useState([]);
-  const [articles, setArticles] = useState([]);
+  const [stats, setStats] = useState(_cache.stats);
+  const [queue, setQueue] = useState(_cache.queue ?? []);
+  const [articles, setArticles] = useState(_cache.articles ?? []);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    adminApi.getStats().then(r => setStats(r.data)).catch(() => {});
-    adminApi.getVerificationQueue().then(r => setQueue(r.data)).catch(() => {});
-    libraryApi.getAll().then(r => setArticles(r.data)).catch(() => {});
+    Promise.all([
+      adminApi.getStats(),
+      adminApi.getVerificationQueue(),
+      libraryApi.getAll(),
+    ]).then(([statsRes, queueRes, articlesRes]) => {
+      _cache.stats    = statsRes.data;
+      _cache.queue    = queueRes.data;
+      _cache.articles = articlesRes.data;
+      setStats(statsRes.data);
+      setQueue(queueRes.data);
+      setArticles(articlesRes.data);
+    }).catch(() => {});
   }, []);
 
   const handleVerify = async (id) => {
     await doctorsApi.verify(id);
     setQueue(q => q.filter(d => d.id !== id));
     setStats(s => s ? { ...s, pendingDoctors: s.pendingDoctors - 1 } : s);
+    _cache.stats = null; // force refresh next visit
+    _cache.queue = null;
   };
 
   const CATEGORY_THEMES = {
@@ -33,15 +47,7 @@ const AdminDashboard = () => {
     Default: { bg: 'bg-gray-100', text: 'text-gray-600', label: 'Other' }
   };
 
-  const growthData = [
-    { day: 'Tue', registrations: 190 },
-    { day: 'Wed', registrations: 140 },
-    { day: 'Thu', registrations: 180 },
-    { day: 'Fri', registrations: 210 },
-    { day: 'Sat', registrations: 260 },
-    { day: 'Sun', registrations: 220 },
-    { day: 'Mon', registrations: 250 },
-  ];
+  const growthData = stats?.enrollmentTrend?.map(e => ({ day: e.day, registrations: e.registrations })) ?? [];
 
   return (
     <AdminLayout>
@@ -70,10 +76,10 @@ const AdminDashboard = () => {
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {[
-              { label: 'Total Mothers', value: stats.totalMothers.toLocaleString(), trend: '+12%', progress: '75%', color: 'text-mamacare-teal', path: '/patients' },
-              { label: 'Total Doctors', value: stats.totalDoctors, trend: 'Stable', progress: '90%', color: 'text-blue-500', path: '/admin/doctors' },
-              { label: 'Triage Success', value: '98.4%', trend: 'High', progress: '98%', color: 'text-teal-600', path: '/patients' },
-              { label: 'Library Reach', value: '85k', trend: '+8%', progress: '15%', color: 'text-purple-500', path: '/admin/library' },
+              { label: 'Total Mothers',   value: stats.totalMothers,                          trend: `${stats.totalMothers} registered`, progress: '75%',                                                    color: 'text-mamacare-teal', path: '/patients' },
+              { label: 'Total Doctors',   value: stats.totalDoctors,                          trend: stats.pendingDoctors > 0 ? `${stats.pendingDoctors} pending` : 'All verified', progress: `${Math.min((stats.totalDoctors / 10) * 100, 100)}%`, color: 'text-blue-500',        path: '/admin/doctors' },
+              { label: 'Triage Sessions', value: stats.triageSuccessRate > 0 ? `${stats.triageSuccessRate}%` : stats.todayAppointments, trend: stats.triageSuccessRate >= 90 ? 'High' : stats.triageSuccessRate > 0 ? 'Moderate' : 'No data', progress: `${stats.triageSuccessRate || 0}%`, color: 'text-teal-600', path: '/patients' },
+              { label: 'Library Reach',   value: stats.libraryViews >= 1000 ? `${(stats.libraryViews/1000).toFixed(1)}k` : stats.libraryViews, trend: stats.libraryViews > 0 ? `${stats.libraryViews} views` : 'No views yet', progress: `${Math.min((stats.libraryViews / 100) * 100, 100)}%`, color: 'text-purple-500', path: '/admin/library' },
             ].map((s, i) => (
               <Link 
                 key={i} 
@@ -181,40 +187,52 @@ const AdminDashboard = () => {
             </div>
             
             {/* Compact Donut Chart */}
-            <div className="relative w-48 h-48 transition-transform duration-700 hover:scale-105">
-              <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
-                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f9fafb" strokeWidth="12" />
-                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#005C5C" strokeWidth="12" strokeDasharray="150.8 251.2" className="transition-all duration-1000" />
-                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f97316" strokeWidth="12" strokeDasharray="70.4 251.2" strokeDashoffset="-150.8" className="transition-all duration-1000" />
-                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f87171" strokeWidth="12" strokeDasharray="30.1 251.2" strokeDashoffset="-221.2" className="transition-all duration-1000" />
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                <span className="text-3xl font-extrabold text-gray-900 tracking-tight">12%</span>
-                <span className="text-[8px] font-black text-red-400 uppercase tracking-widest">High Risk</span>
-              </div>
-            </div>
-
-            {/* Legend - Vertical Stacking for Sidebar */}
-            <div className="w-full space-y-4">
-              {[
-                { label: 'Stable', value: '60%', color: 'bg-mamacare-teal', text: 'text-mamacare-teal' },
-                { label: 'Moderate', value: '28%', color: 'bg-orange-500', text: 'text-orange-500' },
-                { label: 'High Risk', value: '12%', color: 'bg-red-400', text: 'text-red-400' },
-              ].map((item) => (
-                <div key={item.label} className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full ${item.color}`} />
-                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{item.label}</span>
+            {stats && (() => {
+              const total = stats.totalMothers || 1;
+              const lowPct   = Math.round((stats.lowRiskMothers   / total) * 100);
+              const medPct   = Math.round((stats.mediumRiskMothers / total) * 100);
+              const highPct  = Math.round((stats.highRiskMothers  / total) * 100);
+              const circ = 251.2;
+              const lowDash  = (lowPct  / 100) * circ;
+              const medDash  = (medPct  / 100) * circ;
+              const highDash = (highPct / 100) * circ;
+              return (
+                <>
+                  <div className="relative w-48 h-48 transition-transform duration-700 hover:scale-105">
+                    <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
+                      <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f9fafb" strokeWidth="12" />
+                      <circle cx="50" cy="50" r="40" fill="transparent" stroke="#005C5C" strokeWidth="12" strokeDasharray={`${lowDash} ${circ}`} />
+                      <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f97316" strokeWidth="12" strokeDasharray={`${medDash} ${circ}`} strokeDashoffset={-lowDash} />
+                      <circle cx="50" cy="50" r="40" fill="transparent" stroke="#f87171" strokeWidth="12" strokeDasharray={`${highDash} ${circ}`} strokeDashoffset={-(lowDash + medDash)} />
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                      <span className="text-3xl font-extrabold text-gray-900 tracking-tight">{highPct}%</span>
+                      <span className="text-[8px] font-black text-red-400 uppercase tracking-widest">High Risk</span>
                     </div>
-                    <span className={`text-[10px] font-black ${item.text}`}>{item.value}</span>
                   </div>
-                  <div className="h-1.5 w-full bg-black/5 rounded-full overflow-hidden">
-                    <div className={`h-full ${item.color}`} style={{ width: item.value }} />
+                  <div className="w-full space-y-4">
+                    {[
+                      { label: 'Stable',    value: `${lowPct}%`,  color: 'bg-mamacare-teal', text: 'text-mamacare-teal' },
+                      { label: 'Moderate',  value: `${medPct}%`,  color: 'bg-orange-500',    text: 'text-orange-500' },
+                      { label: 'High Risk', value: `${highPct}%`, color: 'bg-red-400',       text: 'text-red-400' },
+                    ].map(item => (
+                      <div key={item.label} className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center gap-2">
+                            <div className={`w-2 h-2 rounded-full ${item.color}`} />
+                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{item.label}</span>
+                          </div>
+                          <span className={`text-[10px] font-black ${item.text}`}>{item.value}</span>
+                        </div>
+                        <div className="h-1.5 w-full bg-black/5 rounded-full overflow-hidden">
+                          <div className={`h-full ${item.color}`} style={{ width: item.value }} />
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                </div>
-              ))}
-            </div>
+                </>
+              );
+            })()}
           </div>
         </div>
 

@@ -33,7 +33,7 @@ const ArticleDetail = () => {
     libraryApi.getById(id)
       .then(r => {
         setArticle(r.data);
-        // Load related articles from same category
+        libraryApi.recordView(id).catch(() => {});
         return libraryApi.getAll({ status: 'Published' });
       })
       .then(r => setRelated(r.data.filter(a => a.id !== Number(id)).slice(0, 3)))

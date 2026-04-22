@@ -14,4 +14,5 @@ public class LibraryArticle
     public string? ImageUrl { get; set; }
     public DateTime PublishedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    public int ViewCount { get; set; } = 0;
 }

@@ -38,7 +38,7 @@ function PatientsPage() {
         ...m,
         weeksPregnant: m.gestationalWeek,
         phoneNumber: m.phoneNumber || null,
-        address: m.location || null,
+        address: m.address || m.location || null,
       }))
       setPatients(mappedData)
     } catch {
@@ -50,7 +50,15 @@ function PatientsPage() {
 
   useEffect(() => { fetchPatients() }, [])
 
-  const handleEdit = (patient) => { setEditingPatient(patient); setShowForm(true) }
+  const handleEdit = async (patient) => {
+    try {
+      const res = await mothersApi.getById(patient.id)
+      setEditingPatient(res.data)
+    } catch {
+      setEditingPatient(patient)
+    }
+    setShowForm(true)
+  }
 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this patient? This cannot be undone.')) return
@@ -334,8 +342,11 @@ function PatientsPage() {
                           {/* Patient */}
                           <td className="py-8 pl-12 pr-8">
                             <div className="flex items-center gap-4">
-                              <div className="w-10 h-10 rounded-2xl bg-mamacare-teal/5 border border-mamacare-teal/10 flex items-center justify-center text-mamacare-teal font-extrabold text-base shrink-0">
-                                {patient.fullName?.charAt(0).toUpperCase()}
+                              <div className="w-10 h-10 rounded-2xl overflow-hidden bg-mamacare-teal/5 border border-mamacare-teal/10 shrink-0">
+                                {patient.profileImageUrl
+                                  ? <img src={patient.profileImageUrl} alt={patient.fullName} className="w-full h-full object-cover" />
+                                  : <div className="w-full h-full flex items-center justify-center text-mamacare-teal font-extrabold text-base">{patient.fullName?.charAt(0).toUpperCase()}</div>
+                                }
                               </div>
                               <div>
                                 <p className="font-bold text-gray-900 group-hover:text-mamacare-teal transition-colors leading-tight">{patient.fullName}</p>

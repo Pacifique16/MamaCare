@@ -52,7 +52,7 @@ function PatientForm({ patient, onSuccess, onCancel }) {
         fullName: patient.fullName || '',
         phoneNumber: patient.phoneNumber || '',
         address: patient.address || '',
-        weeksPregnant: patient.weeksPregnant ?? '',
+        weeksPregnant: patient.weeksPregnant ?? patient.gestationalWeek ?? '',
         dateOfBirth: patient.dateOfBirth ? patient.dateOfBirth.substring(0, 10) : '',
         bloodType: patient.bloodType || 'Unknown',
         riskLevel: patient.riskLevel || 'Low',

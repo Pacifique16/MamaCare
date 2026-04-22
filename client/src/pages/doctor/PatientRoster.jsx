@@ -1,7 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DoctorLayout from '../../components/layout/DoctorLayout';
-import { AlertTriangle, Calendar, Eye, MessageSquare, Plus, X, Search, ChevronDown, Activity, Users, ClipboardCheck, ChevronLeft, ChevronRight } from 'lucide-react';
+import { 
+  AlertTriangle, 
+  Calendar, 
+  Eye, 
+  MessageSquare, 
+  Plus, 
+  X, 
+  Search, 
+  ChevronDown, 
+  Activity, 
+  Users, 
+  ClipboardCheck, 
+  ChevronLeft, 
+  ChevronRight 
+} from 'lucide-react';
 import { doctorsApi, mothersApi, appointmentsApi } from '../../api/services';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
@@ -56,7 +70,10 @@ const PatientRoster = () => {
       });
       doctorsApi.getPatients(doctorId).then(r => setPatients(r.data)).catch(() => {});
       setShowModal(false);
-    } catch {}
+      toast.success('Patient linked successfully!');
+    } catch {
+      toast.error('Failed to link patient.');
+    }
     setAdding(null);
   };
 
@@ -65,20 +82,14 @@ const PatientRoster = () => {
     m.email?.toLowerCase().includes(search.toLowerCase())
   );
 
-  const actionButton = (
-    <button onClick={openModal} className="flex items-center gap-2 px-6 py-3 bg-[#005C5C] text-white rounded-full font-bold shadow-lg hover:bg-[#004D4D] transition-all text-sm">
-      <Plus size={18} />Add New Patient
-    </button>
-  );
-
   const totalPages = Math.max(1, Math.ceil(patients.length / PAGE_SIZE));
   const paginatedPatients = patients.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
     <DoctorLayout>
-      <div className="max-w-7xl mx-auto space-y-12 font-poppins animate-in fade-in duration-1000">
+      <div className="max-w-7xl mx-auto space-y-12 font-poppins animate-in fade-in duration-1000 pb-20">
         
-        {/* Premium Branding Header */}
+        {/* 1. Premium Branding Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-gray-100 pb-10">
           <div className="space-y-1">
             <span className="text-[10px] font-bold text-mamacare-teal uppercase tracking-[0.25em]">PATIENT CARE</span>
@@ -101,12 +112,12 @@ const PatientRoster = () => {
           </div>
         </div>
 
-        {/* High-Fidelity Stat Cards */}
+        {/* 2. High-Fidelity Stat Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             { title: 'Total Patients', value: patients.length, change: 'Active prenatal files', icon: Users, color: 'text-teal-600', bg: 'bg-teal-50', progress: '100%' },
-            { title: 'High Risk', value: highRisk, change: 'Critical attention', icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-50', progress: `${(highRisk/patients.length)*100}%` },
-            { title: 'Due This Month', value: dueThisMonth, change: 'Expected deliveries', icon: Calendar, color: 'text-orange-500', bg: 'bg-orange-50', progress: `${(dueThisMonth/patients.length)*100}%` },
+            { title: 'High Risk', value: highRisk, change: 'Critical attention', icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-50', progress: `${(highRisk / Math.max(1, patients.length)) * 100}%` },
+            { title: 'Due This Month', value: dueThisMonth, change: 'Expected deliveries', icon: Calendar, color: 'text-orange-500', bg: 'bg-orange-50', progress: `${(dueThisMonth / Math.max(1, patients.length)) * 100}%` },
             { title: 'Program Health', value: '98.2%', change: 'Compliance rate', icon: Activity, color: 'text-blue-500', bg: 'bg-blue-50', progress: '98.2%' },
           ].map((stat, i) => (
             <div key={i} className="bg-white rounded-[2.5rem] p-8 border border-white shadow-card transition-all duration-300 hover:shadow-xl hover:scale-[1.02] group relative overflow-hidden">
@@ -129,7 +140,7 @@ const PatientRoster = () => {
           ))}
         </div>
 
-        {/* Main Content Area */}
+        {/* 3. Main Patient Directory Table */}
         <div className="bg-white rounded-[2.5rem] border border-white shadow-card overflow-hidden">
           <div className="p-10 flex justify-between items-center border-b border-gray-50 bg-white">
             <div className="space-y-1">
@@ -149,11 +160,11 @@ const PatientRoster = () => {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-50/50">
-                  <th className="p-8 text-[14px] font-semibold text-gray-600">Patient Name</th>
-                  <th className="p-8 text-[14px] font-semibold text-gray-600">Gestational Age</th>
-                  <th className="p-8 text-[14px] font-semibold text-gray-600 text-center">Risk Level</th>
-                  <th className="p-8 text-[14px] font-semibold text-gray-600">Expected Due Date</th>
-                  <th className="p-8 text-[14px] font-semibold text-gray-600 text-right">Actions</th>
+                  <th className="p-8 text-[14px] font-semibold text-gray-600 uppercase tracking-widest">Patient Name</th>
+                  <th className="p-8 text-[14px] font-semibold text-gray-600 uppercase tracking-widest">Gestational Age</th>
+                  <th className="p-8 text-[14px] font-semibold text-gray-600 text-center uppercase tracking-widest">Risk Level</th>
+                  <th className="p-8 text-[14px] font-semibold text-gray-600 uppercase tracking-widest">Expected Due Date</th>
+                  <th className="p-8 text-[14px] font-semibold text-gray-600 text-right uppercase tracking-widest">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
@@ -165,7 +176,10 @@ const PatientRoster = () => {
                       <td className="p-8">
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-lg shadow-sm group-hover:scale-110 transition-transform">
-                            {initials}
+                             {p.profileImageUrl 
+                               ? <img src={p.profileImageUrl} alt={p.fullName} className="w-full h-full object-cover rounded-2xl" />
+                               : initials
+                             }
                           </div>
                           <div className="space-y-0.5">
                             <p className="font-bold text-gray-900 text-sm group-hover:text-mamacare-teal transition-colors">{p.fullName}</p>
@@ -231,7 +245,7 @@ const PatientRoster = () => {
           )}
         </div>
 
-        {/* Modal Polishing */}
+        {/* 4. Add Patient Modal */}
         {showModal && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-md px-4 animate-in fade-in duration-300">
             <div className="bg-white rounded-[2.5rem] w-full max-w-xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
@@ -262,7 +276,10 @@ const PatientRoster = () => {
                     <div key={m.id} className="flex items-center justify-between p-6 rounded-[1.5rem] border border-transparent hover:border-gray-100 hover:bg-gray-50 transition-all group">
                       <div className="flex items-center gap-4">
                         <div className="w-14 h-14 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-lg shadow-sm group-hover:scale-110 transition-transform">
-                          {m.fullName?.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                          {m.profileImageUrl 
+                            ? <img src={m.profileImageUrl} alt={m.fullName} className="w-full h-full object-cover rounded-2xl" />
+                            : m.fullName?.split(' ').map(n => n[0]).join('').slice(0, 2)
+                          }
                         </div>
                         <div className="space-y-0.5">
                           <p className="font-bold text-gray-900 text-sm">{m.fullName}</p>
@@ -280,9 +297,6 @@ const PatientRoster = () => {
                     </div>
                   );
                 })}
-              </div>
-              <div className="p-8 border-t border-gray-50 text-center">
-                <p className="text-xs text-gray-400 font-medium italic">Only verified mothers can be linked to your clinical roster.</p>
               </div>
             </div>
           </div>
