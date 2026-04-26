@@ -60,10 +60,27 @@ public class AppointmentsController : ControllerBase
     {
         if (!Enum.TryParse<AppointmentType>(dto.Type, out var parsedType))
             return BadRequest(new { message = $"Invalid appointment type: {dto.Type}" });
+
+        var scheduledAt = DateTime.SpecifyKind(dto.ScheduledAt, DateTimeKind.Utc);
+        var slotStart = scheduledAt.AddMinutes(-29);
+        var slotEnd   = scheduledAt.AddMinutes(29);
+
+        var conflict = await _db.Appointments.AnyAsync(a =>
+                a.DoctorId == dto.DoctorId &&
+                a.Status != AppointmentStatus.Cancelled &&
+                a.ScheduledAt >= slotStart && a.ScheduledAt <= slotEnd)
+            || await _db.PatientAppointments.AnyAsync(a =>
+                a.DoctorId == dto.DoctorId &&
+                a.Status != PatientAppointmentStatus.Cancelled &&
+                a.AppointmentDate >= slotStart && a.AppointmentDate <= slotEnd);
+
+        if (conflict)
+            return Conflict(new { message = "This time slot is already booked for the selected doctor. Please choose a different time." });
+
         var appt = new Appointment
         {
             MotherId = dto.MotherId, DoctorId = dto.DoctorId,
-            ScheduledAt = DateTime.SpecifyKind(dto.ScheduledAt, DateTimeKind.Utc),
+            ScheduledAt = scheduledAt,
             Type = parsedType, Notes = dto.Notes
         };
         _db.Appointments.Add(appt);

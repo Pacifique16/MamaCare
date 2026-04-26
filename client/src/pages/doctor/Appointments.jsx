@@ -3,7 +3,7 @@ import DoctorLayout from '../../components/layout/DoctorLayout';
 import {
   Search, CalendarDays, CheckCircle, XCircle, Clock,
   ArrowUpDown, Download, Plus, User, Tag, FileText, Stethoscope,
-  CheckCircle2, Calendar, Bell
+  CheckCircle2
 } from 'lucide-react';
 import { patientAppointmentsApi, appointmentsApi, messagesApi, doctorsApi } from '../../api/services';
 import { useAuth } from '../../context/AuthContext';
@@ -300,8 +300,6 @@ const DoctorAppointments = () => {
                               className="hover:scale-110 transition-transform cursor-pointer text-[#005C5C] hover:text-green-600">
                               <CheckCircle2 size={16} />
                             </button>
-                            <Calendar size={16} className="hover:text-gray-900 hover:scale-110 transition-transform cursor-pointer" />
-                            <Bell size={16} className="hover:text-gray-900 hover:scale-110 transition-transform cursor-pointer" />
                           </div>
                         </td>
                       </tr>
