@@ -7,19 +7,23 @@ import { Baby } from 'lucide-react';
 const LandingPage = () => {
   const navigate = useNavigate();
 
+  const scrollTo = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div className="antialiased min-h-screen font-body bg-background-lp text-on-background-lp selection:bg-primary-lp/30">
       {/* TopNavBar */}
       <nav className="fixed top-0 w-full z-50 bg-stone-50/70 backdrop-blur-md">
         <div className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
-          <span className="flex items-center gap-2 text-2xl font-bold tracking-tighter text-mamacare-teal">
+          <span onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center gap-2 text-2xl font-bold tracking-tighter text-mamacare-teal cursor-pointer">
             <Baby size={26} />
             MamaCare
           </span>
           <div className="hidden md:flex items-center gap-8">
-            <a className="font-headline tracking-tight text-base font-medium text-stone-600 hover:text-primary-lp transition-colors" href="#features">Features</a>
-            <a className="font-headline tracking-tight text-base font-medium text-stone-600 hover:text-primary-lp transition-colors" href="#how-it-works">How it Works</a>
-            <Link to="/contact" className="font-headline tracking-tight text-base font-medium text-stone-600 hover:text-primary-lp transition-colors">Contact Support</Link>
+            <a onClick={() => scrollTo('features')} className="font-headline tracking-tight text-base font-medium text-stone-600 hover:text-primary-lp transition-colors cursor-pointer">Features</a>
+            <a onClick={() => scrollTo('how-it-works')} className="font-headline tracking-tight text-base font-medium text-stone-600 hover:text-primary-lp transition-colors cursor-pointer">How it Works</a>
+            <Link to="/contact" onClick={() => window.scrollTo({ top: 0, behavior: 'instant' })} className="font-headline tracking-tight text-base font-medium text-stone-600 hover:text-primary-lp transition-colors">Contact Support</Link>
           </div>
           <div className="flex items-center gap-4">
             <button

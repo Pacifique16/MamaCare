@@ -1,6 +1,6 @@
 import React from 'react';
 import DoctorSidebar from './DoctorSidebar';
-import { Search, Bell, HelpCircle, User, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -30,28 +30,8 @@ const DoctorLayout = ({ children, title, subtitle, activeActionButton }) => {
             <DoctorSidebar />
             
             <div className="flex-1 flex flex-col min-w-0">
-                <header className="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-10 sticky top-0 z-50">
-                    <div className="flex items-center gap-6 flex-1 max-w-xl">
-                        <div className="relative w-full">
-                            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                            <input 
-                                type="text" 
-                                placeholder="Search by name, patient ID, or status..." 
-                                className="w-full h-11 bg-white border border-gray-300 rounded-xl pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-mamacare-teal/10 focus:bg-white transition-all placeholder:text-gray-500"
-                            />
-                        </div>
-                        {/* <div className="flex gap-2">
-                            <button className="px-4 py-2 bg-gray-50 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-100 transition-all">Risk: All</button>
-                            <button className="px-4 py-2 bg-gray-50 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-100 transition-all">Status: Active</button>
-                        </div> */}
-                    </div>
-
-                    <div className="flex items-center gap-6 pl-10">
-                        <div className="flex items-center gap-4 border-r border-gray-100 pr-6 mr-6">
-                            <button className="p-2.5 bg-gray-50 text-gray-600 rounded-xl hover:bg-gray-100 transition-all">
-                                <Bell size={20} />
-                            </button>
-                        </div>
+                <header className="h-20 bg-white border-b border-gray-100 flex items-center justify-end px-10 sticky top-0 z-50">
+                    <div className="flex items-center gap-6">
                         <div className="flex items-center gap-3">
                             <div className="text-right">
                                 <p className="text-sm font-bold text-gray-900 leading-none">{user?.name || 'Doctor'}</p>

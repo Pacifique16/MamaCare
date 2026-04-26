@@ -67,14 +67,8 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  button, 
-  a, 
-  select,
-  input[type="checkbox"],
-  input[type="radio"],
-  [role="button"],
-  .cursor-pointer {
-    cursor: pointer !important;
+  button, a, [role="button"] {
+    cursor: pointer;
   }
 }
 

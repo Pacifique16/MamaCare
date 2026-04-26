@@ -66,9 +66,7 @@ const AdminDashboard = () => {
                 Live System Status
               </span>
             </div>
-            <button className="bg-mamacare-teal text-white px-8 py-3 rounded-xl font-bold text-xs shadow-lg shadow-mamacare-teal/10 transition-all hover:bg-mamacare-teal-dark active:scale-[0.98]">
-              Generate Report
-            </button>
+
           </div>
         </div>
 

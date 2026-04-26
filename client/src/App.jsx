@@ -1,6 +1,6 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
@@ -47,22 +47,16 @@ import CustomToast from './components/common/CustomToast';
 
 import Prescriptions from './pages/Prescriptions';
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }); }, [pathname]);
+  return null;
+}
+
 function App() {
   return (
     <Router>
-      <Toaster 
-        position="top-right"
-        gutter={16}
-        containerStyle={{
-          top: 40,
-          right: 40,
-        }}
-        toastOptions={{
-          duration: 4000,
-        }}
-      >
-        {(t) => <CustomToast t={t} />}
-      </Toaster>
+      <ScrollToTop />
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />

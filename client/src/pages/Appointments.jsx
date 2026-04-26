@@ -9,7 +9,7 @@ import {
     MapPin, User, ArrowRight, ShieldAlert, Sparkles,
     Stethoscope, Activity, HeartPulse
 } from 'lucide-react';
-import { appointmentsApi, doctorsApi } from '../api/services';
+import { appointmentsApi, doctorsApi, patientAppointmentsApi } from '../api/services';
 import { useAuth } from '../context/AuthContext';
 
 const typeLabel = (type) => type?.replace(/([A-Z])/g, ' $1').trim() || type;
@@ -23,6 +23,8 @@ const Appointments = () => {
     const [bookingStep, setBookingStep] = useState(1);
     const [direction, setDirection] = useState(0);
     const [confirming, setConfirming] = useState(false);
+    const [bookingError, setBookingError] = useState('');
+    const [availableSlots, setAvailableSlots] = useState([]);
 
     // Calendar State
     const [calendarDate, setCalendarDate] = useState(new Date());
@@ -75,6 +77,7 @@ const Appointments = () => {
     const handleConfirm = async () => {
         if (!selectedDoctorId) { alert('Please select a doctor.'); return; }
         setConfirming(true);
+        setBookingError('');
         try {
             const { h, m } = timeToHour(selectedTime);
             const scheduledAt = new Date(selectedDate);
@@ -88,7 +91,26 @@ const Appointments = () => {
             navigate('/rest-monitor');
         } catch (err) {
             const msg = err?.response?.data?.message || err?.response?.data?.title || 'Failed to book appointment. Please try again.';
-            alert(msg);
+            setBookingError(msg);
+            // Fetch available slots for the selected doctor + date
+            if (err?.response?.status === 409 && selectedDoctorId) {
+                const dateOnly = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth()+1).padStart(2,'0')}-${String(selectedDate.getDate()).padStart(2,'0')}`;
+                patientAppointmentsApi.getSlots(selectedDoctorId, dateOnly)
+                    .then(r => {
+                        const toAmPm = (t) => {
+                            const [h, m] = t.split(':').map(Number);
+                            const period = h >= 12 ? 'PM' : 'AM';
+                            const hour = h % 12 || 12;
+                            return `${hour}:${String(m).padStart(2,'0')} ${period}`;
+                        };
+                        setAvailableSlots(
+                            r.data
+                                .filter(s => s.available)
+                                .map(s => ({ ...s, time: toAmPm(s.time) }))
+                        );
+                    })
+                    .catch(() => {});
+            }
         }
         setConfirming(false);
     };
@@ -101,6 +123,8 @@ const Appointments = () => {
     const prevStep = () => {
         setDirection(-1);
         setBookingStep(prev => prev - 1);
+        setBookingError('');
+        setAvailableSlots([]);
     };
 
     const borderColor = (type) => type === 'UrgentFollowUp' ? 'border-red-400' : 'border-mamacare-teal';
@@ -184,10 +208,13 @@ const Appointments = () => {
                                         reason={reasons.find(r => r.id === selectedReason)}
                                         doctors={doctors}
                                         selectedDoctorId={selectedDoctorId}
-                                        onSelectDoctor={setSelectedDoctorId}
+                                        onSelectDoctor={(id) => { setSelectedDoctorId(id); setBookingError(''); setAvailableSlots([]); }}
                                         onBack={prevStep}
                                         confirming={confirming}
                                         onConfirm={handleConfirm}
+                                        bookingError={bookingError}
+                                        availableSlots={availableSlots}
+                                        onPickSlot={(slot) => { setSelectedTime(slot); setBookingError(''); setAvailableSlots([]); }}
                                     />
                                 )}
                             </motion.div>
@@ -451,7 +478,7 @@ const ReasonStep = ({ reasons, selectedReason, onSelect, onNext, onBack }) => (
     </div>
 );
 
-const ReviewStep = ({ date, time, reason, doctors, selectedDoctorId, onSelectDoctor, onBack, onConfirm, confirming }) => {
+const ReviewStep = ({ date, time, reason, doctors, selectedDoctorId, onSelectDoctor, onBack, onConfirm, confirming, bookingError, availableSlots, onPickSlot }) => {
     const selectedDoctor = doctors.find(d => d.id === selectedDoctorId);
     return (
     <div className="max-w-lg mx-auto space-y-8">
@@ -495,6 +522,34 @@ const ReviewStep = ({ date, time, reason, doctors, selectedDoctorId, onSelectDoc
             >
                 <CheckCircle2 size={22} /> {confirming ? 'Booking...' : 'Confirm Booking'}
             </button>
+
+            {bookingError && (
+                <div className="space-y-4">
+                    <div className="flex items-center gap-3 bg-red-50 border border-red-100 rounded-2xl px-5 py-4">
+                        <AlertCircle size={18} className="text-red-500 shrink-0" />
+                        <p className="text-sm font-bold text-red-500">{bookingError}</p>
+                    </div>
+                    {availableSlots.length > 0 && (
+                        <div className="space-y-3">
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Available slots for this day</p>
+                            <div className="grid grid-cols-3 gap-2">
+                                {availableSlots.map(slot => (
+                                    <button
+                                        key={slot.time}
+                                        onClick={() => onPickSlot(slot.time)}
+                                        className="flex items-center justify-center gap-1.5 py-3 bg-teal-50 hover:bg-mamacare-teal hover:text-white text-mamacare-teal rounded-xl text-xs font-bold transition-all"
+                                    >
+                                        <Clock size={12} />{slot.time}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                    {bookingError && availableSlots.length === 0 && (
+                        <p className="text-xs text-gray-400 font-medium text-center">No available slots for this day. Please go back and choose a different date.</p>
+                    )}
+                </div>
+            )}
         </div>
         <button onClick={onBack} className="w-full text-[#005C5C] font-bold underline underline-offset-8 text-sm">Need to change something?</button>
     </div>

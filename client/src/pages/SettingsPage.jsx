@@ -13,7 +13,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 const BLOOD_TYPES = ['Unknown','APositive','ANegative','BPositive','BNegative','OPositive','ONegative','ABPositive','ABNegative'];
 
 const SettingsPage = () => {
-    const { user } = useAuth();
+    const { user, updateUser } = useAuth();
     const role = user?.role;
     const isMother = role === 'Mother';
 
@@ -119,6 +119,7 @@ const SettingsPage = () => {
             const updated = { ...profile, profileImageUrl };
             setProfile(updated); setOriginalProfile(updated);
             setPhotoFile(null); setProfileSaved(true);
+            updateUser({ fullName: profile.fullName.trim(), profileImageUrl });
             // Clear mother cache so dashboard reflects updated info
             if (isMother && user?.motherId) sessionStorage.removeItem(`mother_${user.motherId}`);
             setTimeout(() => setProfileSaved(false), 3000);
