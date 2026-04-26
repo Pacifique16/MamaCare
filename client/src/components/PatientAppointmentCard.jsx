@@ -2,8 +2,10 @@ import { Edit2, Trash2, User, Stethoscope, Calendar, FileText, Clock, Tag, XCirc
 
 const STATUS_STYLES = {
   Scheduled: 'bg-teal-50 text-mamacare-teal',
+  Confirmed: 'bg-blue-50 text-blue-500',
+  Waiting:   'bg-orange-50 text-orange-500',
   Completed: 'bg-green-50 text-green-600',
-  Cancelled: 'bg-red-50 text-red-400',
+  Cancelled: 'bg-red-50 text-red-500',
 }
 
 const TYPE_LABELS = {
@@ -33,15 +35,13 @@ function getProximityBadge(dateStr) {
 function PatientAppointmentCard({ appointment, onEdit, onDelete }) {
   const formattedDate = appointment.appointmentDate
     ? new Date(appointment.appointmentDate).toLocaleDateString('en-US', {
-        weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
-        timeZone: 'UTC'
+        weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
       })
     : '—'
 
   const formattedTime = appointment.appointmentDate
     ? new Date(appointment.appointmentDate).toLocaleTimeString('en-US', {
-        hour: '2-digit', minute: '2-digit',
-        timeZone: 'UTC'
+        hour: '2-digit', minute: '2-digit'
       })
     : ''
 
@@ -76,34 +76,34 @@ function PatientAppointmentCard({ appointment, onEdit, onDelete }) {
       {/* Details */}
       <div className="space-y-3 mb-8">
         <div className="flex items-center gap-3 text-sm text-gray-500">
-          <User size={14} className="text-gray-300 shrink-0" />
+          <User size={14} className="text-mamacare-teal shrink-0" />
           <span className="font-medium">{appointment.patientName}</span>
         </div>
         <div className="flex items-center gap-3 text-sm text-gray-500">
-          <Calendar size={14} className="text-gray-300 shrink-0" />
+          <Calendar size={14} className="text-blue-500 shrink-0" />
           <span className="font-medium">{formattedDate}</span>
         </div>
         {formattedTime && (
           <div className="flex items-center gap-3 text-sm text-gray-500">
-            <Clock size={14} className="text-gray-300 shrink-0" />
+            <Clock size={14} className="text-purple-500 shrink-0" />
             <span className="font-medium">{formattedTime}</span>
           </div>
         )}
         {appointment.type && (
           <div className="flex items-center gap-3 text-sm text-gray-500">
-            <Tag size={14} className="text-gray-300 shrink-0" />
+            <Tag size={14} className="text-orange-500 shrink-0" />
             <span className="font-medium">{TYPE_LABELS[appointment.type] || appointment.type}</span>
           </div>
         )}
         {appointment.notes && (
           <div className="flex items-start gap-3 text-sm text-gray-500">
-            <FileText size={14} className="text-gray-300 shrink-0 mt-0.5" />
+            <FileText size={14} className="text-green-600 shrink-0 mt-0.5" />
             <span className="font-medium">{appointment.notes}</span>
           </div>
         )}
         {appointment.status === 'Cancelled' && appointment.cancellationReason && (
           <div className="flex items-start gap-3 text-sm text-red-400">
-            <XCircle size={14} className="shrink-0 mt-0.5" />
+            <XCircle size={14} className="text-red-500 shrink-0 mt-0.5" />
             <span className="font-medium">{appointment.cancellationReason}</span>
           </div>
         )}
@@ -113,14 +113,14 @@ function PatientAppointmentCard({ appointment, onEdit, onDelete }) {
       <div className="flex items-center gap-3 pt-6 border-t border-gray-50">
         <button
           onClick={() => onEdit(appointment)}
-          className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-gray-50 hover:bg-teal-50 text-gray-400 hover:text-mamacare-teal rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all"
+          className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-teal-50/50 hover:bg-teal-50 text-mamacare-teal rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all"
         >
           <Edit2 size={13} />
           Edit
         </button>
         <button
           onClick={() => onDelete(appointment.id)}
-          className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-400 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all"
+          className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-red-50/50 hover:bg-red-50 text-red-500 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all"
         >
           <Trash2 size={13} />
           Delete

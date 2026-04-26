@@ -18,12 +18,18 @@ export const doctorsApi = {
   getPatientsByPriority: (id) => api.get(`/doctors/${id}/patients/priority`),
   create: (data) => api.post('/doctors', data),
   update: (id, data) => api.put(`/doctors/${id}`, data),
+  updateMe: (data) => api.patch('/doctors/me', data),
   verify: (id) => api.patch(`/doctors/${id}/verify`),
   suspend: (id) => api.patch(`/doctors/${id}/suspend`),
   delete: (id) => api.delete(`/doctors/${id}`),
   getCertifications: (id) => api.get(`/doctors/${id}/certifications`),
   addCertification: (id, data) => api.post(`/doctors/${id}/certifications`, data),
   deleteCertification: (id, certId) => api.delete(`/doctors/${id}/certifications/${certId}`),
+  addMyCertification: (data) => api.post('/doctors/me/certifications', data),
+  deleteMyCertification: (certId) => api.delete(`/doctors/me/certifications/${certId}`),
+  getSchedule: (id) => api.get(`/doctors/${id}/schedule`),
+  getActivity: (id) => api.get(`/doctors/${id}/activity`),
+  resetPassword: (id, password) => api.patch(`/doctors/${id}/reset-password`, JSON.stringify(password), { headers: { 'Content-Type': 'application/json' } }),
 }
 
 export const appointmentsApi = {
@@ -32,6 +38,17 @@ export const appointmentsApi = {
   create: (data) => api.post('/appointments', data),
   update: (id, data) => api.put(`/appointments/${id}`, data),
   delete: (id) => api.delete(`/appointments/${id}`),
+}
+
+export const patientAppointmentsApi = {
+  getAll: (params) => api.get('/patient-appointments', { params }),
+  getById: (id) => api.get(`/patient-appointments/${id}`),
+  getByPatientId: (patientId) => api.get(`/patient-appointments/patient/${patientId}`),
+  getDoctors: () => api.get('/patient-appointments/doctors'),
+  getSlots: (doctorId, date, exclude) => api.get(`/patient-appointments/doctors/${doctorId}/slots`, { params: { date, exclude } }),
+  create: (data) => api.post('/patient-appointments', data),
+  update: (id, data) => api.put(`/patient-appointments/${id}`, data),
+  delete: (id) => api.delete(`/patient-appointments/${id}`),
 }
 
 export const triageApi = {
@@ -49,6 +66,8 @@ export const vitalsApi = {
 export const messagesApi = {
   getConversation: (motherId, doctorId) =>
     api.get('/messages', { params: { motherId, doctorId } }),
+  getConversations: (doctorId) => api.get(`/messages/conversations/${doctorId}`),
+  getMotherConversation: (motherId) => api.get(`/messages/mother/${motherId}`),
   send: (data) => api.post('/messages', data),
   markRead: (id) => api.patch(`/messages/${id}/read`),
 }
@@ -56,9 +75,37 @@ export const messagesApi = {
 export const libraryApi = {
   getAll: (params) => api.get('/library', { params }),
   getById: (id) => api.get(`/library/${id}`),
+  recordView: (id) => api.post(`/library/${id}/view`),
   create: (data) => api.post('/library', data),
   update: (id, data) => api.put(`/library/${id}`, data),
   delete: (id) => api.delete(`/library/${id}`),
+}
+
+export const settingsApi = {
+  getProfile: () => api.get('/settings/profile'),
+  updateProfile: (data) => api.put('/settings/profile', data),
+  changePassword: (data) => api.put('/settings/password', data),
+}
+
+export const prescriptionsApi = {
+  getAll: (params) => api.get('/prescriptions', { params }),
+  create: (data) => api.post('/prescriptions', data),
+  delete: (id) => api.delete(`/prescriptions/${id}`),
+}
+
+export const articleRequestsApi = {
+  getAll: () => api.get('/article-requests'),
+  create: (data) => api.post('/article-requests', data),
+  updateStatus: (id, status) => api.patch(`/article-requests/${id}/status`, JSON.stringify(status), { headers: { 'Content-Type': 'application/json' } }),
+}
+
+export const contactMessagesApi = {
+  getAll: () => api.get('/contact-messages'),
+  markRead: (id) => api.patch(`/contact-messages/${id}/read`),
+}
+
+export const chatApi = {
+  send: (message, history) => api.post('/chat', { message, history }),
 }
 
 export const authApi = {

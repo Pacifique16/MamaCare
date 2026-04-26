@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   AlertTriangle,
   Users,
@@ -12,28 +13,40 @@ import {
   Activity
 } from 'lucide-react';
 import DoctorLayout from '../components/layout/DoctorLayout';
-import { adminApi, doctorsApi, messagesApi } from '../api/services';
+import { doctorsApi, messagesApi } from '../api/services';
 import { useAuth } from '../context/AuthContext';
 
 const DoctorDashboard = () => {
   const { user } = useAuth();
   const doctorId = user?.doctorId || 1;
 
-  const [stats, setStats] = useState(null);
   const [patients, setPatients] = useState([]);
+  const [allPatients, setAllPatients] = useState([]);
   const [messages, setMessages] = useState([]);
   const [msgInput, setMsgInput] = useState('');
   const [loading, setLoading] = useState(true);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [activeFilter, setActiveFilter] = useState('All');
+  const [dismissedAlerts, setDismissedAlerts] = useState(
+    () => JSON.parse(sessionStorage.getItem('dismissed_alerts') || '[]')
+  );
+
+  const dismissAlert = (id) => {
+    const updated = [...dismissedAlerts, id];
+    setDismissedAlerts(updated);
+    sessionStorage.setItem('dismissed_alerts', JSON.stringify(updated));
+  };
+
+  const navigate = useNavigate();
 
   // Focused patient is always the first high-risk one
   const focusedPatient = patients.find(p => p.riskLevel === 'High') || patients[0];
 
   useEffect(() => {
     Promise.all([
-      adminApi.getStats(),
       doctorsApi.getPatientsByPriority(doctorId),
-    ]).then(([statsRes, patientsRes]) => {
-      setStats(statsRes.data);
+    ]).then(([patientsRes]) => {
+      setAllPatients(patientsRes.data);
       setPatients(patientsRes.data);
     }).catch(() => {}).finally(() => setLoading(false));
   }, [doctorId]);
@@ -52,12 +65,18 @@ const DoctorDashboard = () => {
     messagesApi.getConversation(focusedPatient.id, doctorId).then(r => setMessages(r.data)).catch(() => {});
   };
 
-  const statCards = stats ? [
-    { title: 'Total Mothers', value: stats.totalMothers, change: 'Registered patients', icon: Users, color: 'text-teal-600', bg: 'bg-teal-50' },
-    { title: 'High-Risk Cases', value: stats.highRiskMothers, change: 'Immediate attention', icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-50' },
-    { title: "Today's Appointments", value: stats.todayAppointments, change: 'Scheduled today', icon: Calendar, color: 'text-orange-500', bg: 'bg-orange-50' },
-    { title: 'Pending Triage', value: stats.pendingDoctors, change: 'Review needed', icon: ClipboardCheck, color: 'text-blue-500', bg: 'bg-blue-50' },
-  ] : [];
+  const applyFilter = (risk) => {
+    setActiveFilter(risk);
+    setFilterOpen(false);
+    setPatients(risk === 'All' ? allPatients : allPatients.filter(p => p.riskLevel === risk));
+  };
+
+  const statCards = [
+    { title: 'My Patients', value: patients.length, change: 'Assigned patients', icon: Users, color: 'text-teal-600', bg: 'bg-teal-50' },
+    { title: 'High-Risk Cases', value: patients.filter(p => p.riskLevel === 'High').length, change: 'Immediate attention', icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-50' },
+    { title: 'Due This Month', value: patients.filter(p => { const d = new Date(p.expectedDueDate); const n = new Date(); return d.getMonth() === n.getMonth() && d.getFullYear() === n.getFullYear(); }).length, change: 'Expected deliveries', icon: Calendar, color: 'text-orange-500', bg: 'bg-orange-50' },
+    { title: 'Medium Risk', value: patients.filter(p => p.riskLevel === 'Medium').length, change: 'Monitor closely', icon: ClipboardCheck, color: 'text-blue-500', bg: 'bg-blue-50' },
+  ];
 
   const riskBadge = (risk) => {
     if (risk === 'High') return 'bg-[#C62828] text-white';
@@ -70,7 +89,7 @@ const DoctorDashboard = () => {
       <div className="space-y-8 animate-in fade-in duration-500">
 
         {/* Emergency Alert — shown if any high-risk patient exists */}
-        {focusedPatient && focusedPatient.riskLevel === 'High' && (
+        {focusedPatient && focusedPatient.riskLevel === 'High' && !dismissedAlerts.includes(focusedPatient.id) && (
           <div className="bg-[#FFEBEB] border-l-[6px] border-red-500 rounded-2xl p-6 flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-5">
               <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-red-500 shadow-sm animate-pulse">
@@ -84,8 +103,8 @@ const DoctorDashboard = () => {
               </div>
             </div>
             <div className="flex gap-4">
-              <button className="bg-[#C62828] text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-[#B71C1C] transition-all shadow-lg active:scale-95">Review Case</button>
-              <button className="bg-white/50 text-red-700 px-6 py-3 rounded-xl font-bold text-sm hover:bg-white transition-all active:scale-95">Dismiss</button>
+              <button onClick={() => navigate(`/doctor/patients/${focusedPatient.id}`)} className="bg-[#C62828] text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-[#B71C1C] transition-all shadow-lg active:scale-95">Review Case</button>
+              <button onClick={() => dismissAlert(focusedPatient.id)} className="bg-white/50 text-red-700 px-6 py-3 rounded-xl font-bold text-sm hover:bg-white transition-all active:scale-95">Dismiss</button>
             </div>
           </div>
         )}
@@ -102,7 +121,7 @@ const DoctorDashboard = () => {
             {statCards.map((stat, idx) => (
               <div key={idx} className="bg-white rounded-[2.5rem] p-8 border border-white shadow-card flex items-center justify-between group hover:shadow-2xl transition-all duration-300">
                 <div className="space-y-3">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{stat.title}</p>
+                  <p className="text-[13px] font-medium text-gray-400">{stat.title}</p>
                   <h3 className="text-4xl font-extrabold text-gray-900 tracking-tighter">{stat.value}</h3>
                   <p className={`text-[10px] font-bold ${stat.color} bg-white px-2 py-1 rounded-full w-fit shadow-sm`}>{stat.change}</p>
                 </div>
@@ -121,10 +140,24 @@ const DoctorDashboard = () => {
             <div className="p-10 flex justify-between items-center bg-white sticky top-0 z-10">
               <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Patient Priority List</h2>
               <div className="flex gap-4">
-                <button className="flex items-center gap-2 bg-gray-50 text-gray-600 px-6 py-3 rounded-xl font-bold text-sm border border-gray-100 hover:bg-gray-100 transition-all">
-                  <Filter size={18} />Filter
-                </button>
-                <button className="flex items-center gap-2 bg-[#005C5C] text-white px-6 py-3 rounded-xl font-bold text-sm shadow-xl shadow-teal-100 hover:bg-teal-800 transition-all">
+                <div className="relative">
+                  <button onClick={() => setFilterOpen(o => !o)}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm border transition-all ${activeFilter !== 'All' ? 'bg-[#005C5C] text-white border-[#005C5C]' : 'bg-gray-50 text-gray-600 border-gray-100 hover:bg-gray-100'}`}>
+                    <Filter size={18} />{activeFilter === 'All' ? 'Filter' : activeFilter + ' Risk'}
+                  </button>
+                  {filterOpen && (
+                    <div className="absolute right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-20 w-40">
+                      {['All', 'High', 'Medium', 'Low'].map(r => (
+                        <button key={r} onClick={() => applyFilter(r)}
+                          className={`w-full px-5 py-3 text-left text-sm font-bold transition-colors hover:bg-gray-50 ${activeFilter === r ? 'text-[#005C5C]' : 'text-gray-600'}`}>
+                          {r === 'All' ? 'All Patients' : r + ' Risk'}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <button onClick={() => navigate('/doctor/patients')}
+                  className="flex items-center gap-2 bg-[#005C5C] text-white px-6 py-3 rounded-xl font-bold text-sm shadow-xl shadow-teal-100 hover:bg-teal-800 transition-all">
                   <Plus size={18} />New Patient
                 </button>
               </div>
@@ -153,8 +186,11 @@ const DoctorDashboard = () => {
                       <tr key={patient.id} className={`group border-b border-gray-50 last:border-0 hover:bg-teal-50/30 transition-all ${patient.riskLevel === 'High' ? 'bg-red-50/20' : ''}`}>
                         <td className="p-8">
                           <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-lg">
-                              {patient.fullName.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                            <div className="w-12 h-12 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-lg overflow-hidden shrink-0">
+                              {patient.profileImageUrl
+                                ? <img src={patient.profileImageUrl} alt={patient.fullName} className="w-full h-full object-cover" />
+                                : patient.fullName.split(' ').map(n => n[0]).join('').slice(0, 2)
+                              }
                             </div>
                             <div className="space-y-0.5">
                               <p className="font-bold text-gray-900">{patient.fullName}</p>
@@ -177,7 +213,7 @@ const DoctorDashboard = () => {
                           </p>
                         </td>
                         <td className="p-8 text-right">
-                          <button className="text-[#005C5C] font-extrabold text-sm hover:underline tracking-tight">Manage</button>
+                          <button onClick={() => navigate(`/doctor/patients/${patient.id}`)} className="text-[#005C5C] font-extrabold text-sm hover:underline tracking-tight">Manage</button>
                         </td>
                       </tr>
                     ))}
@@ -239,11 +275,15 @@ const DoctorDashboard = () => {
 
                   {/* Actions */}
                   <div className="space-y-4 pt-4">
-                    <button className="w-full bg-[#C62828] text-white py-6 rounded-3xl font-bold text-sm shadow-xl shadow-red-200 hover:bg-[#B71C1C] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group">
+                    <button className="w-full bg-[#C62828] text-white py-6 rounded-3xl font-bold text-sm shadow-xl shadow-red-200 hover:bg-[#B71C1C] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group"
+                      onClick={() => focusedPatient?.phoneNumber && window.location.assign(`tel:${focusedPatient.phoneNumber}`)}
+                    >
                       <Phone size={18} className="transition-transform group-hover:rotate-12" />
-                      Call Patient Now
+                      {focusedPatient?.phoneNumber ? 'Call Patient Now' : 'No Phone Number'}
                     </button>
-                    <button className="w-full bg-[#E0E7E7] text-[#005C5C] py-6 rounded-3xl font-bold text-sm hover:bg-[#D1DADA] active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+                    <button className="w-full bg-[#E0E7E7] text-[#005C5C] py-6 rounded-3xl font-bold text-sm hover:bg-[#D1DADA] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+                      onClick={() => navigate(`/doctor/patients/${focusedPatient.id}`)}
+                    >
                       <FileText size={18} />
                       Full Clinical Record
                     </button>

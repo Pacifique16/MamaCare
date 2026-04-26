@@ -1,178 +1,282 @@
 import React from 'react';
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
-import { AlertCircle, Phone, MessageSquare, BookOpen, Clock, Activity, Scale, ShieldAlert, Utensils, Bell, Users, ChevronRight, BarChart3 } from 'lucide-react';
+import Footer from '../components/layout/Footer';
+import { mothersApi, vitalsApi } from '../api/services';
+import { 
+  AlertCircle, Phone, MessageSquare, BookOpen, Clock, Activity, 
+  Scale, ShieldAlert, Utensils, Bell, Users, ChevronRight, 
+  BarChart3, Heart, Sparkles, Zap, ShieldCheck, CheckCircle2
+} from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const RestMonitor = () => {
-   return (
-      <div className="min-h-screen bg-[#FDFDFD] font-outfit pb-20 overflow-x-hidden">
-         {/* Top Red Alert Bar */}
-         <div className="fixed top-20 left-0 right-0 z-40 bg-[#BA1A1A] text-white py-3 px-8 flex items-center justify-between shadow-xl animate-pulse">
-            <div className="flex items-center gap-3">
-               <AlertCircle size={20} />
-               <span className="text-xs font-bold uppercase tracking-widest leading-none pt-0.5">Active Alert: Preeclampsia Risk Detected. Please follow your physician's instructions.</span>
-            </div>
-            <div className="flex items-center gap-6">
-               <button className="text-[10px] font-extrabold uppercase tracking-widest border-b border-white pb-0.5 hover:text-white/80 transition-colors">View Emergency Instructions</button>
-               <button className="bg-white text-red-600 px-6 py-2 rounded-full font-extrabold text-[10px] flex items-center justify-center gap-2 hover:scale-105 active:scale-95 transition-all">
-                  <Phone size={14} />
-                  Call Doctor
-               </button>
-            </div>
-         </div>
+    const { user } = useAuth();
+    const navigate = useNavigate();
+    const motherId = user?.motherId || 1;
+    const [mother, setMother] = React.useState(null);
+    const [latestVital, setLatestVital] = React.useState(null);
 
-         <Navbar />
+    React.useEffect(() => {
+        mothersApi.getById(motherId).then(r => setMother(r.data)).catch(() => {});
+        vitalsApi.getAll({ motherId }).then(r => {
+            const sorted = r.data.sort((a, b) => new Date(b.recordedAt) - new Date(a.recordedAt));
+            setLatestVital(sorted[0] || null);
+        }).catch(() => {});
+    }, [motherId]);
 
-         <main className="pt-40 px-4 md:px-8 max-w-7xl mx-auto space-y-12">
-            {/* Main Header */}
-            <div className="space-y-6">
-               <h1 className="text-6xl font-bold text-[#005C5C] tracking-tight">Rest & Monitor, Aline.</h1>
-               <p className="text-gray-400 font-medium max-w-3xl text-lg leading-relaxed">
-                  Your doctor has been notified. Focus on rest and monitor your symptoms as instructed. We are monitoring your vitals in real-time.
-               </p>
-            </div>
+    // Stagger container for entrance animations
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1,
+                delayChildren: 0.2
+            }
+        }
+    };
 
-            {/* Top Action Cards */}
-            <div className="grid md:grid-cols-2 gap-8">
-               <div className="bg-[#E6F3F3] rounded-[3rem] p-12 space-y-12 shadow-card border border-[#DCECEC] group hover:shadow-2xl transition-all duration-500">
-                  <div className="flex justify-between items-start">
-                     <div className="w-16 h-16 bg-[#B2DFE0] rounded-3xl flex items-center justify-center text-[#005C5C] group-hover:scale-110 transition-transform">
-                        <MessageSquare size={32} />
-                     </div>
-                     <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#005C5C]/50">ACTION REQUIRED</span>
-                  </div>
-                  <div className="space-y-4">
-                     <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Symptom Log</h2>
-                     <p className="text-[#005C5C]/70 font-medium leading-relaxed">Keep track of headaches, vision changes, or swelling every 4 hours.</p>
-                  </div>
-                  <button className="w-full bg-[#005C5C] text-white py-6 rounded-3xl font-bold text-lg hover:bg-mamacare-teal-dark shadow-xl shadow-mamacare-teal/20 transition-all active:scale-[0.98]">
-                     Update Status
-                  </button>
-               </div>
+    const itemVariants = {
+        hidden: { y: 20, opacity: 0 },
+        visible: { y: 0, opacity: 1, transition: { duration: 0.5, ease: "easeOut" } }
+    };
 
-               <div className="bg-white rounded-[3rem] p-12 space-y-12 shadow-card border border-gray-50 group hover:shadow-2xl transition-all duration-500">
-                  <div className="flex justify-between items-start">
-                     <div className="w-16 h-16 bg-[#FBE9E7] rounded-3xl flex items-center justify-center text-[#F44336] group-hover:scale-110 transition-transform">
-                        <BookOpen size={32} />
-                     </div>
-                     <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-300">RESOURCE</span>
-                  </div>
-                  <div className="space-y-4">
-                     <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Medical Guidance</h2>
-                     <p className="text-gray-400 font-medium leading-relaxed">Essential reading on managing Preeclampsia risks and what to expect next.</p>
-                  </div>
-                  <button className="w-full bg-[#E0E0E0] text-gray-600 py-6 rounded-3xl font-bold text-lg hover:bg-gray-300 transition-all active:scale-[0.98]">
-                     Explore Library
-                  </button>
-               </div>
-            </div>
-
-            {/* Vitals Section */}
-            <section className="space-y-8 pt-10">
-               <div className="flex items-center gap-4">
-                  <div className="h-[2px] bg-mamacare-teal w-12 opacity-30"></div>
-                  <h3 className="text-[10px] font-extrabold uppercase tracking-[0.3em] text-[#005C5C]">LIVE VITAL MONITORING</h3>
-               </div>
-
-               <div className="grid lg:grid-cols-3 gap-8">
-                  {/* Blood Pressure Card */}
-                  <div className="bg-white rounded-[2.5rem] p-10 border border-gray-50 shadow-card relative overflow-hidden group h-64 flex flex-col justify-between">
-                     <div className="absolute top-0 right-0 w-32 h-32 bg-[#E6F3F3] rounded-full -translate-y-1/2 translate-x-1/2 opacity-50 group-hover:scale-110 transition-transform"></div>
-                     <div className="space-y-1">
-                        <p className="text-sm font-bold text-gray-400">Blood Pressure</p>
-                        <div className="flex items-baseline gap-2">
-                           <span className="text-6xl font-bold text-[#005C5C] tracking-tighter">140/90</span>
-                           <span className="text-sm md:text-md font-bold text-gray-300">mmHg</span>
+    return (
+        <div className="min-h-screen bg-[#FAFAFA] font-poppins pb-8 overflow-x-hidden">
+            {/* Premium Safety Banner (Glassmorphism) */}
+            {/* Premium Safety Banner (Commented out for future AI integration) */}
+            {/* 
+            <motion.div 
+                initial={{ y: -100 }}
+                animate={{ y: 0 }}
+                className="fixed top-24 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-4xl"
+            >
+                <div className="bg-[#BA1A1A]/90 backdrop-blur-xl text-white py-4 px-8 rounded-full flex flex-col md:flex-row items-center justify-between gap-4 shadow-[0_20px_50px_rgba(186,26,26,0.3)] border border-white/20">
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center animate-pulse">
+                            <AlertCircle size={18} />
                         </div>
-                     </div>
-                     <div className="flex items-center gap-2 group/status cursor-default">
-                        <span className="w-2 h-2 rounded-full bg-orange-400 animate-pulse"></span>
-                        <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 bg-orange-50 text-orange-400 rounded-full">Elevated - Monitoring</span>
-                     </div>
-                  </div>
+                        <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] leading-tight">
+                            Safety Alert: Elevated Risk Detected. Follow protocol below.
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <button className="text-[10px] font-bold uppercase tracking-widest hover:underline decoration-white/30 underline-offset-4 transition-all">Emergency Help</button>
+                        <button className="bg-white text-[#BA1A1A] px-6 py-2.5 rounded-full font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:scale-105 active:scale-95 transition-all shadow-lg">
+                            <Phone size={14} fill="currentColor" />
+                            Call Doctor
+                        </button>
+                    </div>
+                </div>
+            </motion.div>
+            */}
 
-                  {/* Weight Status Card */}
-                  <div className="bg-[#F8F9FA] rounded-[2.5rem] p-10 border border-gray-100 shadow-card h-64 flex flex-col justify-between relative group">
-                     <div className="space-y-1">
-                        <p className="text-sm font-bold text-gray-400">Weight Status</p>
-                        <div className="flex items-baseline gap-2">
-                           <span className="text-6xl font-bold text-gray-900 tracking-tighter">68.4</span>
-                           <span className="text-sm md:text-md font-bold text-gray-300">kg</span>
-                        </div>
-                     </div>
-                     <div className="flex items-center gap-2">
-                        <div className="px-4 py-2 bg-white rounded-xl shadow-sm flex items-center gap-2">
-                           <Activity size={14} className="text-mamacare-teal" />
-                           <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">+0.5kg this week</span>
-                        </div>
-                     </div>
-                  </div>
+            <Navbar />
 
-                  {/* Health Stability Flow Chart */}
-                  <div className="bg-[#E6F3F3] rounded-[2.5rem] p-10 shadow-card h-64 flex flex-col justify-between relative overflow-hidden group">
-                     <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-extrabold uppercase tracking-widest text-mamacare-teal italic">Health Stability Flow</span>
-                        <BarChart3 size={20} className="text-mamacare-teal/30 group-hover:scale-110 transition-all" />
-                     </div>
-                     <div className="flex items-end justify-between h-24 gap-2">
-                        {[40, 60, 90, 70, 85].map((h, i) => (
-                           <div key={i} className="flex-1 relative group/bar">
-                              <div
-                                 className={`w-full rounded-t-xl transition-all duration-1000 ease-out hover:opacity-100 ${i === 4 ? 'bg-mamacare-teal opacity-100' : 'bg-mamacare-teal/30 opacity-60'}`}
-                                 style={{ height: `${h}%` }}
-                              ></div>
-                              {i === 4 && <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rounded-full border-2 border-mamacare-teal animate-ping"></div>}
-                              {i === 4 && <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rounded-full border-2 border-mamacare-teal"></div>}
-                           </div>
+            <main className="pt-28 px-6 md:px-12 max-w-7xl mx-auto space-y-20">
+                {/* Editorial Header */}
+                <motion.div 
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center space-y-4"
+                >
+                   
+                    <h1 className="text-5xl md:text-6xl font-black text-[#003e3d] tracking-tighter leading-tight">
+                        Rest & Monitor, <span className="text-mamacare-teal italic">{mother?.fullName?.split(' ')[0] || 'Mama'}.</span>
+                    </h1>
+                    <p className="text-gray-500 font-medium max-w-2xl mx-auto text-lg leading-relaxed italic">
+                        Your clinical team has been updated. Focus on gentle recovery while we track your health markers in real-time.
+                    </p>
+                </motion.div>
+
+                {/* Hero Action Cards */}
+                <motion.section 
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                    className="grid lg:grid-cols-2 gap-10"
+                >
+                    <motion.div 
+                        variants={itemVariants}
+                        className="bg-white rounded-[3.5rem] p-12 md:p-14 space-y-10 shadow-card border border-gray-50 group hover:shadow-3xl transition-all duration-700 relative overflow-hidden"
+                    >
+                        <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none group-hover:scale-125 transition-transform duration-1000">
+                             <Zap size={200} />
+                        </div>
+                        <div className="flex justify-between items-start relative z-10">
+                            <div className="w-16 h-16 bg-mamacare-teal/5 rounded-[1.5rem] flex items-center justify-center text-mamacare-teal ring-8 ring-mamacare-teal/5">
+                                <MessageSquare size={32} />
+                            </div>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-mamacare-teal bg-mamacare-teal/5 px-4 py-2 rounded-full border border-mamacare-teal/10">Action Required</span>
+                        </div>
+                        <div className="space-y-3 relative z-10">
+                            <h2 className="text-xl font-bold text-[#005C5C] tracking-tight">Symptom Log</h2>
+                            <p className="text-gray-400 font-medium leading-relaxed text-sm">
+                                Log any physiological changes every 4 hours. This helps our AI refine your stability baseline.
+                            </p>
+                        </div>
+                        <button className="w-full bg-[#005C5C] text-white py-7 rounded-[2.5rem] font-bold text-xl hover:bg-mamacare-teal-dark shadow-3xl shadow-mamacare-teal/20 transition-all active:scale-[0.98] relative z-10 group overflow-hidden">
+                            <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+                            <span className="relative z-10">Update Status Now</span>
+                        </button>
+                    </motion.div>
+
+                    <motion.div 
+                        variants={itemVariants}
+                        className="bg-[#E6F3F3] rounded-[3.5rem] p-12 md:p-14 space-y-10 shadow-card border border-[#DCECEC] group hover:shadow-3xl transition-all duration-700 relative overflow-hidden"
+                    >
+                        <div className="absolute top-0 right-0 p-12 opacity-10 pointer-events-none group-hover:scale-125 transition-transform duration-1000">
+                             <BookOpen size={200} />
+                        </div>
+                        <div className="flex justify-between items-start relative z-10">
+                            <div className="w-16 h-16 bg-white rounded-[1.5rem] flex items-center justify-center text-gray-900 shadow-sm ring-8 ring-white/30">
+                                <BookOpen size={32} />
+                            </div>
+                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#003e3d]/50">Resources</span>
+                        </div>
+                        <div className="space-y-3 relative z-10">
+                            <h2 className="text-xl font-bold text-[#003e3d] tracking-tight">Clinical Care Support</h2>
+                            <p className="text-[#003e3d]/60 font-medium leading-relaxed text-sm">
+                                Expert-reviewed guidance on managing preeclampsia symptoms and maintaining low-stress environments.
+                            </p>
+                        </div>
+                        <button onClick={() => navigate('/library')} className="w-full bg-white text-[#003e3d] py-7 rounded-[2.5rem] font-bold text-xl hover:bg-gray-50 shadow-xl transition-all active:scale-[0.98] relative z-10 border border-gray-100 flex items-center justify-center gap-3">
+                            Explore Library <ChevronRight size={24} />
+                        </button>
+                    </motion.div>
+                </motion.section>
+
+                {/* Vitals Grid - High Fidelity */}
+                <motion.section 
+                    variants={containerVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    className="space-y-10 pt-10"
+                >
+                    <div className="flex items-center gap-6">
+                        <div className="h-[2px] bg-mamacare-teal w-12 opacity-30"></div>
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-mamacare-teal">Health Stability Metrics</h3>
+                    </div>
+
+                    <div className="grid lg:grid-cols-3 gap-10">
+                        {/* Blood Pressure */}
+                        <motion.div variants={itemVariants} className="bg-white rounded-[3rem] p-10 border-2 border-gray-50 shadow-card relative overflow-hidden group">
+                            <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#BA1A1A]/5 rounded-full group-hover:scale-110 transition-transform duration-1000"></div>
+                            <div className="space-y-6 relative z-10">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-8 h-8 bg-[#BA1A1A]/10 rounded-full flex items-center justify-center text-[#BA1A1A]">
+                                        <Heart size={16} fill="currentColor" />
+                                    </div>
+                                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Blood Pressure</p>
+                                </div>
+                                <div className="space-y-0">
+                                    <div className="flex items-baseline gap-3">
+                                        <span className="text-5xl font-black text-[#003e3d] tracking-tighter">
+                                            {latestVital ? `${latestVital.bloodPressureSystolic}/${latestVital.bloodPressureDiastolic}` : '—'}
+                                        </span>
+                                        <span className="text-base font-bold text-gray-300 uppercase">mmHg</span>
+                                    </div>
+                                    {latestVital && latestVital.bloodPressureSystolic >= 130 && (
+                                        <div className="flex items-center gap-2 mt-4">
+                                            <div className="px-5 py-2 bg-[#FBE9E7] text-[#BA1A1A] rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse border border-[#BA1A1A]/10">
+                                                Elevated
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="pt-6 border-t border-gray-50 flex items-center justify-between">
+                                    <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Target: Below 130/80</p>
+                                    <Sparkles size={14} className="text-amber-400" />
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        {/* Weight */}
+                        <motion.div variants={itemVariants} className="bg-[#005C5C] rounded-[3rem] p-10 shadow-card text-white relative overflow-hidden group">
+                             <div className="absolute top-0 right-0 p-10 opacity-10">
+                                <Scale size={120} />
+                             </div>
+                             <div className="space-y-6 relative z-10">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+                                        <Scale size={16} />
+                                    </div>
+                                    <p className="text-xs font-bold text-white/50 uppercase tracking-widest">Gestational Weight</p>
+                                </div>
+                                <div className="flex items-baseline gap-3">
+                                    <span className="text-5xl font-black text-white tracking-tighter">
+                                        {latestVital?.weightKg ?? mother?.weightKg ?? '—'}
+                                    </span>
+                                    <span className="text-base font-bold text-white/30 uppercase">kg</span>
+                                </div>
+                                <div className="pt-6 border-t border-white/10 flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 bg-mamacare-teal rounded-xl flex items-center justify-center">
+                                            <Activity size={18} />
+                                        </div>
+                                        <p className="text-xs font-bold leading-tight">Latest reading<br/><span className="text-white/40 uppercase text-[8px] tracking-widest">{latestVital ? new Date(latestVital.recordedAt).toLocaleDateString() : 'No data'}</span></p>
+                                    </div>
+                                    <CheckCircle2 size={24} className="text-mamacare-teal" />
+                                </div>
+                             </div>
+                        </motion.div>
+
+                        {/* Fetal Heart Rate */}
+                        <motion.div variants={itemVariants} className="bg-[#E6F3F3] rounded-[3rem] p-10 shadow-card border border-[#DCECEC] flex flex-col justify-between group">
+                            <div className="flex justify-between items-center mb-8">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-[#003e3d]">Fetal Heart Rate</span>
+                                <BarChart3 size={20} className="text-mamacare-teal" />
+                            </div>
+                            <div className="flex items-baseline gap-3">
+                                <span className="text-5xl font-black text-[#003e3d] tracking-tighter">
+                                    {latestVital?.fetalHeartRate ?? '—'}
+                                </span>
+                                <span className="text-base font-bold text-[#003e3d]/30 uppercase">bpm</span>
+                            </div>
+                            <p className="mt-6 text-[10px] font-bold text-[#003e3d]/40 uppercase tracking-widest">Normal: 110–160 bpm</p>
+                        </motion.div>
+                    </div>
+                </motion.section>
+
+                <motion.section 
+                    variants={containerVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    className="space-y-10 pt-10 pb-8"
+                >
+                    <div className="flex items-center gap-6">
+                        <div className="h-[2px] bg-mamacare-teal w-12 opacity-30"></div>
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-mamacare-teal">Recommended Protocol</h3>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-8">
+                        {[
+                            { icon: Utensils, label: 'Rest & Nutrition', text: 'Low-sodium intake and left-side resting to improve placental blood flow.', color: 'bg-teal-50 text-mamacare-teal' },
+                            { icon: Bell, label: 'Early Warning Signs', text: 'Call immediately if you see spots, feel upper gastric pain, or have severe headaches.', color: 'bg-amber-50 text-amber-500' },
+                            { icon: Users, label: 'Support Network', text: 'Your primary OB-GYN and local labor unit have been flagged with your status.', color: 'bg-red-50 text-red-500' }
+                        ].map((proto, idx) => (
+                            <motion.div 
+                                key={idx}
+                                variants={itemVariants}
+                                className="bg-white rounded-[3rem] p-10 border border-gray-50 shadow-card group hover:shadow-2xl transition-all duration-500"
+                            >
+                                <div className={`w-14 h-14 ${proto.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
+                                    <proto.icon size={28} />
+                                </div>
+                                <h4 className="text-xl font-bold text-[#005C5C] mb-4 tracking-tight">{proto.label}</h4>
+                                <p className="text-gray-500 font-medium leading-relaxed text-sm">{proto.text}</p>
+                            </motion.div>
                         ))}
-                     </div>
-                  </div>
-               </div>
-            </section>
-
-            {/* Recommended Actions */}
-            <section className="space-y-8 pt-10">
-               <div className="flex items-center gap-4">
-                  <div className="h-[2px] bg-mamacare-teal w-12 opacity-30"></div>
-                  <h3 className="text-[10px] font-extrabold uppercase tracking-[0.3em] text-[#005C5C]">RECOMMENDED ACTIONS</h3>
-               </div>
-
-               <div className="grid md:grid-cols-3 gap-8">
-                  <div className="bg-white rounded-[2.5rem] p-10 border border-gray-50 shadow-card space-y-6 group hover:scale-[1.02] transition-all">
-                     <div className="w-12 h-12 bg-teal-50 rounded-2xl flex items-center justify-center text-mamacare-teal">
-                        <Utensils size={24} />
-                     </div>
-                     <div className="space-y-2">
-                        <h4 className="text-xl font-bold text-gray-900 leading-tight">Rest & Nutrition</h4>
-                        <p className="text-sm font-medium text-gray-400 leading-relaxed">Focus on a low-sodium diet and left-side resting to improve circulation.</p>
-                     </div>
-                  </div>
-
-                  <div className="bg-white rounded-[2.5rem] p-10 border border-gray-50 shadow-card space-y-6 group hover:scale-[1.02] transition-all">
-                     <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-400">
-                        <Bell size={24} />
-                     </div>
-                     <div className="space-y-2">
-                        <h4 className="text-xl font-bold text-gray-900 leading-tight">When to Call Again</h4>
-                        <p className="text-sm font-medium text-gray-400 leading-relaxed">Immediate markers: severe headache, upper gastric pain, or vision spots.</p>
-                     </div>
-                  </div>
-
-                  <div className="bg-white rounded-[2.5rem] p-10 border border-gray-50 shadow-card space-y-6 group hover:scale-[1.02] transition-all">
-                     <div className="w-12 h-12 bg-red-50 rounded-2xl flex items-center justify-center text-red-500">
-                        <Users size={24} />
-                     </div>
-                     <div className="space-y-2">
-                        <h4 className="text-xl font-bold text-gray-900 leading-tight">Emergency Contacts</h4>
-                        <p className="text-sm font-medium text-gray-400 leading-relaxed">Direct line to Labor & Delivery and your primary OB-GYN's after-hours line.</p>
-                     </div>
-                  </div>
-               </div>
-            </section>
-         </main>
-
-
-      </div>
-   );
+                    </div>
+                </motion.section>
+            </main>
+            <Footer />
+        </div>
+    );
 };
 
 export default RestMonitor;

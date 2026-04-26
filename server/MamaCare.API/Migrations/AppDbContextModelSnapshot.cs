@@ -30,6 +30,9 @@ namespace MamaCare.API.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("CancellationReason")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -126,6 +129,43 @@ namespace MamaCare.API.Migrations
                         });
                 });
 
+            modelBuilder.Entity("MamaCare.API.Models.ArticleRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Category")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SubmittedByEmail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SubmittedByName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Topic")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ArticleRequests");
+                });
+
             modelBuilder.Entity("MamaCare.API.Models.ContactMessage", b =>
                 {
                     b.Property<int>("Id")
@@ -180,6 +220,9 @@ namespace MamaCare.API.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Institution")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Languages")
                         .HasColumnType("text");
 
                     b.Property<string>("LicenseNumber")
@@ -304,6 +347,9 @@ namespace MamaCare.API.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.ToTable("LibraryArticles");
@@ -318,7 +364,8 @@ namespace MamaCare.API.Migrations
                             Status = 1,
                             Summary = "Optimizing your rest is crucial as you approach delivery.",
                             Title = "Safe Sleep Positions during the Third Trimester",
-                            UpdatedAt = new DateTime(2026, 3, 28, 0, 0, 0, 0, DateTimeKind.Utc)
+                            UpdatedAt = new DateTime(2026, 3, 28, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ViewCount = 0
                         },
                         new
                         {
@@ -329,7 +376,8 @@ namespace MamaCare.API.Migrations
                             Status = 1,
                             Summary = "Essential vitamins and nutrients for you and your baby.",
                             Title = "The Third Trimester Diet: What to Eat",
-                            UpdatedAt = new DateTime(2026, 4, 2, 0, 0, 0, 0, DateTimeKind.Utc)
+                            UpdatedAt = new DateTime(2026, 4, 2, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ViewCount = 0
                         },
                         new
                         {
@@ -340,7 +388,8 @@ namespace MamaCare.API.Migrations
                             Status = 1,
                             Summary = "Safe exercises to keep you active during pregnancy.",
                             Title = "Pregnancy Safety: Gentle Movement Guide",
-                            UpdatedAt = new DateTime(2026, 3, 23, 0, 0, 0, 0, DateTimeKind.Utc)
+                            UpdatedAt = new DateTime(2026, 3, 23, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ViewCount = 0
                         },
                         new
                         {
@@ -351,7 +400,8 @@ namespace MamaCare.API.Migrations
                             Status = 0,
                             Summary = "Mindfulness and support strategies for new mothers.",
                             Title = "Managing Postpartum Anxiety",
-                            UpdatedAt = new DateTime(2026, 4, 5, 0, 0, 0, 0, DateTimeKind.Utc)
+                            UpdatedAt = new DateTime(2026, 4, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ViewCount = 0
                         },
                         new
                         {
@@ -362,7 +412,8 @@ namespace MamaCare.API.Migrations
                             Status = 1,
                             Summary = "What to expect and how to prepare in your first 12 weeks.",
                             Title = "First Trimester Essentials",
-                            UpdatedAt = new DateTime(2026, 3, 8, 0, 0, 0, 0, DateTimeKind.Utc)
+                            UpdatedAt = new DateTime(2026, 3, 8, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ViewCount = 0
                         },
                         new
                         {
@@ -373,7 +424,8 @@ namespace MamaCare.API.Migrations
                             Status = 1,
                             Summary = "Low-impact workouts approved for all trimesters.",
                             Title = "Safe Exercises for Pregnancy",
-                            UpdatedAt = new DateTime(2026, 3, 30, 0, 0, 0, 0, DateTimeKind.Utc)
+                            UpdatedAt = new DateTime(2026, 3, 30, 0, 0, 0, 0, DateTimeKind.Utc),
+                            ViewCount = 0
                         });
                 });
 
@@ -453,14 +505,26 @@ namespace MamaCare.API.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Address")
+                        .HasColumnType("text");
+
                     b.Property<string>("Allergies")
                         .HasColumnType("text");
+
+                    b.Property<int>("BloodType")
+                        .HasColumnType("integer");
 
                     b.Property<int>("CurrentTrimester")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("EmergencyContactName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EmergencyContactPhone")
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("ExpectedDueDate")
                         .HasColumnType("timestamp with time zone");
@@ -475,6 +539,9 @@ namespace MamaCare.API.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Location")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MedicalNotes")
                         .HasColumnType("text");
 
                     b.Property<bool>("OnboardingComplete")
@@ -501,6 +568,7 @@ namespace MamaCare.API.Migrations
                         {
                             Id = 1,
                             Allergies = "Penicillin",
+                            BloodType = 8,
                             CurrentTrimester = 2,
                             DateOfBirth = new DateTime(1992, 3, 15, 0, 0, 0, 0, DateTimeKind.Utc),
                             ExpectedDueDate = new DateTime(2026, 10, 24, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -516,6 +584,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 2,
+                            BloodType = 8,
                             CurrentTrimester = 1,
                             DateOfBirth = new DateTime(1999, 7, 20, 0, 0, 0, 0, DateTimeKind.Utc),
                             ExpectedDueDate = new DateTime(2026, 12, 10, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -531,6 +600,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 3,
+                            BloodType = 8,
                             CurrentTrimester = 2,
                             DateOfBirth = new DateTime(1993, 11, 5, 0, 0, 0, 0, DateTimeKind.Utc),
                             ExpectedDueDate = new DateTime(2026, 9, 15, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -546,6 +616,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 4,
+                            BloodType = 8,
                             CurrentTrimester = 0,
                             DateOfBirth = new DateTime(2001, 4, 12, 0, 0, 0, 0, DateTimeKind.Utc),
                             ExpectedDueDate = new DateTime(2027, 2, 20, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -561,6 +632,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 5,
+                            BloodType = 8,
                             CurrentTrimester = 2,
                             DateOfBirth = new DateTime(1990, 9, 28, 0, 0, 0, 0, DateTimeKind.Utc),
                             ExpectedDueDate = new DateTime(2026, 8, 5, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -664,6 +736,50 @@ namespace MamaCare.API.Migrations
                     b.ToTable("PatientAppointments");
                 });
 
+            modelBuilder.Entity("MamaCare.API.Models.Prescription", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Dosage")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Duration")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Frequency")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("IssuedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("MedicineName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("MotherId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasIndex("MotherId");
+
+                    b.ToTable("Prescriptions");
+                });
+
             modelBuilder.Entity("MamaCare.API.Models.TriageSession", b =>
                 {
                     b.Property<int>("Id")
@@ -696,6 +812,9 @@ namespace MamaCare.API.Migrations
                     b.Property<int>("Outcome")
                         .HasColumnType("integer");
 
+                    b.Property<int>("RiskLevel")
+                        .HasColumnType("integer");
+
                     b.Property<int>("SeverityScore")
                         .HasColumnType("integer");
 
@@ -724,6 +843,7 @@ namespace MamaCare.API.Migrations
                             HeartRate = 92.0,
                             MotherId = 1,
                             Outcome = 3,
+                            RiskLevel = 0,
                             SeverityScore = 9,
                             Symptoms = "headache_severe,swelling_sudden,vision_blurred",
                             Temperature = 37.200000000000003
@@ -736,6 +856,7 @@ namespace MamaCare.API.Migrations
                             DurationDescription = "Mild, on and off for 2 days",
                             MotherId = 1,
                             Outcome = 1,
+                            RiskLevel = 0,
                             SeverityScore = 4,
                             Symptoms = "nausea,fatigue"
                         },
@@ -750,6 +871,7 @@ namespace MamaCare.API.Migrations
                             HeartRate = 88.0,
                             MotherId = 3,
                             Outcome = 2,
+                            RiskLevel = 0,
                             SeverityScore = 5,
                             Symptoms = "headache_mild,fatigue"
                         });
@@ -795,7 +917,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 4, 14, 14, 43, 9, 421, DateTimeKind.Utc).AddTicks(2482),
+                            CreatedAt = new DateTime(2026, 4, 22, 1, 33, 7, 319, DateTimeKind.Utc).AddTicks(5545),
                             Email = "uwimana@mamacare.app",
                             FullName = "Uwimana Clarisse",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -806,7 +928,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 4, 14, 14, 43, 9, 421, DateTimeKind.Utc).AddTicks(5666),
+                            CreatedAt = new DateTime(2026, 4, 22, 1, 33, 7, 319, DateTimeKind.Utc).AddTicks(8087),
                             Email = "mukamana@mamacare.app",
                             FullName = "Mukamana Espérance",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -816,7 +938,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 4, 14, 14, 43, 9, 421, DateTimeKind.Utc).AddTicks(5669),
+                            CreatedAt = new DateTime(2026, 4, 22, 1, 33, 7, 319, DateTimeKind.Utc).AddTicks(8090),
                             Email = "niyonsenga@mamacare.app",
                             FullName = "Niyonsenga Vestine",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -826,7 +948,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2026, 4, 14, 14, 43, 9, 421, DateTimeKind.Utc).AddTicks(5671),
+                            CreatedAt = new DateTime(2026, 4, 22, 1, 33, 7, 319, DateTimeKind.Utc).AddTicks(8091),
                             Email = "uwase@mamacare.app",
                             FullName = "Uwase Alphonsine",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -836,7 +958,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2026, 4, 14, 14, 43, 9, 421, DateTimeKind.Utc).AddTicks(5672),
+                            CreatedAt = new DateTime(2026, 4, 22, 1, 33, 7, 319, DateTimeKind.Utc).AddTicks(8092),
                             Email = "ingabire@mamacare.app",
                             FullName = "Ingabire Solange",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -846,7 +968,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2026, 4, 14, 14, 43, 9, 421, DateTimeKind.Utc).AddTicks(5673),
+                            CreatedAt = new DateTime(2026, 4, 22, 1, 33, 7, 319, DateTimeKind.Utc).AddTicks(8115),
                             Email = "s.mitchell@mamacare.app",
                             FullName = "Dr. Sarah Mitchell",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -857,7 +979,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2026, 4, 14, 14, 43, 9, 421, DateTimeKind.Utc).AddTicks(5675),
+                            CreatedAt = new DateTime(2026, 4, 22, 1, 33, 7, 319, DateTimeKind.Utc).AddTicks(8116),
                             Email = "m.chen@mamacare.app",
                             FullName = "Dr. Michael Chen",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -868,7 +990,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2026, 4, 14, 14, 43, 9, 421, DateTimeKind.Utc).AddTicks(5676),
+                            CreatedAt = new DateTime(2026, 4, 22, 1, 33, 7, 319, DateTimeKind.Utc).AddTicks(8117),
                             Email = "e.rodriguez@mamacare.app",
                             FullName = "Dr. Elena Rodriguez",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -879,7 +1001,7 @@ namespace MamaCare.API.Migrations
                         new
                         {
                             Id = 9,
-                            CreatedAt = new DateTime(2026, 4, 14, 14, 43, 9, 421, DateTimeKind.Utc).AddTicks(5678),
+                            CreatedAt = new DateTime(2026, 4, 22, 1, 33, 7, 319, DateTimeKind.Utc).AddTicks(8118),
                             Email = "admin@mamacare.app",
                             FullName = "Admin Sarah",
                             PasswordHash = "$2a$11$/Sh.lP5iSGFbtdSo7wfzhetzKL8bdBd63U56bq6fYl8AIBT9jHIKW",
@@ -1069,6 +1191,25 @@ namespace MamaCare.API.Migrations
                     b.Navigation("Doctor");
 
                     b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("MamaCare.API.Models.Prescription", b =>
+                {
+                    b.HasOne("MamaCare.API.Models.Doctor", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MamaCare.API.Models.Mother", "Mother")
+                        .WithMany()
+                        .HasForeignKey("MotherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Mother");
                 });
 
             modelBuilder.Entity("MamaCare.API.Models.TriageSession", b =>

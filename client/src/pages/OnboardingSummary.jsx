@@ -69,7 +69,7 @@ const OnboardingSummary = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white font-outfit pb-20">
+    <div className="min-h-screen bg-white font-poppins pb-20">
       <div className="fixed top-0 left-0 right-0 z-50 bg-white pt-6">
         <div className="max-w-3xl mx-auto px-4">
           <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">

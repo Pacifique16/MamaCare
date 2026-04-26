@@ -36,16 +36,16 @@ public class AuthController : ControllerBase
         if (user.Role == UserRole.Mother)
         {
             var mother = await _db.Mothers.FirstOrDefaultAsync(m => m.UserId == user.Id);
-            profile = new { id = user.Id, motherId = mother?.Id, role = "Mother", name = user.FullName, email = user.Email };
+            profile = new { id = user.Id, motherId = mother?.Id, role = "Mother", name = user.FullName, email = user.Email, profileImageUrl = user.ProfileImageUrl };
         }
         else if (user.Role == UserRole.Doctor)
         {
             var doctor = await _db.Doctors.FirstOrDefaultAsync(d => d.UserId == user.Id);
-            profile = new { id = user.Id, doctorId = doctor?.Id, role = "Doctor", name = user.FullName, email = user.Email };
+            profile = new { id = user.Id, doctorId = doctor?.Id, role = "Doctor", name = user.FullName, email = user.Email, profileImageUrl = user.ProfileImageUrl };
         }
         else
         {
-            profile = new { id = user.Id, role = "Admin", name = user.FullName, email = user.Email };
+            profile = new { id = user.Id, role = "Admin", name = user.FullName, email = user.Email, profileImageUrl = user.ProfileImageUrl };
         }
 
         var token = GenerateToken(user);

@@ -26,7 +26,7 @@ public class LibraryController : ControllerBase
             .OrderByDescending(a => a.PublishedAt)
             .Select(a => new LibraryArticleDto(
                 a.Id, a.Title, a.Summary, a.Category,
-                a.Status, a.ImageUrl, a.PublishedAt, a.UpdatedAt))
+                a.Status, a.ImageUrl, a.PublishedAt, a.UpdatedAt, a.Content, a.ViewCount))
             .ToListAsync();
         return Ok(result);
     }
@@ -38,7 +38,17 @@ public class LibraryController : ControllerBase
         if (a is null) return NotFound();
         return Ok(new LibraryArticleDto(
             a.Id, a.Title, a.Summary, a.Category,
-            a.Status, a.ImageUrl, a.PublishedAt, a.UpdatedAt));
+            a.Status, a.ImageUrl, a.PublishedAt, a.UpdatedAt, a.Content, a.ViewCount));
+    }
+
+    [HttpPost("{id}/view")]
+    [AllowAnonymous]
+    public async Task<IActionResult> RecordView(int id)
+    {
+        await _db.LibraryArticles
+            .Where(a => a.Id == id)
+            .ExecuteUpdateAsync(s => s.SetProperty(a => a.ViewCount, a => a.ViewCount + 1));
+        return Ok();
     }
 
     [HttpPost]

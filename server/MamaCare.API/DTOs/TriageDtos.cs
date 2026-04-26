@@ -14,6 +14,7 @@ public record TriageSessionDto(
     double? HeartRate,
     double? Temperature,
     TriageOutcome Outcome,
+    RiskLevel RiskLevel,
     string? AiRecommendation,
     DateTime CreatedAt
 );

@@ -3,10 +3,10 @@ import { createPortal } from 'react-dom'
 import { X, Clock } from 'lucide-react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
-import { createAppointment, updateAppointment, getVerifiedDoctors, getAvailableSlots } from '../api/patientAppointmentsApi'
-import { getAllPatients } from '../api/patientsApi'
+import { getVerifiedDoctors, getAvailableSlots } from '../api/patientAppointmentsApi'
+import { mothersApi, appointmentsApi } from '../api/services'
 
-const STATUSES = ['Scheduled', 'Completed', 'Cancelled']
+const STATUSES = ['Scheduled', 'Confirmed', 'Waiting', 'Completed', 'Cancelled']
 
 const APPOINTMENT_TYPES = [
   { value: 'RoutineCheckup', label: 'Routine Checkup' },
@@ -43,7 +43,7 @@ function PatientAppointmentForm({ appointment, onSuccess, onCancel }) {
   const [submitError, setSubmitError] = useState('')
 
   useEffect(() => {
-    getAllPatients().then((res) => setPatients(res.data)).catch(() => {})
+    mothersApi.getAll().then((res) => setPatients(res.data)).catch(() => {})
     getVerifiedDoctors().then((res) => setDoctors(res.data)).catch(() => {})
   }, [])
 
@@ -103,21 +103,28 @@ function PatientAppointmentForm({ appointment, onSuccess, onCancel }) {
     setSubmitting(true)
     setSubmitError('')
 
-    const payload = {
-      patientId: parseInt(form.patientId, 10),
-      doctorId: parseInt(form.doctorId, 10),
-      appointmentDate: new Date(`${form.date}T${form.time}:00Z`).toISOString(),
-      type: form.type,
-      notes: form.notes.trim() || null,
-      status: form.status,
-      cancellationReason: form.status === 'Cancelled' ? form.cancellationReason.trim() || null : null,
-    }
+    const isSystemA = true // We are transitioning to System A (Mothers)
 
     try {
       if (isEdit) {
-        await updateAppointment(appointment.id, payload)
+        // Update payload for Mothers System (UpdateAppointmentDto)
+        const updatePayload = {
+          scheduledAt: new Date(`${form.date}T${form.time}:00Z`).toISOString(),
+          type: form.type,
+          notes: form.notes.trim() || null,
+          status: form.status,
+        }
+        await appointmentsApi.update(appointment.id, updatePayload)
       } else {
-        await createAppointment(payload)
+        // Create payload for Mothers System (CreateAppointmentDto)
+        const createPayload = {
+          motherId: parseInt(form.patientId, 10),
+          doctorId: parseInt(form.doctorId, 10),
+          scheduledAt: new Date(`${form.date}T${form.time}:00Z`).toISOString(),
+          type: form.type,
+          notes: form.notes.trim() || null
+        }
+        await appointmentsApi.create(createPayload)
       }
       onSuccess()
     } catch (err) {
@@ -176,7 +183,7 @@ function PatientAppointmentForm({ appointment, onSuccess, onCancel }) {
               <option value="">Select a patient…</option>
               {patients.map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.fullName} — {p.weeksPregnant}w
+                  {p.fullName} — {p.gestationalWeek}w
                 </option>
               ))}
             </select>

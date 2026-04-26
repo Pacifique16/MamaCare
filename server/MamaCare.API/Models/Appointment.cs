@@ -1,7 +1,7 @@
 namespace MamaCare.API.Models;
 
 public enum AppointmentStatus { Scheduled, Waiting, Confirmed, Completed, Cancelled }
-public enum AppointmentType { RoutineCheckup, UltrasoundScan, GlucoseScreening, BirthPlanReview, UrgentFollowUp, Postpartum }
+public enum AppointmentType { RoutineCheckup, UltrasoundScan, GlucoseScreening, BirthPlanReview, UrgentFollowUp, Postpartum, Other }
 
 public class Appointment
 {
@@ -15,5 +15,6 @@ public class Appointment
     public AppointmentType Type { get; set; }
     public AppointmentStatus Status { get; set; } = AppointmentStatus.Scheduled;
     public string? Notes { get; set; }
+    public string? CancellationReason { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

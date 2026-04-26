@@ -1,5 +1,7 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 import ForgotPassword from './pages/ForgotPassword';
@@ -10,10 +12,7 @@ import Contact from './pages/Contact';
 import OnboardingStep1 from './pages/OnboardingStep1';
 import OnboardingSummary from './pages/OnboardingSummary';
 import MotherDashboard from './pages/MotherDashboard';
-import SymptomProfile from './pages/triage/SymptomProfile';
-import SeverityDuration from './pages/triage/SeverityDuration';
-import VitalsClinical from './pages/triage/VitalsClinical';
-import AnalysisResults from './pages/triage/AnalysisResults';
+import TriageWizard from './pages/triage/TriageWizard';
 import Library from './pages/Library';
 import Appointments from './pages/Appointments';
 import RestMonitor from './pages/RestMonitor';
@@ -28,11 +27,36 @@ import DoctorAppointments from './pages/doctor/Appointments';
 import Messaging from './pages/doctor/Messaging'
 import PatientsPage from './pages/PatientsPage';
 import PatientAppointmentsPage from './pages/PatientAppointmentsPage';
+import SettingsPage from './pages/SettingsPage';
+
+import LandingPage from './pages/LandingPage';
+import EmergencyCall from './pages/EmergencyCall';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import HelpCenter from './pages/HelpCenter';
+import TermsOfService from './pages/TermsOfService';
+import ArticleDetail from './pages/ArticleDetail';
+
+import ArticleRequestsPage from './pages/admin/ArticleRequestsPage';
+import LibraryPage from './pages/admin/LibraryPage';
+import ContactMessagesPage from './pages/admin/ContactMessagesPage';
+
+import MotherMessaging from './pages/MotherMessaging';
+
+import Prescriptions from './pages/Prescriptions';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }); }, [pathname]);
+  return null;
+}
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<SignIn />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -40,39 +64,63 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/reset-success" element={<ResetSuccess />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/onboarding/step-1" element={<OnboardingStep1 />} />
-        <Route path="/onboarding/complete" element={<OnboardingSummary />} />
-        <Route path="/dashboard" element={<MotherDashboard />} />
+        <Route path="/emergency" element={<EmergencyCall />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/help" element={<HelpCenter />} />
+        <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/library/:id" element={<ArticleDetail />} />
 
-        {/* Triage Flow */}
-        <Route path="/triage/symptom-profile" element={<SymptomProfile />} />
-        <Route path="/triage/severity-duration" element={<SeverityDuration />} />
-        <Route path="/triage/vitals-clinical" element={<VitalsClinical />} />
-        <Route path="/triage/analysis-results" element={<AnalysisResults />} />
-        <Route path="/triage/rest-monitor" element={<RestMonitor />} />
+        {/* Mother Protected Routes */}
+        <Route element={<ProtectedRoute allowedRoles={['Mother']} />}>
+          <Route path="/onboarding/step-1" element={<OnboardingStep1 />} />
+          <Route path="/onboarding/complete" element={<OnboardingSummary />} />
+          <Route path="/dashboard" element={<MotherDashboard />} />
+          
+          {/* Triage Flow */}
+          <Route path="/triage" element={<TriageWizard />} />
+          <Route path="/triage/rest-monitor" element={<RestMonitor />} />
 
-        {/* Library & Appointments */}
-        <Route path="/library" element={<Library />} />
-        <Route path="/appointments" element={<Appointments />} />
-        <Route path="/rest-monitor" element={<RestMonitor />} />
+          {/* Library & Appointments */}
+          <Route path="/library" element={<Library />} />
+          <Route path="/appointments" element={<Appointments />} />
+          <Route path="/rest-monitor" element={<RestMonitor />} />
+          <Route path="/messaging" element={<MotherMessaging />} />
+          <Route path="/prescriptions" element={<Prescriptions />} />
+        </Route>
 
-        {/* Admin Portal */}
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/doctors" element={<DoctorManagement />} />
-        <Route path="/admin/edit-doctor/:id" element={<EditDoctor />} />
-        <Route path="/admin/add-doctor" element={<AddDoctor />} />
+        {/* Admin Protected Portal */}
+        <Route element={<ProtectedRoute allowedRoles={['Admin']} />}>
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/doctors" element={<DoctorManagement />} />
+          <Route path="/admin/edit-doctor/:id" element={<EditDoctor />} />
+          <Route path="/admin/add-doctor" element={<AddDoctor />} />
+          <Route path="/admin/article-requests" element={<ArticleRequestsPage />} />
+          <Route path="/admin/library" element={<LibraryPage />} />
+          <Route path="/admin/contact-messages" element={<ContactMessagesPage />} />
+        </Route>
 
-        {/* Doctor Portal */}
-        <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
-        <Route path="/doctor/patients" element={<PatientRoster />} />
-        <Route path="/doctor/patients/:id" element={<PatientProfile />} />
-        <Route path="/doctor/appointments" element={<DoctorAppointments />} />
-        <Route path="/doctor/messaging" element={<Messaging />} />
+        {/* Doctor Protected Portal */}
+        <Route element={<ProtectedRoute allowedRoles={['Doctor']} />}>
+          <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
+          <Route path="/doctor/patients" element={<PatientRoster />} />
+          <Route path="/doctor/patients/:id" element={<PatientProfile />} />
+          <Route path="/doctor/appointments" element={<DoctorAppointments />} />
+          <Route path="/doctor/messaging" element={<Messaging />} />
+        </Route>
 
-        <Route path="/patients" element={<PatientsPage />} />
-        <Route path="/patient-appointments" element={<PatientAppointmentsPage />} />
+        {/* Shared Management Portal (Admin & Doctor) */}
+        <Route element={<ProtectedRoute allowedRoles={['Admin', 'Doctor']} />}>
+          <Route path="/patients" element={<PatientsPage />} />
+          <Route path="/patient-appointments" element={<PatientAppointmentsPage />} />
+        </Route>
 
-        <Route path="/" element={<Navigate to="/signup" replace />} />
+        {/* Settings — all authenticated roles */}
+        <Route element={<ProtectedRoute allowedRoles={['Admin', 'Doctor', 'Mother']} />}>
+          <Route path="/settings" element={<SettingsPage />} />
+        </Route>
+
+        {/* Fallback routing */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
   );

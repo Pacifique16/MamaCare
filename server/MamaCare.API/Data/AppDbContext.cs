@@ -25,6 +25,8 @@ public class AppDbContext : DbContext
     public DbSet<PatientAppointment> PatientAppointments => Set<PatientAppointment>();
     public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
     public DbSet<DoctorCertification> DoctorCertifications => Set<DoctorCertification>();
+    public DbSet<ArticleRequest> ArticleRequests => Set<ArticleRequest>();
+    public DbSet<Prescription> Prescriptions => Set<Prescription>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -88,6 +90,18 @@ public class AppDbContext : DbContext
             .WithMany(d => d.Certifications)
             .HasForeignKey(c => c.DoctorId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Prescription>()
+            .HasOne(p => p.Mother)
+            .WithMany()
+            .HasForeignKey(p => p.MotherId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Prescription>()
+            .HasOne(p => p.Doctor)
+            .WithMany()
+            .HasForeignKey(p => p.DoctorId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         SeedData(modelBuilder);
     }

@@ -1,164 +1,264 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import DoctorLayout from '../../components/layout/DoctorLayout';
-import { 
-  Search, 
-  Send,
-  MoreVertical,
-  Paperclip,
-  Image as ImageIcon,
-  Phone,
-  Video,
-  CheckCheck
-} from 'lucide-react';
+import { messagesApi, mothersApi } from '../../api/services';
+import { useAuth } from '../../context/AuthContext';
+import { Search, Send, CheckCheck, MessageSquare, Phone } from 'lucide-react';
+
+const avatar = (name, img) => img
+  ? <img src={img} alt={name} className="w-full h-full object-cover" />
+  : <span className="font-bold text-sm">{name?.split(' ').map(n => n[0]).join('').slice(0, 2)}</span>;
 
 const Messaging = () => {
-    const [activeChat, setActiveChat] = useState(0);
+  const { user } = useAuth();
+  const doctorId = user?.doctorId || 1;
+  const [searchParams] = useSearchParams();
+  const preselectedMotherId = searchParams.get('motherId') ? Number(searchParams.get('motherId')) : null;
 
-    const chats = [
-        { id: 0, name: 'Aline Silva', lastMessage: 'Okay, I will monitor it and let you know.', time: '10:48 AM', unread: 0, online: true, risk: 'HIGH RISK' },
-        { id: 1, name: 'Elena Wright', lastMessage: 'Thank you for the ultrasound results!', time: 'Yesterday', unread: 2, online: false, risk: 'LOW RISK' },
-        { id: 2, name: 'Maya Lopez', lastMessage: 'Should I continue taking the supplements?', time: 'Tuesday', unread: 0, online: true, risk: 'HIGH RISK' },
-        { id: 3, name: 'Sarah Parker', lastMessage: 'My next appointment is confirmed.', time: 'Oct 12', unread: 0, online: false, risk: 'MEDIUM RISK' },
-    ];
+  const [conversations, setConversations] = useState([]);
+  const [activeConv, setActiveConv] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [text, setText] = useState('');
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
+  const bottomRef = useRef(null);
+  const pollRef = useRef(null);
 
-    return (
-        <DoctorLayout title="Secure Messaging" subtitle="Communicate with your patients securely.">
-            <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] overflow-hidden flex h-[600px]">
-                
-                {/* Chat List Sidebar */}
-                <div className="w-[350px] border-r border-gray-100 flex flex-col bg-gray-50/50">
-                    <div className="p-6 border-b border-gray-100">
-                        <div className="relative">
-                            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                            <input 
-                                type="text" 
-                                placeholder="Search messages..." 
-                                className="w-full h-12 bg-white border border-gray-200 rounded-2xl pl-12 pr-4 text-sm font-medium focus:border-[#005C5C] focus:ring-2 focus:ring-teal-500/10 focus:outline-none transition-all shadow-sm"
-                            />
-                        </div>
-                    </div>
-                    
-                    <div className="flex-1 overflow-y-auto">
-                        {chats.map((chat, idx) => (
-                            <div 
-                                key={chat.id} 
-                                onClick={() => setActiveChat(idx)}
-                                className={`p-6 border-b border-gray-50 cursor-pointer transition-all hover:bg-white flex items-start gap-4 ${activeChat === idx ? 'bg-white border-l-4 border-l-[#005C5C]' : 'border-l-4 border-l-transparent'}`}
-                            >
-                                <div className="relative">
-                                    <div className="w-12 h-12 rounded-full bg-teal-100 text-[#005C5C] flex items-center justify-center font-bold text-lg border-2 border-white shadow-sm">
-                                        {chat.name.split(' ').map(n => n[0]).join('')}
-                                    </div>
-                                    {chat.online && <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white shadow-sm"></div>}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex justify-between items-start mb-1">
-                                        <h4 className="font-bold text-gray-900 truncate pr-2">{chat.name}</h4>
-                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">{chat.time}</span>
-                                    </div>
-                                    <p className={`text-sm truncate ${chat.unread > 0 ? 'font-bold text-gray-900' : 'text-gray-500 font-medium'}`}>
-                                        {chat.lastMessage}
-                                    </p>
-                                    <div className="flex items-center gap-2 mt-2">
-                                        <span className={`text-[8px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded-full ${chat.risk.includes('HIGH') ? 'bg-red-50 text-red-600' : chat.risk.includes('MEDIUM') ? 'bg-orange-50 text-orange-600' : 'bg-teal-50 text-teal-600'}`}>
-                                            {chat.risk}
-                                        </span>
-                                    </div>
-                                </div>
-                                {chat.unread > 0 && (
-                                    <div className="w-5 h-5 bg-[#005C5C] rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-sm mt-1">
-                                        {chat.unread}
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                </div>
+  // Load conversation list
+  useEffect(() => {
+    messagesApi.getConversations(doctorId)
+      .then(async r => {
+        setConversations(r.data);
+        if (preselectedMotherId) {
+          const found = r.data.find(c => c.motherId === preselectedMotherId);
+          if (found) {
+            setActiveConv(found);
+          } else {
+            // Mother has no prior messages — fetch her info and open a blank chat
+            try {
+              const m = await mothersApi.getById(preselectedMotherId);
+              const synthetic = {
+                motherId: preselectedMotherId,
+                motherName: m.data.fullName,
+                motherImage: m.data.profileImageUrl,
+                motherPhone: m.data.phoneNumber,
+                lastMessage: null,
+                lastMessageAt: null,
+                unreadCount: 0
+              };
+              setConversations(prev => [synthetic, ...prev]);
+              setActiveConv(synthetic);
+            } catch {}
+          }
+        }
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [doctorId]);
 
-                {/* Main Chat Area */}
-                <div className="flex-1 flex flex-col bg-white">
-                    {/* Chat Header */}
-                    <div className="h-20 border-b border-gray-100 px-8 flex justify-between items-center bg-white shadow-sm z-10">
-                        <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-full bg-teal-100 text-[#005C5C] flex items-center justify-center font-bold">
-                                {chats[activeChat].name.split(' ').map(n => n[0]).join('')}
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-gray-900 leading-tight">{chats[activeChat].name}</h3>
-                                <p className="text-[10px] font-bold text-green-500 uppercase tracking-widest pb-0.5">Online</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2 text-gray-400">
-                            <button className="p-3 hover:bg-gray-50 rounded-xl transition-colors hover:text-[#005C5C]"><Phone size={18} /></button>
-                            <button className="p-3 hover:bg-gray-50 rounded-xl transition-colors hover:text-[#005C5C]"><Video size={18} /></button>
-                            <button className="p-3 hover:bg-gray-50 rounded-xl transition-colors hover:text-gray-900"><MoreVertical size={18} /></button>
-                        </div>
-                    </div>
+  // Load messages when active conversation changes
+  useEffect(() => {
+    if (!activeConv) return;
+    loadMessages(activeConv.motherId);
+    // Poll every 5s
+    pollRef.current = setInterval(() => loadMessages(activeConv.motherId), 5000);
+    return () => clearInterval(pollRef.current);
+  }, [activeConv?.motherId]);
 
-                    {/* Messages */}
-                    <div className="flex-1 overflow-y-auto p-8 space-y-6 bg-gray-50/30">
-                        <div className="text-center">
-                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-100 px-4 py-1.5 rounded-full">Today</span>
-                        </div>
-                        
-                        {/* Patient Message */}
-                        <div className="flex items-end gap-3 max-w-2xl">
-                            <div className="w-8 h-8 rounded-full bg-teal-100 text-[#005C5C] flex items-center justify-center font-bold text-xs shrink-0">
-                                {chats[activeChat].name.split(' ').map(n => n[0]).join('')}
-                            </div>
-                            <div className="bg-white border border-gray-100 rounded-2xl rounded-bl-none p-5 shadow-sm">
-                                <p className="text-sm font-medium text-gray-800 leading-relaxed">Hello Dr. Sarah, I'm feeling very dizzy and my vision is spotting. My blood pressure reading was 140/90 just now.</p>
-                                <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-widest">10:42 AM</p>
-                            </div>
-                        </div>
+  const loadMessages = (motherId) => {
+    messagesApi.getConversation(motherId, doctorId)
+      .then(r => {
+        setMessages(r.data);
+        // Mark unread messages as read
+        r.data.filter(m => !m.isRead && !m.sentByDoctor)
+          .forEach(m => messagesApi.markRead(m.id));
+        // Update unread count in sidebar
+        setConversations(prev => prev.map(c =>
+          c.motherId === motherId ? { ...c, unreadCount: 0 } : c
+        ));
+      })
+      .catch(() => {});
+  };
 
-                        {/* Doctor Message */}
-                        <div className="flex items-end gap-3 justify-end max-w-2xl ml-auto">
-                            <div className="bg-[#E0F2F1] rounded-2xl rounded-br-none p-5 shadow-none border border-teal-100">
-                                <p className="text-sm font-bold text-[#004D4D] leading-relaxed">Aline, please remain seated. I have received your triage alert. Are you alone? Please have someone ready to drive you.</p>
-                                <div className="flex items-center justify-end gap-1 mt-2">
-                                    <p className="text-[9px] font-bold text-teal-600/60 uppercase tracking-widest">10:45 AM</p>
-                                    <CheckCheck size={12} className="text-[#005C5C]" />
-                                </div>
-                            </div>
-                        </div>
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
-                        {/* Patient Message */}
-                        <div className="flex items-end gap-3 max-w-2xl">
-                            <div className="w-8 h-8 rounded-full bg-teal-100 text-[#005C5C] flex items-center justify-center font-bold text-xs shrink-0">
-                                {chats[activeChat].name.split(' ').map(n => n[0]).join('')}
-                            </div>
-                            <div className="bg-white border border-gray-100 rounded-2xl rounded-bl-none p-5 shadow-sm">
-                                <p className="text-sm font-medium text-gray-800 leading-relaxed">My husband is here with me. We are getting ready to leave.</p>
-                                <p className="text-[9px] font-bold text-gray-400 mt-2 uppercase tracking-widest">10:48 AM</p>
-                            </div>
-                        </div>
-                    </div>
+  const handleSelectConv = (conv) => {
+    setActiveConv(conv);
+    setMessages([]);
+  };
 
-                    {/* Input Area */}
-                    <div className="p-6 bg-white border-t border-gray-100">
-                        <div className="flex items-center gap-4 bg-gray-50 border border-gray-200 rounded-full p-2 pr-2 hover:bg-white hover:border-[#005C5C] transition-all focus-within:bg-white focus-within:border-[#005C5C] focus-within:ring-4 focus-within:ring-teal-500/10">
-                            <button className="p-2.5 text-gray-400 hover:text-[#005C5C] transition-colors rounded-full hover:bg-teal-50">
-                                <Paperclip size={20} />
-                            </button>
-                            <button className="p-2.5 text-gray-400 hover:text-[#005C5C] transition-colors rounded-full hover:bg-teal-50">
-                                <ImageIcon size={20} />
-                            </button>
-                            <input 
-                                type="text"
-                                placeholder="Type a secure message..."
-                                className="flex-1 bg-transparent border-none focus:ring-0 text-sm font-medium text-gray-900 px-2"
-                            />
-                            <button className="w-12 h-12 bg-[#005C5C] text-white rounded-full flex items-center justify-center hover:bg-teal-800 transition-all shadow-lg shadow-teal-900/20 active:scale-95">
-                                <Send size={18} className="translate-x-0.5 -translate-y-0.5" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
+  const handleSend = async (e) => {
+    e.preventDefault();
+    if (!text.trim() || !activeConv || sending) return;
+    setSending(true);
+    const content = text.trim();
+    setText('');
+    try {
+      const res = await messagesApi.send({
+        motherId: activeConv.motherId,
+        doctorId,
+        content,
+        sentByDoctor: true,
+      });
+      setMessages(prev => [...prev, res.data]);
+      setConversations(prev => prev.map(c =>
+        c.motherId === activeConv.motherId ? { ...c, lastMessage: content, lastMessageAt: new Date().toISOString() } : c
+      ));
+    } catch {}
+    setSending(false);
+  };
 
+  const filtered = conversations.filter(c =>
+    c.motherName?.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const formatTime = (dt) => {
+    const d = new Date(dt);
+    const now = new Date();
+    if (d.toDateString() === now.toDateString())
+      return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
+  return (
+    <DoctorLayout title="Secure Messaging" subtitle="Communicate with your patients securely.">
+      <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden flex h-[640px]">
+
+        {/* Sidebar */}
+        <div className="w-[320px] border-r border-gray-100 flex flex-col bg-gray-50/50 shrink-0">
+          <div className="p-4 border-b border-gray-100">
+            <div className="relative">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input value={search} onChange={e => setSearch(e.target.value)}
+                placeholder="Search patients..."
+                className="w-full h-10 bg-white border border-gray-200 rounded-xl pl-9 pr-3 text-sm focus:outline-none focus:border-[#005C5C] transition-colors" />
             </div>
-        </DoctorLayout>
-    );
+          </div>
+
+          <div className="flex-1 overflow-y-auto">
+            {loading ? (
+              Array(4).fill(0).map((_, i) => (
+                <div key={i} className="p-4 flex gap-3 animate-pulse">
+                  <div className="w-10 h-10 rounded-full bg-gray-200 shrink-0" />
+                  <div className="flex-1 space-y-2 pt-1">
+                    <div className="h-3 bg-gray-200 rounded w-3/4" />
+                    <div className="h-3 bg-gray-100 rounded w-full" />
+                  </div>
+                </div>
+              ))
+            ) : filtered.length === 0 ? (
+              <div className="p-8 text-center text-gray-400 text-sm">
+                <MessageSquare size={32} className="mx-auto mb-2 opacity-30" />
+                No conversations yet
+              </div>
+            ) : (
+              filtered.map(conv => (
+                <button key={conv.motherId} onClick={() => handleSelectConv(conv)}
+                  className={`w-full p-4 border-b border-gray-50 text-left flex items-start gap-3 transition-all hover:bg-white ${activeConv?.motherId === conv.motherId ? 'bg-white border-l-4 border-l-[#005C5C]' : 'border-l-4 border-l-transparent'}`}>
+                  <div className="w-10 h-10 rounded-full bg-teal-100 text-[#005C5C] flex items-center justify-center shrink-0 overflow-hidden">
+                    {avatar(conv.motherName, conv.motherImage)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-center mb-0.5">
+                      <span className={`text-sm truncate ${conv.unreadCount > 0 ? 'font-bold text-gray-900' : 'font-semibold text-gray-700'}`}>{conv.motherName}</span>
+                      <span className="text-[10px] text-gray-400 shrink-0 ml-1">{formatTime(conv.lastMessageAt)}</span>
+                    </div>
+                    <p className={`text-xs truncate ${conv.unreadCount > 0 ? 'font-semibold text-gray-800' : 'text-gray-400'}`}>{conv.lastMessage}</p>
+                  </div>
+                  {conv.unreadCount > 0 && (
+                    <span className="w-5 h-5 bg-[#005C5C] text-white text-[10px] font-bold rounded-full flex items-center justify-center shrink-0 mt-0.5">{conv.unreadCount}</span>
+                  )}
+                </button>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Chat area */}
+        {!activeConv ? (
+          <div className="flex-1 flex flex-col items-center justify-center text-gray-400 gap-3">
+            <MessageSquare size={48} className="opacity-20" />
+            <p className="font-semibold">Select a conversation</p>
+          </div>
+        ) : (
+          <div className="flex-1 flex flex-col">
+            {/* Header */}
+            <div className="h-16 border-b border-gray-100 px-6 flex items-center gap-3 bg-white shrink-0">
+              <div className="w-9 h-9 rounded-full bg-teal-100 text-[#005C5C] flex items-center justify-center overflow-hidden">
+                {avatar(activeConv.motherName, activeConv.motherImage)}
+              </div>
+              <div className="flex-1">
+                <p className="font-bold text-gray-900 text-sm leading-tight">{activeConv.motherName}</p>
+                <p className="text-[10px] text-gray-400">Patient</p>
+              </div>
+              {activeConv.motherPhone && (
+                <a href={`tel:${activeConv.motherPhone}`}
+                  className="w-9 h-9 bg-green-50 text-green-600 rounded-full flex items-center justify-center hover:bg-green-100 transition-colors"
+                  title={`Call ${activeConv.motherName}`}>
+                  <Phone size={16} />
+                </a>
+              )}
+            </div>
+
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50/30">
+              {messages.length === 0 && (
+                <p className="text-center text-gray-400 text-sm py-10">No messages yet. Say hello!</p>
+              )}
+              {messages.map((msg, i) => {
+                const isDoctor = msg.sentByDoctor;
+                const showTime = i === 0 || new Date(msg.sentAt).toDateString() !== new Date(messages[i - 1].sentAt).toDateString();
+                return (
+                  <React.Fragment key={msg.id}>
+                    {showTime && (
+                      <div className="text-center">
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-100 px-3 py-1 rounded-full">
+                          {new Date(msg.sentAt).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                        </span>
+                      </div>
+                    )}
+                    <div className={`flex items-end gap-2 ${isDoctor ? 'justify-end' : 'justify-start'}`}>
+                      {!isDoctor && (
+                        <div className="w-7 h-7 rounded-full bg-teal-100 text-[#005C5C] flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden">
+                          {avatar(activeConv.motherName, activeConv.motherImage)}
+                        </div>
+                      )}
+                      <div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${isDoctor ? 'bg-[#005C5C] text-white rounded-br-none' : 'bg-white border border-gray-100 text-gray-800 rounded-bl-none shadow-sm'}`}>
+                        <p className="text-sm leading-relaxed">{msg.content}</p>
+                        <div className={`flex items-center gap-1 mt-1 ${isDoctor ? 'justify-end' : ''}`}>
+                          <span className={`text-[10px] ${isDoctor ? 'text-white/60' : 'text-gray-400'}`}>
+                            {new Date(msg.sentAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                          {isDoctor && <CheckCheck size={12} className={msg.isRead ? 'text-teal-300' : 'text-white/40'} />}
+                        </div>
+                      </div>
+                    </div>
+                  </React.Fragment>
+                );
+              })}
+              <div ref={bottomRef} />
+            </div>
+
+            {/* Input */}
+            <form onSubmit={handleSend} className="p-4 bg-white border-t border-gray-100 shrink-0">
+              <div className="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-full px-4 py-2 focus-within:border-[#005C5C] focus-within:bg-white transition-all">
+                <input value={text} onChange={e => setText(e.target.value)}
+                  placeholder="Type a secure message..."
+                  className="flex-1 bg-transparent border-none focus:ring-0 text-sm text-gray-900 outline-none" />
+                <button type="submit" disabled={!text.trim() || sending}
+                  className="w-9 h-9 bg-[#005C5C] text-white rounded-full flex items-center justify-center hover:bg-[#004848] transition-all disabled:opacity-40 shrink-0">
+                  <Send size={15} className="translate-x-0.5 -translate-y-0.5" />
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+      </div>
+    </DoctorLayout>
+  );
 };
 
 export default Messaging;

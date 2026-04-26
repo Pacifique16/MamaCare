@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using MamaCare.API.Data;
 using MamaCare.API.DTOs;
 using MamaCare.API.Models;
@@ -13,7 +14,8 @@ namespace MamaCare.API.Controllers;
 public class DoctorsController : ControllerBase
 {
     private readonly AppDbContext _db;
-    public DoctorsController(AppDbContext db) => _db = db;
+    private readonly IMemoryCache _cache;
+    public DoctorsController(AppDbContext db, IMemoryCache cache) { _db = db; _cache = cache; }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -41,7 +43,10 @@ public class DoctorsController : ControllerBase
             d.Institution, d.YearsOfExperience, d.Bio, d.Status, d.CertificationUrl,
             d.Certifications.OrderByDescending(c => c.UploadedAt)
                 .Select(c => new CertificationDto(c.Id, c.FileName, c.Url, c.UploadedAt))
-                .ToList()));
+                .ToList(),
+            string.IsNullOrEmpty(d.Languages)
+                ? new List<string>()
+                : d.Languages.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()));
     }
 
     [HttpGet("{id}/certifications")]
@@ -53,6 +58,33 @@ public class DoctorsController : ControllerBase
             .Select(c => new CertificationDto(c.Id, c.FileName, c.Url, c.UploadedAt))
             .ToListAsync();
         return Ok(certs);
+    }
+
+    [HttpPost("me/certifications")]
+    [Authorize(Roles = "Doctor")]
+    public async Task<IActionResult> AddMyCertification(AddCertificationDto dto)
+    {
+        var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
+        var doctor = await _db.Doctors.FirstOrDefaultAsync(d => d.UserId == userId);
+        if (doctor is null) return NotFound();
+        var cert = new DoctorCertification { DoctorId = doctor.Id, FileName = dto.FileName, Url = dto.Url };
+        _db.DoctorCertifications.Add(cert);
+        await _db.SaveChangesAsync();
+        return Ok(new CertificationDto(cert.Id, cert.FileName, cert.Url, cert.UploadedAt));
+    }
+
+    [HttpDelete("me/certifications/{certId}")]
+    [Authorize(Roles = "Doctor")]
+    public async Task<IActionResult> DeleteMyCertification(int certId)
+    {
+        var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
+        var doctor = await _db.Doctors.FirstOrDefaultAsync(d => d.UserId == userId);
+        if (doctor is null) return NotFound();
+        var cert = await _db.DoctorCertifications.FirstOrDefaultAsync(c => c.Id == certId && c.DoctorId == doctor.Id);
+        if (cert is null) return NotFound();
+        _db.DoctorCertifications.Remove(cert);
+        await _db.SaveChangesAsync();
+        return NoContent();
     }
 
     [HttpPost("{id}/certifications")]
@@ -78,6 +110,67 @@ public class DoctorsController : ControllerBase
         return NoContent();
     }
 
+    [HttpGet("{id}/schedule")]
+    public async Task<IActionResult> GetSchedule(int id)
+    {
+        var appointments = await _db.PatientAppointments
+            .Where(a => a.DoctorId == id)
+            .Include(a => a.Patient)
+            .OrderBy(a => a.AppointmentDate)
+            .Select(a => new {
+                a.Id,
+                PatientName = a.Patient.FullName,
+                PatientImage = (string?)null,
+                AppointmentDate = a.AppointmentDate,
+                Type = a.Type.ToString(),
+                Status = a.Status.ToString(),
+                a.Notes
+            })
+            .ToListAsync();
+
+        // Also include from Appointments (Mother-linked)
+        var motherAppts = await _db.Appointments
+            .Where(a => a.DoctorId == id)
+            .Include(a => a.Mother).ThenInclude(m => m.User)
+            .OrderBy(a => a.ScheduledAt)
+            .Select(a => new {
+                a.Id,
+                PatientName = a.Mother.User.FullName,
+                PatientImage = a.Mother.User.ProfileImageUrl,
+                AppointmentDate = a.ScheduledAt,
+                Type = a.Type.ToString(),
+                Status = a.Status.ToString(),
+                a.Notes
+            })
+            .ToListAsync();
+
+        var combined = appointments.Cast<object>().Concat(motherAppts.Cast<object>())
+            .OrderBy(a => ((dynamic)a).AppointmentDate)
+            .ToList();
+
+        return Ok(combined);
+    }
+
+    [HttpGet("{id}/activity")]
+    public async Task<IActionResult> GetActivity(int id)
+    {
+        var appointments = await _db.PatientAppointments
+            .Where(a => a.DoctorId == id)
+            .Include(a => a.Patient)
+            .OrderByDescending(a => a.CreatedAt)
+            .Take(20)
+            .Select(a => new {
+                a.Id,
+                PatientName = a.Patient.FullName,
+                Type = a.Type.ToString(),
+                Status = a.Status.ToString(),
+                a.CreatedAt,
+                a.AppointmentDate
+            })
+            .ToListAsync();
+        return Ok(appointments);
+    }
+
     [HttpGet("{id}/patients")]
     public async Task<IActionResult> GetPatients(int id)
     {
@@ -89,7 +182,7 @@ public class DoctorsController : ControllerBase
             .Select(m => new MotherSummaryDto(
                 m.Id, m.User.FullName, m.User.ProfileImageUrl,
                 m.GestationalWeek, m.CurrentTrimester, m.RiskLevel,
-                m.ExpectedDueDate, m.WeightKg, m.Location))
+                m.ExpectedDueDate, m.WeightKg, m.Location, m.User.PhoneNumber))
             .ToListAsync();
         return Ok(patients);
     }
@@ -105,7 +198,7 @@ public class DoctorsController : ControllerBase
             .Select(m => new MotherSummaryDto(
                 m.Id, m.User.FullName, m.User.ProfileImageUrl,
                 m.GestationalWeek, m.CurrentTrimester, m.RiskLevel,
-                m.ExpectedDueDate, m.WeightKg, m.Location))
+                m.ExpectedDueDate, m.WeightKg, m.Location, m.User.PhoneNumber))
             .ToListAsync();
 
         // Sort: High → Medium → Low, then by gestational week descending
@@ -143,6 +236,25 @@ public class DoctorsController : ControllerBase
         return Ok(new { doctor.Id, doctor.UserId });
     }
 
+    [HttpPatch("me")]
+    [Authorize(Roles = "Doctor")]
+    public async Task<IActionResult> UpdateMe(UpdateDoctorDto dto)
+    {
+        var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
+        var doctor = await _db.Doctors.Include(d => d.User).FirstOrDefaultAsync(d => d.UserId == userId);
+        if (doctor is null) return NotFound();
+
+        if (dto.Specialty is not null) doctor.Specialty = dto.Specialty;
+        if (dto.LicenseNumber is not null) doctor.LicenseNumber = dto.LicenseNumber;
+        if (dto.Institution is not null) doctor.Institution = dto.Institution;
+        if (dto.YearsOfExperience.HasValue) doctor.YearsOfExperience = dto.YearsOfExperience.Value;
+        if (dto.Bio is not null) doctor.Bio = dto.Bio;
+        if (dto.Languages is not null) doctor.Languages = string.Join(',', dto.Languages.Select(l => l.Trim()).Where(l => l.Length > 0));
+
+        await _db.SaveChangesAsync();
+        return Ok(new { doctor.Id });
+    }
+
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(int id, UpdateDoctorDto dto)
@@ -161,9 +273,23 @@ public class DoctorsController : ControllerBase
             doctor.Status = parsedStatus;
         if (dto.ProfileImageUrl is not null) doctor.User.ProfileImageUrl = dto.ProfileImageUrl;
         if (dto.CertificationUrl is not null) doctor.CertificationUrl = dto.CertificationUrl;
+        if (dto.Languages is not null) doctor.Languages = string.Join(',', dto.Languages.Select(l => l.Trim()).Where(l => l.Length > 0));
 
         await _db.SaveChangesAsync();
-        return Ok(doctor);
+        return Ok(new { doctor.Id, doctor.Status });
+    }
+
+    [HttpPatch("{id}/reset-password")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> ResetPassword(int id, [FromBody] string newPassword)
+    {
+        var doctor = await _db.Doctors.Include(d => d.User).FirstOrDefaultAsync(d => d.Id == id);
+        if (doctor is null) return NotFound();
+        if (string.IsNullOrWhiteSpace(newPassword) || newPassword.Length < 6)
+            return BadRequest(new { message = "Password must be at least 6 characters." });
+        doctor.User.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+        await _db.SaveChangesAsync();
+        return Ok(new { message = "Password updated successfully." });
     }
 
     [HttpPatch("{id}/verify")]
@@ -174,6 +300,7 @@ public class DoctorsController : ControllerBase
         if (doctor is null) return NotFound();
         doctor.Status = DoctorStatus.Verified;
         await _db.SaveChangesAsync();
+        _cache.Remove("admin_stats");
         return Ok(new { message = "Doctor verified successfully" });
     }
 
@@ -185,6 +312,7 @@ public class DoctorsController : ControllerBase
         if (doctor is null) return NotFound();
         doctor.Status = DoctorStatus.Inactive;
         await _db.SaveChangesAsync();
+        _cache.Remove("admin_stats");
         return Ok(new { message = "Doctor suspended" });
     }
 
@@ -192,10 +320,22 @@ public class DoctorsController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
-        var doctor = await _db.Doctors.FindAsync(id);
+        var doctor = await _db.Doctors
+            .Include(d => d.Certifications)
+            .FirstOrDefaultAsync(d => d.Id == id);
         if (doctor is null) return NotFound();
+
+        // Remove related records blocked by Restrict FK
+        var appointments = _db.Appointments.Where(a => a.DoctorId == id);
+        var messages = _db.Messages.Where(m => m.DoctorId == id);
+        var patientAppointments = _db.PatientAppointments.Where(a => a.DoctorId == id);
+        _db.Appointments.RemoveRange(appointments);
+        _db.Messages.RemoveRange(messages);
+        _db.PatientAppointments.RemoveRange(patientAppointments);
+
         _db.Doctors.Remove(doctor);
         await _db.SaveChangesAsync();
+        _cache.Remove("admin_stats");
         return NoContent();
     }
 }

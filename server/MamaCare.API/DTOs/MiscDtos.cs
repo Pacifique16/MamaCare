@@ -27,7 +27,9 @@ public record LibraryArticleDto(
     ArticleStatus Status,
     string? ImageUrl,
     DateTime PublishedAt,
-    DateTime UpdatedAt
+    DateTime UpdatedAt,
+    string? Content = null,
+    int ViewCount = 0
 );
 
 public record CreateArticleDto(
@@ -47,11 +49,57 @@ public record UpdateArticleDto(
     string? ImageUrl
 );
 
+public record ArticleRequestDto(
+    int Id,
+    string Topic,
+    string? Description,
+    string? Category,
+    string SubmittedByName,
+    string SubmittedByEmail,
+    string Status,
+    DateTime CreatedAt
+);
+
+public record CreateArticleRequestDto(
+    string Topic,
+    string? Description,
+    string? Category
+);
+
+public record PrescriptionDto(
+    int Id,
+    int MotherId,
+    int DoctorId,
+    string DoctorName,
+    string MedicineName,
+    string Dosage,
+    string Frequency,
+    string? Duration,
+    string? Notes,
+    DateTime IssuedAt
+);
+
+public record CreatePrescriptionDto(
+    int MotherId,
+    string MedicineName,
+    string Dosage,
+    string Frequency,
+    string? Duration,
+    string? Notes
+);
+
+public record EnrollmentDayDto(string Day, int Registrations);
+
 public record AdminStatsDto(
     int TotalMothers,
     int TotalDoctors,
     int PendingDoctors,
     int TodayAppointments,
     int HighRiskMothers,
-    int ActiveSessions
+    int ActiveSessions,
+    double TriageSuccessRate,
+    int LibraryViews,
+    int LowRiskMothers,
+    int MediumRiskMothers,
+    List<EnrollmentDayDto> EnrollmentTrend
 );
