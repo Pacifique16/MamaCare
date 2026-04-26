@@ -112,7 +112,7 @@ const PatientProfile = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-end mb-10 pb-8 border-b border-gray-100">
         <div className="space-y-3">
-          <div className="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+          <div className="flex items-center gap-2 text-[12px] font-bold text-mamacare-teal uppercase tracking-widest border-b border-gray-100 pb-2">
             <NavLink to="/doctor/patients" className="hover:text-[#005C5C] transition-colors">Patients</NavLink>
             <ChevronRight size={12} />
             <span className="text-[#005C5C]">Profile View</span>
@@ -162,7 +162,7 @@ const PatientProfile = () => {
 
             <div className="space-y-5">
               <div className="space-y-2">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2">Contact</p>
+                <p className="text-[12px] font-bold text-mamacare-teal uppercase tracking-widest border-b border-gray-100 pb-2">Contact</p>
                 {mother.email && (
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Mail size={14} className="text-[#005C5C] shrink-0" />
@@ -185,33 +185,33 @@ const PatientProfile = () => {
 
               {(mother.emergencyContactName || mother.emergencyContactPhone) && (
                 <div className="space-y-2">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2">Emergency Contact</p>
+                  <p className="text-[12px] font-bold text-mamacare-teal uppercase tracking-widest border-b border-gray-100 pb-2">Emergency Contact</p>
                   {mother.emergencyContactName && <p className="font-bold text-gray-900 text-sm">{mother.emergencyContactName}</p>}
                   {mother.emergencyContactPhone && <p className="text-gray-500 text-sm">{mother.emergencyContactPhone}</p>}
                 </div>
               )}
 
               <div className="space-y-2">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2">Medical Info</p>
-                <div className="grid grid-cols-2 gap-2 text-xs">
+                <p className="text-[12px] font-bold text-mamacare-teal uppercase tracking-widest border-b border-gray-100 pb-2">Medical Info</p>
+                <div className="grid grid-cols-2 gap-3 text-xs">
                   {mother.bloodType !== 'Unknown' && (
-                    <div className="bg-gray-50 rounded-xl p-2 text-center">
-                      <p className="text-gray-400 font-bold">Blood Type</p>
-                      <p className="font-black text-gray-900">{mother.bloodType}</p>
+                    <div className="border border-gray-100 rounded-2xl p-3 text-center">
+                      <p className="text-[12px] font-bold text-mamacare-teal uppercase tracking-widest border-b border-gray-100 pb-2">Blood Type</p>
+                      <p className="font-black text-gray-900 text-sm tracking-tight">{mother.bloodType}</p>
                     </div>
                   )}
-                  <div className="bg-gray-50 rounded-xl p-2 text-center">
-                    <p className="text-gray-400 font-bold">Trimester</p>
-                    <p className="font-black text-gray-900">{mother.currentTrimester}</p>
+                  <div className="border border-gray-100 rounded-2xl p-3 text-center">
+                    <p className="text-[12px] font-bold text-mamacare-teal uppercase tracking-widest border-b border-gray-100 pb-2">Trimester</p>
+                    <p className="font-bold uppercase  rounded-full text-sm tracking-tight">{mother.currentTrimester}</p>
                   </div>
                   {mother.hasHypertension && (
-                    <div className="bg-red-50 rounded-xl p-2 text-center col-span-2">
-                      <p className="text-red-600 font-bold text-[10px]">⚠ Hypertension</p>
+                    <div className="py-2 text-center col-span-2">
+                      <p className="text-red-600 font-black text-[11px] uppercase tracking-[0.15em] animate-pulse">⚠ Hypertension</p>
                     </div>
                   )}
                   {mother.hasGestationalDiabetes && (
-                    <div className="bg-orange-50 rounded-xl p-2 text-center col-span-2">
-                      <p className="text-orange-600 font-bold text-[10px]">⚠ Gestational Diabetes</p>
+                    <div className="py-2 text-center col-span-2">
+                      <p className="text-orange-600 font-black text-[11px] uppercase tracking-[0.15em] animate-pulse">⚠ Gestational Diabetes</p>
                     </div>
                   )}
                 </div>
@@ -219,7 +219,7 @@ const PatientProfile = () => {
 
               {mother.allergies && (
                 <div>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2 mb-2">Allergies</p>
+                  <p className="text-[12px] font-bold text-mamacare-teal uppercase tracking-widest border-b border-gray-100 pb-2 border-b border-gray-100 pb-2 mb-2">Allergies</p>
                   <p className="text-sm text-red-600 font-semibold">{mother.allergies}</p>
                 </div>
               )}
@@ -267,7 +267,7 @@ const PatientProfile = () => {
 
           {mother.medicalNotes && (
             <div className="mt-8 pt-6 border-t border-gray-50">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Medical Notes</p>
+              <p className="text-[12px] font-bold text-mamacare-teal uppercase tracking-widest border-b border-gray-100 pb-2">Medical Notes</p>
               <p className="text-sm text-gray-600 leading-relaxed">{mother.medicalNotes}</p>
             </div>
           )}
@@ -275,7 +275,7 @@ const PatientProfile = () => {
           {/* Prescriptions */}
           <div className="mt-8 pt-6 border-t border-gray-50">
             <div className="flex items-center justify-between mb-4">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Prescriptions</p>
+              <p className="text-[12px] font-bold text-mamacare-teal uppercase tracking-widest border-b border-gray-100 pb-2">Prescriptions</p>
               <button onClick={() => setShowPrescribeModal(true)}
                 className="flex items-center gap-1 px-3 py-1.5 bg-[#005C5C] text-white text-xs font-bold rounded-xl hover:bg-[#004848] transition-all">
                 <Plus size={13} /> New
@@ -305,7 +305,7 @@ const PatientProfile = () => {
           {/* Triage Sessions */}
           <div className="mt-8 pt-6 border-t border-gray-50">
             <div className="flex items-center justify-between mb-4">
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Triage Sessions</p>
+              <p className="text-[12px] font-bold text-mamacare-teal uppercase tracking-widest border-b border-gray-100 pb-2">Triage Sessions</p>
               {triageSessions.length > 0 && <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded-full">{triageSessions.length} total</span>}
             </div>
             {triageSessions.length === 0 ? (
@@ -362,7 +362,7 @@ const PatientProfile = () => {
               <div className="space-y-3">
                 <div className="bg-gray-50 rounded-2xl p-5 flex items-center justify-between border border-gray-100">
                   <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Blood Pressure</p>
+                    <p className="text-[12px] font-bold text-mamacare-teal uppercase tracking-widest border-b border-gray-100 pb-2">Blood Pressure</p>
                     <h4 className={`text-2xl font-extrabold ${bpColor}`}>
                       {latestVital.bloodPressureSystolic}/{latestVital.bloodPressureDiastolic}
                     </h4>
@@ -375,7 +375,7 @@ const PatientProfile = () => {
 
                 <div className="bg-gray-50 rounded-2xl p-5 flex items-center justify-between border border-gray-100">
                   <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Weight</p>
+                    <p className="text-[12px] font-bold text-mamacare-teal uppercase tracking-widest border-b border-gray-100 pb-2">Weight</p>
                     <h4 className="text-2xl font-extrabold text-gray-900">{latestVital.weightKg}</h4>
                     <p className="text-[10px] text-gray-400">kg</p>
                   </div>
@@ -387,7 +387,7 @@ const PatientProfile = () => {
                 {latestVital.fetalHeartRate && (
                   <div className="bg-gray-50 rounded-2xl p-5 flex items-center justify-between border border-gray-100">
                     <div>
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Fetal Heart Rate</p>
+                      <p className="text-[12px] font-bold text-mamacare-teal uppercase tracking-widest border-b border-gray-100 pb-2">Fetal Heart Rate</p>
                       <h4 className="text-2xl font-extrabold text-gray-900">{latestVital.fetalHeartRate}</h4>
                       <p className="text-[10px] text-gray-400">bpm</p>
                     </div>
@@ -407,7 +407,7 @@ const PatientProfile = () => {
 
           {/* Quick actions */}
           <div className="bg-gray-50 rounded-3xl p-6 space-y-3">
-            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Quick Actions</p>
+            <p className="text-[12px] font-bold text-mamacare-teal uppercase tracking-widest border-b border-gray-100 pb-2 mb-4">Quick Actions</p>
             <button onClick={() => navigate(`/doctor/messaging?motherId=${id}`)}
               className="w-full flex items-center gap-3 px-4 py-3 bg-white rounded-2xl text-sm font-bold text-gray-700 hover:bg-[#005C5C] hover:text-white transition-all shadow-sm">
               <MessageSquare size={16} /> Send Message

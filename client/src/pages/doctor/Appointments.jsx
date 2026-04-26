@@ -31,7 +31,7 @@ const PAGE_SIZE = 4;
 
 const DoctorAppointments = () => {
   const { user } = useAuth();
-  const doctorId = user?.doctorId || 1;
+  const doctorId = parseInt(user?.doctorId, 10) || 1;
 
   const [appointments, setAppointments] = useState([]);
   const [scheduleMap, setScheduleMap] = useState({});

@@ -36,7 +36,13 @@ const PatientRoster = () => {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    doctorsApi.getPatients(doctorId).then(r => setPatients(r.data)).catch(() => {});
+    console.log('Fetching roster for doctor:', doctorId);
+    doctorsApi.getPatients(doctorId)
+      .then(r => setPatients(r.data))
+      .catch(err => {
+        console.error('Failed to fetch roster:', err);
+        toast.error('Could not load patient roster.');
+      });
   }, [doctorId]);
 
   const highRisk = patients.filter(p => p.riskLevel === 'High').length;

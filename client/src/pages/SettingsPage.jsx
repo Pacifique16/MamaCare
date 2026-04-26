@@ -33,6 +33,8 @@ const SettingsPage = () => {
     const [photoPreview, setPhotoPreview] = useState(null);
     const [uploadingPhoto, setUploadingPhoto] = useState(false);
     const [savingProfile, setSavingProfile] = useState(false);
+    const [profileSaved, setProfileSaved] = useState(false);
+    const [profileError, setProfileError] = useState('');
     const photoInputRef = useRef(null);
 
     // --- Mother Profile ---
@@ -59,6 +61,8 @@ const SettingsPage = () => {
     const [showCurrent, setShowCurrent] = useState(false);
     const [showNew, setShowNew] = useState(false);
     const [savingPassword, setSavingPassword] = useState(false);
+    const [passwordSaved, setPasswordSaved] = useState(false);
+    const [passwordError, setPasswordError] = useState('');
 
     useEffect(() => {
         settingsApi.getProfile().then(r => {
@@ -219,7 +223,7 @@ const SettingsPage = () => {
             <div className="flex gap-1 bg-gray-100 p-1 rounded-2xl w-fit">
                 {tabs.map(tab => (
                     <button key={tab} onClick={() => setActiveTab(tab)}
-                        className={`px-5 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}>
+                        className={`px-5 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-600'}`}>
                         {tab}
                     </button>
                 ))}

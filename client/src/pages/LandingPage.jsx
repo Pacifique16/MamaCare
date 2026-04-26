@@ -152,7 +152,7 @@ const LandingPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-16 relative">
               {/* Step 1 */}
               <div className="relative space-y-6">
-                <div className="text-[8rem] font-black text-on-surface-lp/5 absolute -top-16 -left-4 select-none">1</div>
+                <div className="text-[8rem] font-black text-on-surface-lp/5 absolute-top-16 -left-4 select-none">1</div>
                 <div className="w-16 h-16 bg-primary-lp text-on-primary-lp rounded-2xl flex items-center justify-center relative z-10 shadow-lg shadow-primary-lp/20">
                   <span className="material-symbols-outlined text-3xl">person_add</span>
                 </div>

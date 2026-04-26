@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {heart, useEffect, useState } from 'react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import DashboardHero from '../components/dashboard/DashboardHero';
@@ -56,7 +56,7 @@ const MotherDashboard = () => {
   // No metrics display, only keeping minimal data fetching
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] font-poppins pb-4">
+    <div className="min-h-screen bg-[#fafafa] font-poppins pb-4">
       <Navbar />
       <main className="pt-32 px-4 md:px-8 max-w-7xl mx-auto space-y-12">
         <DashboardHero userName={mother?.fullName?.split(' ')[0] || ''} week={mother?.gestationalWeek || 28} />

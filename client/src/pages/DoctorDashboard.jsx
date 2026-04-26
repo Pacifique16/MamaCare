@@ -24,7 +24,7 @@ const PAGE_SIZE = 4;
 
 const DoctorDashboard = () => {
   const { user } = useAuth();
-  const doctorId = user?.doctorId || 1;
+  const doctorId = parseInt(user?.doctorId, 10) || 1;
 
   const [patients, setPatients] = useState([]);
   const [allPatients, setAllPatients] = useState([]);

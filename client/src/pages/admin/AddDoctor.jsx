@@ -34,6 +34,7 @@ const AddDoctor = () => {
    const [certName, setCertName] = useState('');
    const [uploadingCert, setUploadingCert] = useState(false);
    const certInputRef = useRef(null);
+   const [error, setError] = useState('');
 
    const set = (field, value) => setForm(prev => ({ ...prev, [field]: value }));
 
@@ -60,6 +61,7 @@ const AddDoctor = () => {
          toast.error('Password must be at least 6 characters.');
          return;
       }
+      setError('');
       setSubmitting(true);
       try {
          let profileImageUrl = null;
@@ -99,7 +101,9 @@ const AddDoctor = () => {
             navigate('/admin/doctors');
             return;
          }
-         toast.error(err?.response?.data?.title || 'Failed to add doctor. Please try again.');
+         const msg = err?.response?.data?.title || 'Failed to add doctor. Please try again.';
+         setError(msg);
+         toast.error(msg);
       } finally {
          setSubmitting(false);
       }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DoctorLayout from '../../components/layout/DoctorLayout';
-import { messagesApi, mothersApi } from '../../api/services';
+import { messagesApi, mothersApi, doctorsApi, patientAppointmentsApi } from '../../api/services';
 import { useAuth } from '../../context/AuthContext';
 import { Search, Send, CheckCheck, MessageSquare, Phone } from 'lucide-react';
 
@@ -11,11 +11,12 @@ const avatar = (name, img) => img
 
 const Messaging = () => {
   const { user } = useAuth();
-  const doctorId = user?.doctorId || 1;
+  const doctorId = parseInt(user?.doctorId, 10) || 1;
   const [searchParams] = useSearchParams();
   const preselectedMotherId = searchParams.get('motherId') ? Number(searchParams.get('motherId')) : null;
 
   const [conversations, setConversations] = useState([]);
+  const [patients, setPatients] = useState([]);
   const [activeConv, setActiveConv] = useState(null);
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
@@ -25,46 +26,114 @@ const Messaging = () => {
   const bottomRef = useRef(null);
   const pollRef = useRef(null);
 
-  // Load conversation list
+  // Load conversation list and patients from all sources
   useEffect(() => {
-    messagesApi.getConversations(doctorId)
-      .then(async r => {
-        setConversations(r.data);
+    setLoading(true);
+    
+    const fetchEverything = async () => {
+      try {
+        const [convsRes, mothersRes, patientsRes] = await Promise.all([
+          messagesApi.getConversations(doctorId).catch(() => ({ data: [] })),
+          doctorsApi.getPatients(doctorId).catch(() => ({ data: [] })),
+          patientAppointmentsApi.getAll({ doctorId }).catch(() => ({ data: [] }))
+        ]);
+
+        const activeConvs = convsRes.data || [];
+        const rosterMothers = mothersRes.data || [];
+        const clinicalPatients = patientsRes.data || [];
+
+        // Build a unique list of people the doctor can message
+        const map = new Map();
+
+        // 1. Add people from active conversations
+        activeConvs.forEach(c => {
+          map.set(c.motherId, {
+            id: c.motherId,
+            name: c.motherName,
+            image: c.motherImage,
+            phone: c.motherPhone,
+            lastMessage: c.lastMessage,
+            lastMessageAt: c.lastMessageAt,
+            unreadCount: c.unreadCount,
+            source: 'conversation'
+          });
+        });
+
+        // 2. Add mothers from roster
+        rosterMothers.forEach(m => {
+          if (!map.has(m.id)) {
+            map.set(m.id, {
+              id: m.id,
+              name: m.fullName,
+              image: m.profileImageUrl,
+              phone: m.phoneNumber,
+              lastMessage: null,
+              lastMessageAt: null,
+              unreadCount: 0,
+              source: 'roster'
+            });
+          }
+        });
+
+        // 3. Add patients from clinical appointments
+        clinicalPatients.forEach(p => {
+          if (!map.has(p.patientId)) {
+            map.set(p.patientId, {
+              id: p.patientId,
+              name: p.patientName,
+              image: null,
+              phone: null,
+              lastMessage: null,
+              lastMessageAt: null,
+              unreadCount: 0,
+              source: 'clinical'
+            });
+          }
+        });
+
+        const merged = Array.from(map.values());
+        setConversations(merged);
+
         if (preselectedMotherId) {
-          const found = r.data.find(c => c.motherId === preselectedMotherId);
+          const found = merged.find(c => c.id === preselectedMotherId);
           if (found) {
             setActiveConv(found);
           } else {
-            // Mother has no prior messages — fetch her info and open a blank chat
             try {
               const m = await mothersApi.getById(preselectedMotherId);
               const synthetic = {
-                motherId: preselectedMotherId,
-                motherName: m.data.fullName,
-                motherImage: m.data.profileImageUrl,
-                motherPhone: m.data.phoneNumber,
+                id: preselectedMotherId,
+                name: m.data.fullName,
+                image: m.data.profileImageUrl,
+                phone: m.data.phoneNumber,
                 lastMessage: null,
                 lastMessageAt: null,
-                unreadCount: 0
+                unreadCount: 0,
+                isNew: true
               };
               setConversations(prev => [synthetic, ...prev]);
               setActiveConv(synthetic);
             } catch {}
           }
         }
+      } catch (err) {
+        console.error('Messaging init error:', err);
+      } finally {
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [doctorId]);
+      }
+    };
+
+    fetchEverything();
+  }, [doctorId, preselectedMotherId]);
 
   // Load messages when active conversation changes
   useEffect(() => {
     if (!activeConv) return;
-    loadMessages(activeConv.motherId);
+    loadMessages(activeConv.id);
     // Poll every 5s
-    pollRef.current = setInterval(() => loadMessages(activeConv.motherId), 5000);
+    pollRef.current = setInterval(() => loadMessages(activeConv.id), 5000);
     return () => clearInterval(pollRef.current);
-  }, [activeConv?.motherId]);
+  }, [activeConv?.id]);
 
   const loadMessages = (motherId) => {
     messagesApi.getConversation(motherId, doctorId)
@@ -75,7 +144,7 @@ const Messaging = () => {
           .forEach(m => messagesApi.markRead(m.id));
         // Update unread count in sidebar
         setConversations(prev => prev.map(c =>
-          c.motherId === motherId ? { ...c, unreadCount: 0 } : c
+          c.id === motherId ? { ...c, unreadCount: 0 } : c
         ));
       })
       .catch(() => {});
@@ -98,24 +167,44 @@ const Messaging = () => {
     setText('');
     try {
       const res = await messagesApi.send({
-        motherId: activeConv.motherId,
+        motherId: activeConv.id,
         doctorId,
         content,
         sentByDoctor: true,
       });
       setMessages(prev => [...prev, res.data]);
-      setConversations(prev => prev.map(c =>
-        c.motherId === activeConv.motherId ? { ...c, lastMessage: content, lastMessageAt: new Date().toISOString() } : c
-      ));
+      setConversations(prev => {
+        const exists = prev.find(c => c.id === activeConv.id);
+        if (exists) {
+          return prev.map(c =>
+            c.id === activeConv.id ? { ...c, lastMessage: content, lastMessageAt: new Date().toISOString() } : c
+          );
+        }
+        return [{
+          id: activeConv.id,
+          name: activeConv.name,
+          image: activeConv.image,
+          phone: activeConv.phone,
+          lastMessage: content,
+          lastMessageAt: new Date().toISOString(),
+          unreadCount: 0
+        }, ...prev];
+      });
     } catch {}
     setSending(false);
   };
 
   const filtered = conversations.filter(c =>
-    c.motherName?.toLowerCase().includes(search.toLowerCase())
-  );
+    c.name?.toLowerCase().includes(search.toLowerCase())
+  ).sort((a, b) => {
+    if (a.lastMessageAt && b.lastMessageAt) return new Date(b.lastMessageAt) - new Date(a.lastMessageAt);
+    if (a.lastMessageAt) return -1;
+    if (b.lastMessageAt) return 1;
+    return a.name?.localeCompare(b.name);
+  });
 
   const formatTime = (dt) => {
+    if (!dt) return '';
     const d = new Date(dt);
     const now = new Date();
     if (d.toDateString() === now.toDateString())
@@ -135,71 +224,85 @@ const Messaging = () => {
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-100 rounded-lg shadow-sm">
-              <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-              <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">
-                Live Chat Status
-              </span>
+            <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">
+              Live Chat Status
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-card overflow-hidden flex h-[750px]">
+          {/* Sidebar */}
+          <div className="w-[380px] border-r border-gray-100 flex flex-col bg-white shrink-0">
+            <div className="p-8 border-b border-gray-50 space-y-5">
+              <div className="flex justify-between items-center">
+                <p className="text-[10px] font-black text-mamacare-teal uppercase tracking-[0.25em]">Patient Messages</p>
+              </div>
+            <div className="relative">
+              <Search size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input 
+                type="text" 
+                placeholder="Search by name..." 
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                className="w-full pl-14 pr-6 py-4 rounded-2xl border border-gray-100 text-sm font-bold text-gray-900 focus:outline-none focus:ring-4 focus:ring-mamacare-teal/5 focus:bg-white transition-all shadow-sm"
+              />
             </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto custom-scrollbar pb-10">
+            {loading ? (
+              <div className="p-8 space-y-6">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="flex gap-4 animate-pulse">
+                    <div className="w-14 h-14 rounded-2xl bg-gray-50" />
+                    <div className="flex-1 space-y-2 pt-2">
+                      <div className="h-3 bg-gray-50 rounded w-1/2" />
+                      <div className="h-2 bg-gray-50 rounded w-3/4" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : filtered.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 text-gray-400 px-10 text-center">
+                <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                  <MessageSquare size={32} className="text-gray-200" />
+                </div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-2 text-gray-400">No matches found</p>
+                <p className="text-xs text-gray-400 font-medium leading-relaxed">We couldn't find any patients matching your search criteria.</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-50">
+                {filtered.map(conv => (
+                    <button key={conv.id} onClick={() => handleSelectConv(conv)}
+                      className={`w-full p-6 text-left flex items-start gap-5 transition-all duration-200 border-l-4 border-t-0 border-b-0 border-r-0 ${activeConv?.id === conv.id ? 'bg-mamacare-teal/8 border-l-mamacare-teal' : 'hover:bg-gray-50/80 border-l-transparent'}`}>
+                      <div className="relative shrink-0">
+                        <div className={`w-14 h-14 rounded-2xl bg-teal-50 text-mamacare-teal flex items-center justify-center font-bold text-xl overflow-hidden shadow-sm border-2 border-white`}>
+                          {conv.image
+                            ? <img src={conv.image} alt={conv.name} className="w-full h-full object-cover" />
+                            : <span>{conv.name?.split(' ').map(n => n[0]).join('').slice(0, 2)}</span>
+                          }
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0 pt-1">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className={`text-[14px] truncate tracking-tight ${conv.unreadCount > 0 ? 'font-black text-gray-900' : 'font-bold text-gray-700'}`}>{conv.name}</span>
+                          {conv.lastMessageAt && <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest shrink-0 ml-2">{formatTime(conv.lastMessageAt)}</span>}
+                        </div>
+                        <p className={`text-[12px] truncate leading-relaxed ${conv.unreadCount > 0 ? 'font-bold text-gray-800' : 'text-gray-500'}`}>
+                          {conv.lastMessage || (conv.source === 'roster' ? 'New patient assigned' : 'Start consultation')}
+                        </p>
+                      </div>
+                      {conv.unreadCount > 0 && (
+                        <span className="px-2 py-1 bg-orange-500 text-white text-[9px] font-black rounded-lg flex items-center justify-center shrink-0 mt-1 shadow-lg shadow-orange-500/20">{conv.unreadCount}</span>
+                      )}
+                    </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="bg-white rounded-[2.5rem] border border-white shadow-card overflow-hidden flex h-[750px]">
-          {/* Sidebar */}
-          <div className="w-[360px] border-r border-gray-50 flex flex-col bg-gray-50/30 shrink-0">
-            <div className="p-8 border-b border-gray-50">
-              <div className="relative group">
-                <Search size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-mamacare-teal transition-colors" />
-                <input value={search} onChange={e => setSearch(e.target.value)}
-                  placeholder="Search patients..."
-                  className="w-full pl-16 pr-6 py-4 bg-white border border-transparent rounded-2xl text-sm font-bold text-gray-900 placeholder:text-gray-400 focus:ring-4 focus:ring-mamacare-teal/5 transition-all outline-none shadow-sm" />
-              </div>
-            </div>
-
-            <div className="flex-1 overflow-y-auto custom-scrollbar">
-              {loading ? (
-                Array(4).fill(0).map((_, i) => (
-                  <div key={i} className="p-8 flex gap-4 animate-pulse border-b border-gray-50/50">
-                    <div className="w-14 h-14 rounded-2xl bg-gray-200 shrink-0" />
-                    <div className="flex-1 space-y-3 pt-1">
-                      <div className="h-3 bg-gray-200 rounded w-3/4" />
-                      <div className="h-2 bg-gray-100 rounded w-full" />
-                    </div>
-                  </div>
-                ))
-              ) : filtered.length === 0 ? (
-                <div className="p-20 text-center space-y-4">
-                  <div className="w-16 h-16 bg-gray-100 rounded-3xl flex items-center justify-center text-gray-300 mx-auto">
-                    <MessageSquare size={32} />
-                  </div>
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">No conversations yet</p>
-                </div>
-              ) : (
-                filtered.map(conv => (
-                  <button key={conv.motherId} onClick={() => handleSelectConv(conv)}
-                    className={`w-full p-8 border-b border-gray-50/50 text-left flex items-start gap-5 transition-all hover:bg-white relative group ${activeConv?.motherId === conv.motherId ? 'bg-white' : ''}`}>
-                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 overflow-hidden shadow-sm transition-transform group-hover:scale-110 ${activeConv?.motherId === conv.motherId ? 'bg-mamacare-teal text-white' : 'bg-teal-50 text-mamacare-teal'}`}>
-                      {avatar(conv.motherName, conv.motherImage)}
-                    </div>
-                    <div className="flex-1 min-w-0 pt-1">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className={`text-sm truncate font-bold ${conv.unreadCount > 0 ? 'text-gray-900' : 'text-gray-700'}`}>{conv.motherName}</span>
-                        <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">{formatTime(conv.lastMessageAt)}</span>
-                      </div>
-                      <p className={`text-[12px] truncate leading-relaxed ${conv.unreadCount > 0 ? 'font-bold text-gray-900' : 'text-gray-500'}`}>{conv.lastMessage || 'Start a new conversation'}</p>
-                    </div>
-                    {conv.unreadCount > 0 && (
-                      <span className="absolute top-1/2 -translate-y-1/2 right-6 w-6 h-6 bg-red-500 text-white text-[10px] font-black rounded-xl flex items-center justify-center shadow-lg shadow-red-200">{conv.unreadCount}</span>
-                    )}
-                    {activeConv?.motherId === conv.motherId && (
-                      <div className="absolute left-0 top-8 bottom-8 w-1 bg-mamacare-teal rounded-r-full" />
-                    )}
-                  </button>
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Chat area */}
           {!activeConv ? (
             <div className="flex-1 flex flex-col items-center justify-center bg-white gap-6">
               <div className="w-24 h-24 bg-gray-50 rounded-[2.5rem] flex items-center justify-center text-gray-200 animate-bounce-slow">
@@ -212,25 +315,26 @@ const Messaging = () => {
             </div>
           ) : (
             <div className="flex-1 flex flex-col bg-white">
-              {/* Header */}
               <div className="h-24 border-b border-gray-50 px-10 flex items-center justify-between bg-white shrink-0">
                 <div className="flex items-center gap-5">
-                  <div className="w-12 h-12 rounded-2xl bg-teal-50 text-mamacare-teal flex items-center justify-center overflow-hidden shadow-sm">
-                    {avatar(activeConv.motherName, activeConv.motherImage)}
-                  </div>
-                  <div>
-                    <p className="font-bold text-gray-900 text-base leading-tight">{activeConv.motherName}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Active Now</p>
+                  <div className="relative">
+                    <div className="w-16 h-16 rounded-3xl bg-teal-50 text-mamacare-teal flex items-center justify-center overflow-hidden shrink-0 shadow-md ring-4 ring-white group-hover:rotate-3 transition-transform duration-500">
+                      {activeConv.image
+                        ? <img src={activeConv.image} alt={activeConv.name} className="w-full h-full object-cover" />
+                        : <span className="text-2xl font-black">{activeConv.name?.split(' ').map(n => n[0]).join('').slice(0, 2)}</span>
+                      }
                     </div>
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-bold text-gray-900 text-[18px]">{activeConv.name}</p>
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{activeConv.phone || 'Patient'}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  {activeConv.motherPhone && (
-                    <a href={`tel:${activeConv.motherPhone}`}
-                      className="w-12 h-12 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center hover:bg-green-600 hover:text-white transition-all shadow-sm group"
-                      title={`Call ${activeConv.motherName}`}>
+                  {activeConv.phone && (
+                    <a href={`tel:${activeConv.phone}`}
+                      className="w-12 h-12 bg-white border border-gray-100 text-gray-600 rounded-2xl flex items-center justify-center hover:text-mamacare-teal hover:border-mamacare-teal/20 hover:bg-teal-50 shadow-sm transition-all hover:scale-110 active:scale-95 group"
+                      title={`Call ${activeConv.name}`}>
                       <Phone size={20} className="group-hover:rotate-12 transition-transform" />
                     </a>
                   )}
@@ -240,7 +344,6 @@ const Messaging = () => {
                 </div>
               </div>
 
-              {/* Messages */}
               <div className="flex-1 overflow-y-auto p-10 space-y-8 bg-gray-50/10 custom-scrollbar">
                 {messages.length === 0 && (
                   <div className="py-20 text-center space-y-4">
@@ -252,6 +355,7 @@ const Messaging = () => {
                 )}
                 {messages.map((msg, i) => {
                   const isDoctor = msg.sentByDoctor;
+                  const isMe = isDoctor;
                   const showTime = i === 0 || new Date(msg.sentAt).toDateString() !== new Date(messages[i - 1].sentAt).toDateString();
                   return (
                     <React.Fragment key={msg.id}>
@@ -265,9 +369,12 @@ const Messaging = () => {
                         </div>
                       )}
                       <div className={`flex items-end gap-4 ${isDoctor ? 'justify-end' : 'justify-start'}`}>
-                        {!isDoctor && (
-                          <div className="w-10 h-10 rounded-xl bg-teal-50 text-mamacare-teal flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden shadow-sm">
-                            {avatar(activeConv.motherName, activeConv.motherImage)}
+                        {!isMe && (
+                          <div className="w-10 h-10 rounded-2xl bg-teal-50 text-mamacare-teal flex items-center justify-center text-[10px] font-black shrink-0 overflow-hidden shadow-sm border-2 border-white group-hover:rotate-6 transition-transform">
+                            {activeConv.image
+                              ? <img src={activeConv.image} alt="" className="w-full h-full object-cover" />
+                              : <span>{activeConv.name?.split(' ').map(n => n[0]).join('').slice(0, 2)}</span>
+                            }
                           </div>
                         )}
                         <div className="space-y-2 max-w-[70%]">
