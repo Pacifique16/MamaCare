@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Footer from '../components/layout/Footer';
 import ContactForm from '../components/contact/ContactForm';
@@ -9,6 +9,8 @@ import contactHero from '../assets/contact-hero.png';
 
 const Contact = () => {
   const navigate = useNavigate();
+
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }); }, []);
   const faqs = [
     { icon: Plus, question: "How can I join?", answer: "Joining MamaCare is simple. Download our app or sign up through our portal to begin your personalized maternal health journey within minutes." },
     { icon: ShieldCheck, question: "Is it free?", answer: "We offer a comprehensive free tier that includes basic health logging and community access. Our Premium Sanctuary provides advanced AI insights and 1:1 specialist care." },

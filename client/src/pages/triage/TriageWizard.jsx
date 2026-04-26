@@ -465,9 +465,9 @@ const ResultsStep = ({ triageResult, onRestart }) => {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 w-full max-w-2xl">
-          <button className={`flex items-center justify-center gap-3 p-6 ${risk.level === 'High' ? 'bg-red-500' : 'bg-mamacare-teal'} text-white rounded-3xl font-bold shadow-xl transition-all hover:scale-105`}>
+          <a href="tel:+250789534491" className={`flex items-center justify-center gap-3 p-6 ${risk.level === 'High' ? 'bg-red-500' : 'bg-mamacare-teal'} text-white rounded-3xl font-bold shadow-xl transition-all hover:scale-105`}>
             <Phone size={20} /> Call Nursing Line
-          </button>
+          </a>
           <button className="flex items-center justify-center gap-3 p-6 bg-gray-50 text-gray-900 rounded-3xl font-bold border border-gray-100 transition-all hover:bg-gray-100">
             <Clock size={20} /> Log & Monitor
           </button>

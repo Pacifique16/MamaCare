@@ -122,9 +122,6 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          <button className="p-2 text-mamacare-teal bg-[#E6F3F3] rounded-full">
-            <Activity size={18} />
-          </button>
           <div className="relative" ref={notifRef}>
             <button
               onClick={() => setNotifOpen(o => !o)}
