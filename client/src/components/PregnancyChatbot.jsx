@@ -40,10 +40,15 @@ const PregnancyChatbot = () => {
       ]);
     } catch (err) {
       const status = err?.response?.status;
+      const serverError = err?.response?.data?.error || err?.response?.data?.message || '';
       const msg = status === 429
         ? 'I\'m receiving too many requests right now. Please wait a moment and try again.'
-        : 'Sorry, I couldn\'t connect right now. Please try again.';
-      console.error('Chat error:', err?.response?.data?.error?.message || err?.message);
+        : status === 400
+        ? `Configuration error: ${serverError}`
+        : status === 401
+        ? 'Authentication error. Please log out and log in again.'
+        : `Sorry, I couldn't connect right now. (${status || 'network error'}) Please try again.`;
+      console.error('Chat error:', status, err?.response?.data);
       setMessages(prev => [
         ...prev.slice(0, -1),
         { role: 'assistant', content: msg }
