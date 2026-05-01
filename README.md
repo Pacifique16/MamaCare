@@ -2,6 +2,8 @@
 
 > *Empowering Mothers, Ensuring Safe Journeys.*
 
+🌐 **Live App:** [mama-care-ten.vercel.app](https://mama-care-ten.vercel.app)
+
 <img width="1898" height="971" alt="hero section" src="https://github.com/user-attachments/assets/cac406bc-6d0f-4752-8f8b-5c6c6f2b502c" />
 
 
