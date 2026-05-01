@@ -2,9 +2,9 @@
 
 A full-stack maternal healthcare web application that connects pregnant mothers with doctors, provides AI-powered pregnancy guidance, and supports the full care journey from onboarding to postpartum.
 
-![MamaCare Hero](./images/hero%20section.png)
+<img width="1898" height="971" alt="hero section" src="https://github.com/user-attachments/assets/cac406bc-6d0f-4752-8f8b-5c6c6f2b502c" />
 
----
+
 
 ## Features
 
