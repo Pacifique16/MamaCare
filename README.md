@@ -31,7 +31,7 @@ MamaCare was built to solve exactly that. It puts a knowledgeable, always-availa
 - **Assess symptoms** through a guided triage wizard that tells her whether to rest, monitor, or seek immediate care
 - **Book and manage appointments** with her assigned doctor without phone calls or waiting rooms
 - **Read curated health articles** from the library covering nutrition, exercise, mental health, fetal development, and more
-- **Message her doctor directly** for follow-ups, questions, or prescription clarifications
+- **Message her doctor directly** for follow ups, questions, or prescription clarifications
 - **Track her rest patterns** and receive reminders to maintain healthy sleep habits
 - **Access emergency contacts** instantly from her dashboard when every second counts
 - Never feel alone during one of the most important journeys of her life
